@@ -156,6 +156,19 @@ export function calculateReservation(state: RelayDemoState): ReservationTotal {
   return { storageFee, transportFee, total: storageFee + transportFee };
 }
 
+export function expectedFacilityArrivalAt(state: RelayDemoState): number | null {
+  if (state.reservationConfirmedAt === null) return null;
+  const host = state.hosts.find((candidate) => candidate.id === state.selectedHostId);
+  const transport = state.transportOptions.find((candidate) => candidate.id === state.selectedTransportId);
+  if (!host || !transport) return null;
+  return state.reservationConfirmedAt + (transport.arrivalMinutes + host.transferMinutes) * 60_000;
+}
+
+export function simulatedTransferConfirmedAt(state: RelayDemoState, now: number): number {
+  const expectedArrivalAt = expectedFacilityArrivalAt(state);
+  return expectedArrivalAt === null ? now : Math.max(now, expectedArrivalAt + 2 * 60_000);
+}
+
 export function relayReducer(state: RelayDemoState, action: RelayAction): RelayDemoState {
   switch (action.type) {
     case "start-rescue":
@@ -186,7 +199,9 @@ export function relayReducer(state: RelayDemoState, action: RelayAction): RelayD
         : state;
     }
     case "confirm-receiver":
-      return state.step === "handoff" && state.handoffId && state.reservationConfirmedAt ? { ...state, step: "complete", receiverConfirmedAt: action.at } : state;
+      return state.step === "handoff" && state.handoffId && state.reservationConfirmedAt
+        ? { ...state, step: "complete", receiverConfirmedAt: simulatedTransferConfirmedAt(state, action.at) }
+        : state;
     case "reset":
       return createSeedState(action.at);
   }

@@ -2,7 +2,13 @@
 
 import { useState, type Dispatch } from "react";
 import { CheckCircle2, Clipboard, Clock3, Share2, ShieldCheck, RotateCcw } from "lucide-react";
-import { calculateReservation, type RelayAction, type RelayDemoState, type RelaySelection } from "@/lib/kapitbiz";
+import {
+  calculateReservation,
+  expectedFacilityArrivalAt,
+  type RelayAction,
+  type RelayDemoState,
+  type RelaySelection,
+} from "@/lib/kapitbiz";
 import styles from "./KapitBizRelay.module.css";
 
 const SHARE_TEXT = "KapitBiz Relay demo record RE-4892-X: PHP 16,500 of inventory, 42 kg, transferred from Maya's Frozen Goods to Northline Cold Storage. Simulated demo transaction.";
@@ -28,24 +34,30 @@ export default function RescueCompleteScreen({
   const host = state.hosts.find((candidate) => candidate.id === state.selectedHostId);
   const transport = state.transportOptions.find((candidate) => candidate.id === state.selectedTransportId);
   const reservation = calculateReservation(state);
-  const confirmedAt = state.receiverConfirmedAt ?? state.reservationConfirmedAt ?? state.scenarioStartedAt;
-  const arrivedAt = (state.reservationConfirmedAt ?? state.scenarioStartedAt) + ((transport?.arrivalMinutes ?? 15) + (host?.transferMinutes ?? 38)) * 60_000;
+  const arrivedAt = expectedFacilityArrivalAt(state) ?? state.reservationConfirmedAt ?? state.scenarioStartedAt;
+  const confirmedAt = Math.max(state.receiverConfirmedAt ?? arrivedAt, arrivedAt);
 
   const shareRecord = async () => {
-    try {
-      const browserNavigator = window.navigator;
-      if (browserNavigator.share) {
+    const browserNavigator = window.navigator;
+    if (browserNavigator.share) {
+      try {
         await browserNavigator.share({ text: SHARE_TEXT });
         setShareStatus("Recovery record shared.");
-      } else if (browserNavigator.clipboard?.writeText) {
+        return;
+      } catch {
+        // A dismissed or unavailable share sheet falls through to clipboard.
+      }
+    }
+    if (browserNavigator.clipboard?.writeText) {
+      try {
         await browserNavigator.clipboard.writeText(SHARE_TEXT);
         setShareStatus("Recovery record copied to clipboard.");
-      } else {
-        setShareStatus("Sharing is unavailable in this browser. The record text is shown below.");
+        return;
+      } catch {
+        // The exact record remains visible below when clipboard access is denied.
       }
-    } catch {
-      setShareStatus("Could not share the recovery record. Try again or copy the record text.");
     }
+    setShareStatus(`Could not share automatically. ${SHARE_TEXT}`);
   };
 
   if (!host) return null;
@@ -68,12 +80,12 @@ export default function RescueCompleteScreen({
       </section>
 
       <section className={styles.timelineSection} aria-labelledby="timeline-heading">
-        <p className={styles.eyebrow}>Traceable record</p>
+        <p className={styles.eyebrow}>Simulated custody timeline</p>
         <h3 id="timeline-heading">Audit timeline</h3>
         <ol className={styles.auditTimeline}>
-          <li data-complete="true"><span aria-hidden="true" /><div><strong>Transfer confirmed</strong><p>Inventory handed to facility lead</p></div><time>{formatTime(confirmedAt)}</time></li>
-          <li><span aria-hidden="true" /><div><strong>Arrival at facility</strong><p>{transport?.name ?? "Rescue transport"} reached {host.locality}</p></div><time>{formatTime(arrivedAt)}</time></li>
-          <li><span aria-hidden="true" /><div><strong>Rescue initiated</strong><p>Source: Maya&apos;s Frozen Goods, Tagum City</p></div><time>{formatTime(state.scenarioStartedAt)}</time></li>
+          <li data-complete="true"><span aria-hidden="true" /><div><strong>Transfer confirmed</strong><p>Inventory handed to facility lead</p></div><time dateTime={new Date(confirmedAt).toISOString()}>{formatTime(confirmedAt)}</time></li>
+          <li><span aria-hidden="true" /><div><strong>Arrival at facility</strong><p>{transport?.name ?? "Rescue transport"} reached {host.locality}</p></div><time dateTime={new Date(arrivedAt).toISOString()}>{formatTime(arrivedAt)}</time></li>
+          <li><span aria-hidden="true" /><div><strong>Rescue initiated</strong><p>Source: Maya&apos;s Frozen Goods, Tagum City</p></div><time dateTime={new Date(state.scenarioStartedAt).toISOString()}>{formatTime(state.scenarioStartedAt)}</time></li>
         </ol>
       </section>
 

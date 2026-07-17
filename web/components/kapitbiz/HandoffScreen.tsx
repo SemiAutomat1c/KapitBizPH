@@ -6,7 +6,12 @@
 import { useEffect, useRef, useState, type ChangeEvent, type Dispatch } from "react";
 import QRCode from "qrcode";
 import { Camera, CheckCircle2, ImagePlus, ShieldCheck } from "lucide-react";
-import type { RelayAction, RelayDemoState, RelaySelection } from "@/lib/kapitbiz";
+import {
+  simulatedTransferConfirmedAt,
+  type RelayAction,
+  type RelayDemoState,
+  type RelaySelection,
+} from "@/lib/kapitbiz";
 import styles from "./KapitBizRelay.module.css";
 
 function formatCurrency(value: number): string {
@@ -38,7 +43,7 @@ export default function HandoffScreen({
   const evidenceUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!host || !state.handoffId) return;
+    if (!host || !state.handoffId || !state.reservationConfirmedAt) return;
 
     let active = true;
     const payload = JSON.stringify({
@@ -47,6 +52,7 @@ export default function HandoffScreen({
       receiver: host.name,
       value: selection.selectedValue,
       weightKg: selection.selectedWeightKg,
+      reservationConfirmedAt: state.reservationConfirmedAt,
     });
 
     QRCode.toDataURL(payload, {
@@ -70,7 +76,7 @@ export default function HandoffScreen({
     return () => {
       active = false;
     };
-  }, [host, selection.selectedValue, selection.selectedWeightKg, state.handoffId]);
+  }, [host, selection.selectedValue, selection.selectedWeightKg, state.handoffId, state.reservationConfirmedAt]);
 
   useEffect(() => () => {
     if (evidenceUrlRef.current) URL.revokeObjectURL(evidenceUrlRef.current);
@@ -123,8 +129,8 @@ export default function HandoffScreen({
       </section>
 
       <section className={styles.handoffMetrics} aria-label="Transfer details">
-        <div><span>Inventory</span><strong>{selection.selectedGroups} groups</strong><strong>{selection.selectedQuantity} units</strong></div>
-        <div><span>Logistics</span><strong>{selection.selectedWeightKg} kg</strong><strong>{formatCurrency(selection.selectedValue)}</strong></div>
+        <div><span>Inventory</span><strong>{selection.selectedGroups} groups</strong></div>
+        <div><span>Payload</span><strong>{selection.selectedWeightKg} kg</strong><strong>{formatCurrency(selection.selectedValue)}</strong></div>
       </section>
 
       <section className={styles.evidenceSection} aria-labelledby="evidence-heading">
@@ -150,7 +156,7 @@ export default function HandoffScreen({
 
       <div className={styles.handoffAction}>
         <span><ShieldCheck aria-hidden="true" /> Secured by KapitBiz Relay</span>
-        <button className={styles.primaryButton} type="button" onClick={() => dispatch({ type: "confirm-receiver", at: Date.now() })}>
+        <button className={styles.primaryButton} type="button" onClick={() => dispatch({ type: "confirm-receiver", at: simulatedTransferConfirmedAt(state, Date.now()) })}>
           <CheckCircle2 aria-hidden="true" /> Confirm inventory received
         </button>
       </div>
