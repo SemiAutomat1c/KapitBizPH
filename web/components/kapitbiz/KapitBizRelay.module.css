@@ -254,6 +254,10 @@
 .recommendedBand span:last-child { border: 1px solid rgba(255,255,255,.55); border-radius: 4px; padding: 3px 6px; font-size: 0.67rem; }
 .recommendedBand svg { width: 16px; height: 16px; }
 .recommendedContent { padding: 18px; }
+.recommendedContent > .primaryButton {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
 .hostTitleRow { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
 .hostTitleRow h3 { margin: 0; font-size: 1.5rem; line-height: 1.85rem; font-weight: 700; }
 .hostTitleRow p { margin: 6px 0 0; color: #3e494a; font-size: 0.95rem; }
@@ -674,6 +678,21 @@
 .resetButton { border: 1px solid #bec8ca; color: #3e494a; }
 .secondaryAction svg, .resetButton svg { width: 19px; height: 19px; }
 .shareStatus { margin: 0; border-left: 3px solid #006d77; background: #e8f3f3; color: #18484d; padding: 10px 12px; font-size: 0.84rem; line-height: 1.3rem; }
+
+@media (min-width: 600px) and (max-width: 959px) {
+  .progressHeader {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid #bec8ca;
+    color: #526163;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+}
 
 @media (min-width: 960px) {
   .appShell {

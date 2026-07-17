@@ -71,6 +71,22 @@ describe("KapitBiz Relay flow", () => {
     expect(screen.queryByText("KiloKita")).not.toBeInTheDocument();
   });
 
+  it("returns the document to the top when the rescue step changes", async () => {
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+    scrollTo.mockClear();
+
+    await user.click(
+      screen.getByRole("button", { name: /start inventory rescue/i }),
+    );
+
+    await waitFor(() => {
+      expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: "auto" });
+    });
+    scrollTo.mockRestore();
+  });
+
   it("keeps the incident start time derived from persisted state", async () => {
     const scenarioStartedAt = Date.parse("2026-07-18T03:25:00.000Z");
     window.localStorage.setItem(

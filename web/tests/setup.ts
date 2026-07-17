@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { afterEach } from "vitest";
+import { afterEach, vi } from "vitest";
 
 const entries = new Map<string, string>();
 const localStorage: Storage = {
@@ -14,6 +14,7 @@ const localStorage: Storage = {
 };
 
 Object.defineProperty(window, "localStorage", { configurable: true, value: localStorage });
+Object.defineProperty(window, "scrollTo", { configurable: true, value: vi.fn() });
 
 afterEach(() => {
   window.localStorage.clear();
