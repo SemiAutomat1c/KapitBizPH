@@ -190,4 +190,53 @@ describe("KapitBiz Relay flow", () => {
       "Capacity",
     );
   });
+
+  it("shows complete ranked capacity matches in the usable list view", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(
+      screen.getByRole("button", { name: /start inventory rescue/i }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: /find rescue capacity/i }),
+    );
+
+    expect(screen.getByText("Northline Cold Storage")).toBeInTheDocument();
+    expect(screen.getByText("28 km away")).toBeInTheDocument();
+    expect(screen.getByText("38 min transfer")).toBeInTheDocument();
+    expect(screen.getByText("Only 20 kg free")).toBeInTheDocument();
+    expect(screen.getByText("Capacity gap")).toBeInTheDocument();
+    expect(screen.getByText("Long route")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /select northline cold storage/i }),
+    ).toBeEnabled();
+    expect(
+      screen.queryByRole("button", { name: /select south market freezer/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps eligible host selection available in the offline map schematic", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(
+      screen.getByRole("button", { name: /start inventory rescue/i }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: /find rescue capacity/i }),
+    );
+    await user.click(screen.getByRole("button", { name: "Map" }));
+
+    expect(screen.getByText(/offline route schematic/i)).toBeInTheDocument();
+    const selectNorthline = screen.getByRole("button", {
+      name: /select northline cold storage/i,
+    });
+    expect(selectNorthline).toBeEnabled();
+
+    await user.click(selectNorthline);
+    expect(screen.getByLabelText("Current rescue step")).toHaveTextContent(
+      "Reserve",
+    );
+  });
 });

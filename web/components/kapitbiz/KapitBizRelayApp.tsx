@@ -3,6 +3,7 @@
 import { useKapitBiz, type RelayStep } from "@/lib/kapitbiz";
 import { AppHeader, BottomNav, IncidentRail, ProgressHeader } from "./AppChrome";
 import ActiveDisruptionScreen from "./ActiveDisruptionScreen";
+import CapacityMatchScreen from "./CapacityMatchScreen";
 import InventoryTriageScreen from "./InventoryTriageScreen";
 import styles from "./KapitBizRelay.module.css";
 
@@ -38,11 +39,21 @@ export default function KapitBizRelayApp() {
             selection={relay.selection}
             dispatch={relay.dispatch}
           />
+        ) : relay.state.step === "capacity" ? (
+          <CapacityMatchScreen
+            state={relay.state}
+            selection={relay.selection}
+            eligibleHosts={relay.eligibleHosts}
+            onSelectHost={(hostId) => {
+              relay.dispatch({ type: "select-host", hostId });
+              relay.dispatch({ type: "go-to", step: "reservation" });
+            }}
+          />
         ) : (
           <section className={styles.placeholder} aria-labelledby="next-step-heading">
             <p className={styles.eyebrow}>Rescue workflow</p>
-            <h2 id="next-step-heading">Capacity matching</h2>
-            <p>Your selected inventory is ready for capacity matching.</p>
+            <h2 id="next-step-heading">{relay.state.step === "reservation" ? "Reservation and transport" : "Next rescue step"}</h2>
+            <p>{relay.state.step === "reservation" ? "Capacity has been selected. Transport booking is next." : "Continue the active rescue transaction."}</p>
           </section>
         )}
       </section>
