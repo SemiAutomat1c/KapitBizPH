@@ -208,7 +208,7 @@ function canGoTo(state: RelayDemoState, nextStep: RelayStep): boolean {
   }
 }
 
-function isTransportEligible(state: RelayDemoState, transport: TransportOption): boolean {
+export function isTransportEligible(state: RelayDemoState, transport: TransportOption): boolean {
   const host = state.hosts.find((option) => option.id === state.selectedHostId);
   return Boolean(
     host

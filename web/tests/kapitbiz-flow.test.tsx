@@ -306,4 +306,73 @@ describe("KapitBiz Relay flow", () => {
       "Reserve",
     );
   });
+
+  it("reserves Northline capacity and confirms an eligible rider dispatch", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(screen.getByRole("button", { name: /start inventory rescue/i }));
+    await user.click(screen.getByRole("button", { name: /find rescue capacity/i }));
+    await user.click(screen.getByRole("button", { name: /select northline cold storage/i }));
+
+    const reservation = screen.getByRole("region", { name: /confirm reservation/i });
+    expect(within(reservation).getByText("42 kg")).toBeInTheDocument();
+    expect(within(reservation).getByText("12 hours")).toBeInTheDocument();
+    expect(within(reservation).getByText("Storage fee").nextElementSibling).toHaveTextContent("₱300.00");
+    expect(within(reservation).getByText("5 kg | 11 tubs")).toBeInTheDocument();
+    const confirmButton = within(reservation).getByRole("button", { name: /confirm rescue reservation/i });
+    expect(confirmButton).toBeDisabled();
+
+    const chooseTransport = screen.getByRole("button", { name: /choose transport/i });
+    await user.click(chooseTransport);
+    const dialog = screen.getByRole("dialog", { name: "Transport Selection" });
+    expect(dialog).toHaveAttribute("aria-modal", "true");
+    expect(screen.getByRole("radio", { name: /rider - logistics pro/i })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: /refrigerated van/i })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("radio", { name: /rider - logistics pro/i }));
+    await user.click(screen.getByRole("button", { name: /use selected transport/i }));
+
+    expect(screen.getByText("₱450.00")).toBeInTheDocument();
+    expect(confirmButton).toBeEnabled();
+    await user.click(confirmButton);
+    expect(screen.getByLabelText("Current rescue step")).toHaveTextContent("Handoff");
+  });
+
+  it("closes the transport sheet with Escape and restores focus to its trigger", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(screen.getByRole("button", { name: /start inventory rescue/i }));
+    await user.click(screen.getByRole("button", { name: /find rescue capacity/i }));
+    await user.click(screen.getByRole("button", { name: /select northline cold storage/i }));
+
+    const chooseTransport = screen.getByRole("button", { name: /choose transport/i });
+    await user.click(chooseTransport);
+    expect(screen.getByRole("dialog", { name: "Transport Selection" })).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "Transport Selection" })).not.toBeInTheDocument();
+    expect(chooseTransport).toHaveFocus();
+  });
+
+  it("traps keyboard focus within the transport sheet", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(screen.getByRole("button", { name: /start inventory rescue/i }));
+    await user.click(screen.getByRole("button", { name: /find rescue capacity/i }));
+    await user.click(screen.getByRole("button", { name: /select northline cold storage/i }));
+    await user.click(screen.getByRole("button", { name: /choose transport/i }));
+
+    const dialog = screen.getByRole("dialog", { name: "Transport Selection" });
+    const closeButton = within(dialog).getByRole("button", { name: /close transport selection/i });
+    const lastEligibleTransport = within(dialog).getByRole("radio", { name: /refrigerated van/i });
+    closeButton.focus();
+
+    await user.tab({ shift: true });
+    expect(lastEligibleTransport).toHaveFocus();
+    await user.tab();
+    expect(closeButton).toHaveFocus();
+  });
 });

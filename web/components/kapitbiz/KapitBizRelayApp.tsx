@@ -5,6 +5,7 @@ import { AppHeader, BottomNav, IncidentRail, ProgressHeader } from "./AppChrome"
 import ActiveDisruptionScreen from "./ActiveDisruptionScreen";
 import CapacityMatchScreen from "./CapacityMatchScreen";
 import InventoryTriageScreen from "./InventoryTriageScreen";
+import ReservationScreen from "./ReservationScreen";
 import styles from "./KapitBizRelay.module.css";
 
 const stepOrder: RelayStep[] = [
@@ -49,11 +50,17 @@ export default function KapitBizRelayApp() {
               relay.dispatch({ type: "go-to", step: "reservation" });
             }}
           />
+        ) : relay.state.step === "reservation" ? (
+          <ReservationScreen
+            state={relay.state}
+            selection={relay.selection}
+            dispatch={relay.dispatch}
+          />
         ) : (
           <section className={styles.placeholder} aria-labelledby="next-step-heading">
             <p className={styles.eyebrow}>Rescue workflow</p>
-            <h2 id="next-step-heading">{relay.state.step === "reservation" ? "Reservation and transport" : "Next rescue step"}</h2>
-            <p>{relay.state.step === "reservation" ? "Capacity has been selected. Transport booking is next." : "Continue the active rescue transaction."}</p>
+            <h2 id="next-step-heading">Next rescue step</h2>
+            <p>Continue the active rescue transaction.</p>
           </section>
         )}
       </section>
