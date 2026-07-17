@@ -125,7 +125,7 @@ function kiloKitaAnswer(v: Vals): Answer {
 
 export const AREAS: AreaConfig[] = [
   {
-    // KapitBiz Relay has its own bespoke rescue-flow UI (components/kapitbiz/RelayFlow)
+    // KapitBiz Relay has its own bespoke rescue-flow UI.
     // instead of the generic intake-form pattern — this entry only supplies tab
     // metadata (name/short/accent). fields/answer are unused stubs to satisfy the type.
     id: "resilience",

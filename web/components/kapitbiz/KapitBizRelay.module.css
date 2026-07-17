@@ -1,0 +1,206 @@
+.appShell {
+  min-height: 100dvh;
+  background: #f7fafa;
+  color: #181c1d;
+  padding-bottom: 76px;
+}
+
+.workspace {
+  min-width: 0;
+  padding: 20px 16px 32px;
+}
+
+.appHeader,
+.progressHeader,
+.incidentScreen,
+.placeholder {
+  width: 100%;
+  max-width: 680px;
+  margin-inline: auto;
+}
+
+.appHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+}
+
+.appHeader h1,
+.incidentScreen h2,
+.placeholder h2,
+.incidentRail h2 {
+  margin: 0;
+  color: #181c1d;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.appHeader h1 { font-size: 1.35rem; }
+.incidentScreen h2 { font-size: 1.75rem; line-height: 1.2; }
+.placeholder h2 { font-size: 1.4rem; }
+.incidentRail h2 { font-size: 1.15rem; }
+
+.eyebrow,
+.statusBadge,
+.incidentFacts span,
+.incidentFacts small,
+.railStats dt,
+.progressHeader,
+.demoNotice {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #527376;
+  font-size: 0.73rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.backButton,
+.bottomNav button {
+  border: 0;
+  background: transparent;
+  color: #37575a;
+}
+
+.backButton {
+  min-height: 44px;
+  padding: 0 10px;
+  font-weight: 600;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  color: #527376;
+  font-size: 0.78rem;
+}
+
+.incidentScreen,
+.placeholder {
+  border: 1px solid #cbd8d9;
+  border-radius: 8px;
+  background: #fff;
+  padding: 24px;
+}
+
+.statusBadge {
+  display: inline-block;
+  margin: 0 0 14px;
+  border-radius: 4px;
+  background: #fbe9e7;
+  color: #a33a2a;
+  padding: 5px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.incidentCopy,
+.railCopy,
+.placeholder p {
+  color: #4e5e60;
+  line-height: 1.55;
+}
+
+.incidentFacts {
+  display: grid;
+  gap: 1px;
+  margin: 24px 0;
+  border: 1px solid #d8e3e4;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.incidentFacts div {
+  display: grid;
+  gap: 4px;
+  background: #f8fbfb;
+  padding: 14px;
+}
+
+.incidentFacts span,
+.incidentFacts small,
+.railStats dt { color: #527376; font-size: 0.74rem; }
+.incidentFacts strong,
+.railStats dd { font-family: var(--font-mono), ui-monospace, monospace; font-size: 1.12rem; }
+
+.primaryButton {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 6px;
+  background: #006d77;
+  color: #fff;
+  font-weight: 700;
+}
+
+.demoNotice {
+  margin: 18px 0 0;
+  color: #527376;
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.placeholder { min-height: 220px; }
+
+.incidentRail { display: none; }
+
+.bottomNav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #cbd8d9;
+  background: #fff;
+}
+
+.bottomNav button {
+  min-height: 60px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.bottomNav button[aria-current="page"] { color: #006d77; }
+
+@media (min-width: 960px) {
+  .appShell {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    padding-bottom: 0;
+  }
+
+  .incidentRail {
+    display: block;
+    min-height: 100dvh;
+    border-right: 1px solid #cbd8d9;
+    background: #fff;
+    padding: 32px 24px;
+  }
+
+  .railCopy { margin: 8px 0 24px; }
+  .railStats { display: grid; gap: 18px; margin: 0; }
+  .railStats div { display: grid; gap: 4px; }
+  .railStats dt, .railStats dd { margin: 0; }
+  .stepList { display: grid; gap: 10px; margin: 32px 0 0; padding: 0; list-style: none; }
+  .stepList li { color: #789092; font-size: 0.86rem; }
+  .stepList li[data-active="true"] { color: #006d77; font-weight: 700; }
+  .stepList li[data-complete="true"] { color: #181c1d; }
+  .workspace { width: 100%; max-width: 920px; margin: 0 auto; padding: 36px 48px; }
+  .bottomNav { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appShell *, .appShell *::before, .appShell *::after {
+    scroll-behavior: auto;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
