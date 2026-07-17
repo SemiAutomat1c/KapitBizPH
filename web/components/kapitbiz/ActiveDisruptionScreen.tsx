@@ -8,6 +8,15 @@ function formatCurrency(value: number): string {
   return `₱${value.toLocaleString("en-PH")}`;
 }
 
+function formatIncidentStart(scenarioStartedAt: number): string {
+  return new Intl.DateTimeFormat("en-PH", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Manila",
+  }).format(new Date(scenarioStartedAt));
+}
+
 function formatRescueWindow(scenarioStartedAt: number, now: number): string {
   const remainingSeconds = Math.max(0, 90 * 60 - Math.floor((now - scenarioStartedAt) / 1_000));
   const hours = Math.floor(remainingSeconds / 3_600);
@@ -43,7 +52,7 @@ export default function ActiveDisruptionScreen({ state, onStart }: { state: Rela
         <div className={styles.incidentFacts}>
           <div>
             <span>Started</span>
-            <strong>2:10 PM</strong>
+            <strong>{formatIncidentStart(state.scenarioStartedAt)}</strong>
           </div>
           <div>
             <span>Est. duration</span>

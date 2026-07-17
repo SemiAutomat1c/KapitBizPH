@@ -122,7 +122,7 @@ Motion is restrained: screen transitions, bottom-sheet entry, button feedback, c
 incident -> triage -> capacity -> reservation -> handoff -> complete
 ```
 
-Back actions move to the preceding valid state. Reset returns to `incident` and restores all seeded data.
+Back actions move to the preceding valid state. On a first visit with no valid persisted state, the app starts at `incident`. A refresh restores the persisted current rescue step and transaction state instead of forcing the incident screen. The explicit `Reset demo` command creates fresh seeded data, returns to `incident`, and persists that reset state.
 
 ### Component Boundaries
 
@@ -165,7 +165,7 @@ The public Mapbox token is read only from the environment and is never committed
 - `HandoffRecord`
 - `RelayDemoState`
 
-The `useKapitBiz` hook owns transitions and derived values. State persists to a versioned localStorage key so the demo survives refreshes and venue connectivity problems. Invalid or old cached data falls back to a clean seeded state.
+The `useKapitBiz` hook owns transitions and derived values. State persists to a versioned localStorage key so the demo survives refreshes and venue connectivity problems. With no valid stored state, initialization creates a clean seeded state at `incident`; with valid stored state, hydration restores its exact current `RelayStep`. Refresh never resets an in-progress rescue. Invalid or old cached data falls back to the clean seeded incident state. The `Reset demo` command is the only normal interaction that deliberately replaces the current rescue with fresh seeded data and returns the flow to `incident`.
 
 Derived totals are calculated from selected quantities rather than stored independently. This prevents the values displayed on different screens from drifting apart.
 

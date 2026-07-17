@@ -60,13 +60,8 @@
   text-transform: uppercase;
 }
 
-.bottomNav button {
-  border: 0;
-  background: transparent;
-  color: #37575a;
-}
-
-.iconButton {
+.iconButton,
+.staticIcon {
   display: inline-grid;
   width: 44px;
   min-width: 44px;
@@ -77,6 +72,8 @@
   background: transparent;
   color: #00535b;
 }
+
+.staticIcon { cursor: default; }
 
 .progressHeader {
   display: none;
@@ -236,18 +233,21 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-.bottomNav button {
+.navItem {
   display: grid;
   min-height: 80px;
   align-content: center;
   justify-items: center;
   gap: 4px;
+  color: #37575a;
   font-size: 0.75rem;
   font-weight: 600;
+  text-decoration: none;
 }
 
 .bottomNav svg { width: 24px; height: 24px; stroke-width: 2.25; }
-.bottomNav button[aria-current="page"] { color: #006d77; }
+.navItem[aria-current="page"] { color: #006d77; }
+.navItemUnavailable { cursor: default; opacity: 0.72; }
 
 @media (min-width: 960px) {
   .appShell {

@@ -1,5 +1,6 @@
 import type { RelayDemoState, RelaySelection, RelayStep } from "@/lib/kapitbiz";
 import { Bell, ChevronLeft, History, House, ListTodo, Menu, Network, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 import styles from "./KapitBizRelay.module.css";
 
 const steps: { id: RelayStep; label: string }[] = [
@@ -15,15 +16,28 @@ function formatCurrency(value: number): string {
   return `₱${value.toLocaleString("en-PH")}`;
 }
 
+function formatIncidentStart(scenarioStartedAt: number): string {
+  return new Intl.DateTimeFormat("en-PH", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Manila",
+  }).format(new Date(scenarioStartedAt));
+}
+
 export function AppHeader({ step, onBack }: { step: RelayStep; onBack: () => void }) {
   const canGoBack = step !== "incident";
 
   return (
     <header className={styles.appHeader}>
       <div className={styles.headerTitle}>
-        <button className={styles.iconButton} type="button" aria-label="Open menu" title="Open menu">
+        <span
+          className={styles.staticIcon}
+          aria-label="Menu unavailable in this demo"
+          title="Menu unavailable in this demo"
+        >
           <Menu aria-hidden="true" />
-        </button>
+        </span>
         <h1>KapitBiz Relay</h1>
       </div>
       {canGoBack ? (
@@ -31,9 +45,13 @@ export function AppHeader({ step, onBack }: { step: RelayStep; onBack: () => voi
           <ChevronLeft aria-hidden="true" />
         </button>
       ) : (
-        <button className={styles.iconButton} type="button" aria-label="Notifications" title="Notifications">
+        <span
+          className={styles.staticIcon}
+          aria-label="Notifications unavailable in this demo"
+          title="Notifications unavailable in this demo"
+        >
           <Bell aria-hidden="true" />
-        </button>
+        </span>
       )}
     </header>
   );
@@ -46,7 +64,9 @@ export function IncidentRail({ state, selection }: { state: RelayDemoState; sele
     <aside className={styles.incidentRail} aria-label="Incident status">
       <p className={styles.eyebrow}>Active disruption</p>
       <h2>Power interruption</h2>
-      <p className={styles.railCopy}>Simulated localized six-hour interruption at 2:10 PM.</p>
+      <p className={styles.railCopy}>
+        Simulated localized six-hour interruption at {formatIncidentStart(state.scenarioStartedAt)}.
+      </p>
       <dl className={styles.railStats}>
         <div>
           <dt>Merchant</dt>
@@ -83,8 +103,7 @@ export function ProgressHeader({ step }: { step: RelayStep }) {
 }
 
 export function BottomNav() {
-  const items: { label: string; icon: LucideIcon }[] = [
-    { label: "Home", icon: House },
+  const unavailableItems: { label: string; icon: LucideIcon }[] = [
     { label: "Requests", icon: ListTodo },
     { label: "Network", icon: Network },
     { label: "Activity", icon: History },
@@ -92,11 +111,20 @@ export function BottomNav() {
 
   return (
     <nav className={styles.bottomNav} aria-label="Primary navigation">
-      {items.map(({ label, icon: Icon }) => (
-        <button key={label} type="button" aria-current={label === "Home" ? "page" : undefined}>
+      <Link className={styles.navItem} href="/" aria-current="page">
+        <House aria-hidden="true" />
+        <span>Home</span>
+      </Link>
+      {unavailableItems.map(({ label, icon: Icon }) => (
+        <span
+          key={label}
+          className={`${styles.navItem} ${styles.navItemUnavailable}`}
+          aria-label={`${label} unavailable in this demo`}
+          title={`${label} unavailable in this demo`}
+        >
           <Icon aria-hidden="true" />
           <span>{label}</span>
-        </button>
+        </span>
       ))}
     </nav>
   );
