@@ -288,6 +288,11 @@
 .mapCanvas { height: 330px; }
 .mapNotice,
 .schematicCaption { margin: 0; border-top: 1px solid #bec8ca; color: #3e494a; padding: 10px 12px; font-size: 0.78rem; line-height: 1.25rem; }
+.mapHostControls { display: grid; border-top: 1px solid #bec8ca; }
+.mapHostControls > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border-bottom: 1px solid #d9e1e1; }
+.mapHostControls > div:last-child { border-bottom: 0; }
+.mapHostControls span { display: grid; gap: 2px; color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.72rem; }
+.mapHostControls strong { color: #181c1d; font-family: var(--font-geist), sans-serif; font-size: 0.88rem; }
 .schematicHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #e8f3f3; color: #00535b; padding: 10px 12px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; }
 .schematicHeader small { color: #3e494a; font-size: 0.68rem; }
 .schematicRoute { display: grid; grid-template-columns: auto minmax(64px, 1fr) auto; align-items: center; gap: 10px; min-height: 104px; padding: 18px 20px; background: #f1f4f4; }
@@ -312,6 +317,8 @@
   .hostIneligibleReason { justify-items: start; text-align: left; }
   .schematicHost { align-items: stretch; flex-direction: column; }
   .schematicHost .secondaryButton { width: 100%; }
+  .mapHostControls > div { align-items: stretch; flex-direction: column; }
+  .mapHostControls .secondaryButton { width: 100%; }
   .ineligibleNote { max-width: none; text-align: left; }
 }
 

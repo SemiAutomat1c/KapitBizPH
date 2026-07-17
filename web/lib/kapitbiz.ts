@@ -127,7 +127,27 @@ export function deriveSelection(state: RelayDemoState): RelaySelection {
 
 export function eligibleHosts(state: RelayDemoState): CapacityHost[] {
   const { selectedWeightKg } = deriveSelection(state);
-  return state.hosts.filter((host) => host.outsideAffectedArea && host.capacityKg >= selectedWeightKg && host.transferMinutes <= shortestRescueWindow(state));
+  const eligible = state.hosts.filter((host) => host.outsideAffectedArea && host.capacityKg >= selectedWeightKg && host.transferMinutes <= shortestRescueWindow(state));
+  return rankCapacityHosts(eligible, selectedWeightKg);
+}
+
+export function rankCapacityHosts(hosts: CapacityHost[], requiredWeightKg: number): CapacityHost[] {
+  // Lexicographic order: capacity headroom, route time, window, fee, stable ID.
+  return [...hosts].sort((left, right) => {
+    const headroom = (right.capacityKg - requiredWeightKg) - (left.capacityKg - requiredWeightKg);
+    if (headroom !== 0) return headroom;
+
+    const route = left.transferMinutes - right.transferMinutes;
+    if (route !== 0) return route;
+
+    const window = right.windowHours - left.windowHours;
+    if (window !== 0) return window;
+
+    const fee = left.fee - right.fee;
+    if (fee !== 0) return fee;
+
+    return left.id.localeCompare(right.id, "en");
+  });
 }
 
 export function calculateReservation(state: RelayDemoState): ReservationTotal {

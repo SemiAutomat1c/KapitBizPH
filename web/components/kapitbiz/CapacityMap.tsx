@@ -70,9 +70,10 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const [showFallback, setShowFallback] = useState(!token);
   const selectedHost = useMemo(
-    () => hosts.find((host) => host.id === selectedHostId) ?? hosts.find((host) => host.id === "northline") ?? hosts[0],
-    [hosts, selectedHostId],
+    () => hosts.find((host) => host.id === selectedHostId) ?? hosts.find((host) => host.id === eligibleHostIds[0]) ?? hosts[0],
+    [eligibleHostIds, hosts, selectedHostId],
   );
+  const eligibleIds = useMemo(() => new Set(eligibleHostIds), [eligibleHostIds]);
 
   useEffect(() => {
     if (showFallback || !token || !containerRef.current || !selectedHost) return;
@@ -100,7 +101,7 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
           if (cancelled) return;
           new mapboxgl.Marker({ color: "#ba1a1a" }).setLngLat(origin).setPopup(new mapboxgl.Popup().setText(originLabel)).addTo(map);
           hosts.forEach((host) => {
-            new mapboxgl.Marker({ color: host.id === "northline" ? "#006d77" : "#6f797a" })
+            new mapboxgl.Marker({ color: host.id === eligibleHostIds[0] ? "#006d77" : "#6f797a" })
               .setLngLat(host.coordinates)
               .setPopup(new mapboxgl.Popup().setText(host.name))
               .addTo(map);
@@ -132,7 +133,7 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [hosts, origin, selectedHost, showFallback, token]);
+  }, [eligibleHostIds, hosts, origin, selectedHost, showFallback, token]);
 
   if (showFallback) {
     return <OfflineSchematic hosts={hosts} eligibleHostIds={eligibleHostIds} selectedHostId={selectedHostId} onSelectHost={onSelectHost} />;
@@ -142,6 +143,24 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
     <section className={styles.mapPresentation} aria-label="Seeded Mapbox capacity map">
       <div ref={containerRef} className={styles.mapCanvas} />
       <p className={styles.mapNotice}>Seeded demo markers and relay route. No live routing or traffic data.</p>
+      <div className={styles.mapHostControls} role="group" aria-label="Selectable capacity hosts on map">
+        {hosts.filter((host) => eligibleIds.has(host.id)).map((host) => (
+          <div key={host.id}>
+            <span>
+              <strong>{host.name}</strong>
+              {host.transferMinutes} min | {host.capacityKg} kg free
+            </span>
+            <button
+              className={styles.secondaryButton}
+              type="button"
+              aria-pressed={selectedHostId === host.id}
+              onClick={() => onSelectHost(host.id)}
+            >
+              Select {host.name}
+            </button>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

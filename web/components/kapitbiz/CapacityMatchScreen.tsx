@@ -37,7 +37,7 @@ export default function CapacityMatchScreen({
 }: CapacityMatchScreenProps) {
   const [view, setView] = useState<CapacityView>("list");
   const eligibleIds = useMemo(() => new Set(eligibleHosts.map((host) => host.id)), [eligibleHosts]);
-  const recommendedHost = eligibleHosts.find((host) => host.id === "northline") ?? eligibleHosts[0];
+  const recommendedHost = eligibleHosts[0];
   const alternativeHosts = state.hosts.filter((host) => host.id !== recommendedHost?.id);
 
   return (

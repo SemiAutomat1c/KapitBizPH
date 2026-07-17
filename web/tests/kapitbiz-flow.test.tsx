@@ -1,13 +1,44 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import KapitBizRelayApp from "@/components/kapitbiz/KapitBizRelayApp";
 import { createSeedState } from "@/lib/kapitbiz";
+
+const mapboxTestDouble = vi.hoisted(() => {
+  class Map {
+    on(event: string, callback: () => void) {
+      if (event === "load") queueMicrotask(callback);
+      return this;
+    }
+
+    addSource() {}
+    addLayer() {}
+    remove() {}
+  }
+
+  class Marker {
+    setLngLat() { return this; }
+    setPopup() { return this; }
+    addTo() { return this; }
+  }
+
+  class Popup {
+    setText() { return this; }
+  }
+
+  return { mapbox: { accessToken: "", Map, Marker, Popup } };
+});
+
+vi.mock("mapbox-gl", () => ({ default: mapboxTestDouble.mapbox }));
 
 describe("KapitBiz Relay flow", () => {
   beforeEach(() => {
     cleanup();
     window.localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("opens directly to the simulated incident", () => {
@@ -233,6 +264,42 @@ describe("KapitBiz Relay flow", () => {
       name: /select northline cold storage/i,
     });
     expect(selectNorthline).toBeEnabled();
+
+    await user.click(selectNorthline);
+    expect(screen.getByLabelText("Current rescue step")).toHaveTextContent(
+      "Reserve",
+    );
+  });
+
+  it("keeps eligible host selection available in configured Mapbox presentation", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MAPBOX_TOKEN", "test-public-token");
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(
+      screen.getByRole("button", { name: /start inventory rescue/i }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: /find rescue capacity/i }),
+    );
+    await user.click(screen.getByRole("button", { name: "Map" }));
+
+    const mapPresentation = screen.getByRole("region", {
+      name: "Seeded Mapbox capacity map",
+    });
+    expect(
+      within(mapPresentation).queryByRole("button", {
+        name: /select south market freezer/i,
+      }),
+    ).not.toBeInTheDocument();
+    const selectNorthline = within(mapPresentation).getByRole("button", {
+      name: /select northline cold storage/i,
+    });
+    expect(
+      within(mapPresentation).getByRole("button", {
+        name: /select tagum north cold chain/i,
+      }),
+    ).toBeEnabled();
 
     await user.click(selectNorthline);
     expect(screen.getByLabelText("Current rescue step")).toHaveTextContent(

@@ -39,6 +39,38 @@ describe("KapitBiz relay domain", () => {
     expect(eligibleHosts(state).map((host) => host.id)).toEqual(["northline", "tagum-north"]);
   });
 
+  it("keeps Northline recommended when eligible host input order changes", () => {
+    const state = createSeedState(1_000_000);
+    const reversedState = { ...state, hosts: [...state.hosts].reverse() };
+
+    expect(eligibleHosts(state)[0]?.id).toBe("northline");
+    expect(eligibleHosts(reversedState)[0]?.id).toBe("northline");
+  });
+
+  it("ranks eligible hosts by capacity headroom, route, window, fee, then stable id", () => {
+    const state = createSeedState(1_000_000);
+    const baseHost = state.hosts.find((host) => host.id === "northline");
+    expect(baseHost).toBeDefined();
+
+    const hosts = [
+      { ...baseHost!, id: "tie-z", name: "Tie Z", capacityKg: 60, transferMinutes: 30, windowHours: 12, fee: 300 },
+      { ...baseHost!, id: "lower-fee", name: "Lower fee", capacityKg: 60, transferMinutes: 30, windowHours: 12, fee: 200 },
+      { ...baseHost!, id: "longer-window", name: "Longer window", capacityKg: 60, transferMinutes: 30, windowHours: 20, fee: 900 },
+      { ...baseHost!, id: "faster-route", name: "Faster route", capacityKg: 60, transferMinutes: 20, windowHours: 6, fee: 900 },
+      { ...baseHost!, id: "more-headroom", name: "More headroom", capacityKg: 70, transferMinutes: 80, windowHours: 6, fee: 900 },
+      { ...baseHost!, id: "tie-a", name: "Tie A", capacityKg: 60, transferMinutes: 30, windowHours: 12, fee: 300 },
+    ];
+
+    expect(eligibleHosts({ ...state, hosts }).map((host) => host.id)).toEqual([
+      "more-headroom",
+      "faster-route",
+      "longer-window",
+      "lower-fee",
+      "tie-a",
+      "tie-z",
+    ]);
+  });
+
   it("calculates the approved PHP 450 reservation", () => {
     const state = createSeedState(1_000_000);
     const withHost = relayReducer(state, { type: "select-host", hostId: "northline" });
