@@ -202,7 +202,7 @@ function updateInventory(state: RelayDemoState, itemId: string, update: (item: I
   const inventory = state.inventory.map((item) => (item.id === itemId ? update(item) : item));
   const nextState = { ...state, inventory };
   const selectedHostStillEligible = eligibleHosts(nextState).some((host) => host.id === state.selectedHostId);
-  const selectedTransportStillEligible = nextState.transportOptions.some((option) => option.id === state.selectedTransportId && option.capacityKg >= deriveSelection(nextState).selectedWeightKg);
+  const selectedTransportStillEligible = nextState.transportOptions.some((option) => option.id === state.selectedTransportId && isTransportEligible(nextState, option));
   return { ...nextState, selectedHostId: selectedHostStillEligible ? state.selectedHostId : null, selectedTransportId: selectedHostStillEligible && selectedTransportStillEligible ? state.selectedTransportId : null };
 }
 

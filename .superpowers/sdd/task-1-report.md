@@ -72,3 +72,39 @@ npm run lint -- lib/kapitbiz.ts tests/kapitbiz-domain.test.ts
 ```
 
 Result: exit code 0 with no lint output.
+
+## Re-review Fix: Clear Stale Rescue Transport
+
+The re-review found that inventory updates preserved `selectedTransportId` using capacity alone. Selecting inventory with a shorter rescue window could therefore leave a transport selected even when its arrival time plus the selected host's transfer time had become too late.
+
+### RED Evidence
+
+A focused regression starts with ice cream deselected, giving a 120-minute shortest rescue window. A rider with a 60-minute arrival is valid with Northline's 38-minute transfer. Reselecting ice cream shortens the rescue window to 90 minutes and must clear that rider.
+
+Command run from `web/`:
+
+```text
+npm test -- tests/kapitbiz-domain.test.ts
+```
+
+Observed result before the implementation change: exit code 1; 1 failed and 12 passed. The test `clears a selected transport when inventory shortens the rescue window` received `"rider"` instead of `null`.
+
+### Implementation
+
+The inventory-update path now evaluates the selected transport with the existing `isTransportEligible(nextState, option)` guard instead of a capacity-only comparison.
+
+### GREEN Evidence
+
+Commands run from `web/` after the implementation change:
+
+```text
+npm test -- tests/kapitbiz-domain.test.ts
+```
+
+Result: exit code 0; 1 test file passed, 13 tests passed.
+
+```text
+npm run lint -- lib/kapitbiz.ts tests/kapitbiz-domain.test.ts
+```
+
+Result: exit code 0 with no lint output.

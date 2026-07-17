@@ -75,6 +75,24 @@ describe("KapitBiz relay domain", () => {
     expect(relayReducer(withLateTransport, { type: "confirm-reservation", at: 1_000_100 })).toBe(withLateTransport);
   });
 
+  it("clears a selected transport when inventory shortens the rescue window", () => {
+    const state = createSeedState(1_000_000);
+    const withSlowTransport = {
+      ...state,
+      transportOptions: state.transportOptions.map((option) =>
+        option.id === "rider" ? { ...option, arrivalMinutes: 60 } : option,
+      ),
+    };
+    const withLongerWindow = relayReducer(withSlowTransport, { type: "toggle-item", itemId: "ice-cream" });
+    const withHost = relayReducer(withLongerWindow, { type: "select-host", hostId: "northline" });
+    const withTransport = relayReducer(withHost, { type: "select-transport", transportId: "rider" });
+
+    expect(withTransport.selectedTransportId).toBe("rider");
+
+    const withShorterWindow = relayReducer(withTransport, { type: "toggle-item", itemId: "ice-cream" });
+    expect(withShorterWindow.selectedTransportId).toBeNull();
+  });
+
   it("guards invalid forward transitions", () => {
     const state = createSeedState(1_000_000);
     expect(relayReducer(state, { type: "go-to", step: "complete" }).step).toBe("incident");
