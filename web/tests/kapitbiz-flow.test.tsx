@@ -1,4 +1,5 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import KapitBizRelayApp from "@/components/kapitbiz/KapitBizRelayApp";
 import { createSeedState } from "@/lib/kapitbiz";
@@ -59,5 +60,69 @@ describe("KapitBiz Relay flow", () => {
     expect(
       screen.queryByRole("button", { name: "Requests" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("triages selected inventory and keeps quantities within stock bounds", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(
+      screen.getByRole("button", { name: /start inventory rescue/i }),
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Inventory triage" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("42 kg | ₱16,500")).toBeInTheDocument();
+    expect(screen.getByText("11 of 18 tubs")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /increase processed meat quantity/i }),
+    ).toBeDisabled();
+
+    await user.click(screen.getByRole("checkbox", { name: /ice cream/i }));
+    expect(screen.getByText("37 kg | ₱12,100")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("checkbox", { name: /ice cream/i }));
+    expect(screen.getByText("42 kg | ₱16,500")).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: /decrease ice cream quantity/i }),
+    );
+    expect(screen.getByText("10 of 18 tubs")).toBeInTheDocument();
+    expect(screen.getByText("41.55 kg | ₱16,100")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /find rescue capacity/i }),
+    ).toBeEnabled();
+  });
+
+  it("requires inventory before continuing to rescue capacity", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(
+      screen.getByRole("button", { name: /start inventory rescue/i }),
+    );
+    await user.click(screen.getByRole("checkbox", { name: /ice cream/i }));
+    await user.click(
+      screen.getByRole("checkbox", { name: /frozen chicken/i }),
+    );
+    await user.click(
+      screen.getByRole("checkbox", { name: /processed meat/i }),
+    );
+
+    const capacityButton = screen.getByRole("button", {
+      name: /find rescue capacity/i,
+    });
+    expect(capacityButton).toBeDisabled();
+    expect(
+      screen.getByText("Select at least one inventory group to continue."),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("checkbox", { name: /ice cream/i }));
+    expect(capacityButton).toBeEnabled();
+    await user.click(capacityButton);
+    expect(screen.getByLabelText("Current rescue step")).toHaveTextContent(
+      "Capacity",
+    );
   });
 });

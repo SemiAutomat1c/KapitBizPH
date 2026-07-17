@@ -13,6 +13,7 @@
 .appHeader,
 .progressHeader,
 .incidentScreen,
+.triageScreen,
 .placeholder {
   width: 100%;
   max-width: 680px;
@@ -29,6 +30,7 @@
 }
 
 .appHeader h1,
+.triageIntro h2,
 .placeholder h2,
 .incidentRail h2 {
   margin: 0;
@@ -39,6 +41,7 @@
 
 .headerTitle { display: flex; align-items: center; gap: 10px; }
 .appHeader h1 { color: #00535b; font-size: 1.5rem; line-height: 2rem; font-weight: 700; }
+.triageIntro h2 { font-size: 2rem; line-height: 2.5rem; }
 .placeholder h2 { font-size: 1.4rem; }
 .incidentRail h2 { font-size: 1.15rem; }
 
@@ -204,6 +207,7 @@
 
 .primaryButton svg { width: 24px; height: 24px; stroke-width: 2.5; }
 .primaryButton:hover { background: #00535b; }
+.primaryButton:disabled { background: #aeb9ba; color: #f7fafa; cursor: not-allowed; }
 
 .demoNotice {
   margin: 0;
@@ -218,6 +222,141 @@
 }
 
 .placeholder { min-height: 220px; }
+
+.triageScreen {
+  padding-top: 16px;
+  padding-bottom: 190px;
+}
+
+.triageIntro {
+  border-bottom: 1px solid #bec8ca;
+  padding: 0 0 24px;
+}
+
+.triageIntro h2,
+.triageIntro p { margin: 0; }
+.triageIntro p:last-child { margin-top: 4px; color: #3e494a; font-size: 1rem; line-height: 1.5rem; }
+
+.inventoryList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inventoryRow {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 12px;
+  min-height: 190px;
+  border-bottom: 1px solid #bec8ca;
+  padding: 24px 0;
+}
+
+.inventoryRow[data-selected="false"] .inventoryDetails h3,
+.inventoryRow[data-selected="false"] .inventoryValue { color: #526163; }
+
+.inventoryCheckbox {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  cursor: pointer;
+}
+
+.inventoryCheckbox input {
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  accent-color: #007d87;
+  cursor: pointer;
+}
+
+.inventoryDetails { min-width: 0; }
+.inventoryDetails h3 { margin: 0; font-size: 1.35rem; line-height: 1.75rem; font-weight: 650; }
+
+.rescueBadge {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 8px;
+  border-radius: 4px;
+  background: #e4e8e8;
+  color: #4b5758;
+  padding: 5px 8px;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1rem;
+  text-transform: uppercase;
+}
+
+.rescueBadge[data-urgent="true"] { background: #ffdad6; color: #93000a; }
+.rescueBadge[data-safe="true"] { background: #dcebea; color: #00535b; }
+
+.quantityControl {
+  display: grid;
+  grid-template-columns: 52px 56px 52px;
+  width: fit-content;
+  margin-top: 20px;
+  overflow: hidden;
+  border: 1px solid #aebdbf;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.quantityControl button,
+.quantityControl output {
+  display: grid;
+  min-height: 48px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #181c1d;
+}
+
+.quantityControl button { cursor: pointer; }
+.quantityControl button:first-child { border-right: 1px solid #aebdbf; }
+.quantityControl button:last-child { border-left: 1px solid #aebdbf; }
+.quantityControl button:disabled { color: #a7b1b2; cursor: not-allowed; }
+.quantityControl button:not(:disabled):hover { background: #e8f3f3; color: #00535b; }
+.quantityControl svg { width: 20px; height: 20px; stroke-width: 2.25; }
+.quantityControl output { font-family: var(--font-mono), ui-monospace, monospace; font-size: 1rem; font-weight: 600; }
+
+.inventoryValue {
+  display: grid;
+  min-width: 116px;
+  align-content: start;
+  justify-items: end;
+  padding-top: 2px;
+  text-align: right;
+}
+
+.inventoryValue strong { font-family: var(--font-mono), ui-monospace, monospace; font-size: 1.25rem; line-height: 1.5rem; }
+.inventoryValue span { margin-top: 2px; color: #3e494a; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.78rem; line-height: 1.25rem; }
+
+.triageAction {
+  position: fixed;
+  z-index: 20;
+  right: 0;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  left: 0;
+  border-top: 1px solid #aebdbf;
+  background: rgba(247, 250, 250, 0.98);
+  padding: 16px;
+}
+
+.triageSummary {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.triageSummary div { display: grid; gap: 4px; }
+.triageSummary span { color: #3e494a; font-size: 0.78rem; font-weight: 650; text-transform: uppercase; }
+.triageSummary strong { color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 1.35rem; line-height: 1.65rem; }
+.triageSummary p { margin: 0; color: #3e494a; font-size: 0.9rem; }
+.triageHint { margin: -4px 0 10px; color: #93000a; font-size: 0.84rem; line-height: 1.25rem; }
 
 .incidentRail { display: none; }
 
@@ -275,6 +414,17 @@
   .workspace { width: 100%; max-width: 920px; margin: 0 auto; padding: 0 48px 48px; }
   .appHeader { max-width: none; }
   .incidentScreen { max-width: 680px; padding-top: 32px; }
+  .triageScreen { max-width: 760px; padding-top: 32px; padding-bottom: 0; }
+  .triageIntro { padding-bottom: 28px; }
+  .inventoryRow { padding: 24px 8px; }
+  .triageAction {
+    position: static;
+    margin-top: 24px;
+    border: 1px solid #bec8ca;
+    border-radius: 8px;
+    background: #fff;
+    padding: 20px;
+  }
   .alertPanel h2 { font-size: 1.375rem; line-height: 1.75rem; }
   .merchantPanel { min-height: 240px; }
   .bottomNav { display: none; }
