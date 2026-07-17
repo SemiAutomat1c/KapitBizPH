@@ -2,7 +2,7 @@ import { cleanup, render, screen, waitFor, within } from "@testing-library/react
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import KapitBizRelayApp from "@/components/kapitbiz/KapitBizRelayApp";
-import { createSeedState } from "@/lib/kapitbiz";
+import { createSeedState, relayReducer } from "@/lib/kapitbiz";
 
 const mapboxTestDouble = vi.hoisted(() => {
   class Map {
@@ -368,11 +368,96 @@ describe("KapitBiz Relay flow", () => {
     const dialog = screen.getByRole("dialog", { name: "Transport Selection" });
     const closeButton = within(dialog).getByRole("button", { name: /close transport selection/i });
     const lastEligibleTransport = within(dialog).getByRole("radio", { name: /refrigerated van/i });
-    closeButton.focus();
+    expect(dialog).toHaveFocus();
 
     await user.tab({ shift: true });
     expect(lastEligibleTransport).toHaveFocus();
     await user.tab();
     expect(closeButton).toHaveFocus();
+  });
+
+  it("hides primary navigation during reservation and handoff only", async () => {
+    const user = userEvent.setup();
+    const activeFlow = render(<KapitBizRelayApp />);
+
+    expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /start inventory rescue/i }));
+    expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /find rescue capacity/i }));
+    expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /select northline cold storage/i }));
+    expect(screen.queryByRole("navigation", { name: "Primary navigation" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /choose transport/i }));
+    await user.click(screen.getByRole("radio", { name: /rider - logistics pro/i }));
+    await user.click(screen.getByRole("button", { name: /use selected transport/i }));
+    await user.click(screen.getByRole("button", { name: /confirm rescue reservation/i }));
+    expect(screen.getByLabelText("Current rescue step")).toHaveTextContent("Handoff");
+    expect(screen.queryByRole("navigation", { name: "Primary navigation" })).not.toBeInTheDocument();
+
+    activeFlow.unmount();
+    let completeState = relayReducer(createSeedState(1_000_000), { type: "start-rescue" });
+    completeState = relayReducer(completeState, { type: "go-to", step: "capacity" });
+    completeState = relayReducer(completeState, { type: "select-host", hostId: "northline" });
+    completeState = relayReducer(completeState, { type: "go-to", step: "reservation" });
+    completeState = relayReducer(completeState, { type: "select-transport", transportId: "rider" });
+    completeState = relayReducer(completeState, { type: "confirm-reservation", at: 1_000_100 });
+    completeState = relayReducer(completeState, { type: "confirm-receiver", at: 1_000_200 });
+    window.localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(completeState));
+    render(<KapitBizRelayApp />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText("Current rescue step")).toHaveTextContent("Complete");
+    });
+    expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
+  });
+
+  it("restores the selected rider and PHP 450 reservation after remounting", async () => {
+    const user = userEvent.setup();
+    const firstVisit = render(<KapitBizRelayApp />);
+
+    await user.click(screen.getByRole("button", { name: /start inventory rescue/i }));
+    await user.click(screen.getByRole("button", { name: /find rescue capacity/i }));
+    await user.click(screen.getByRole("button", { name: /select northline cold storage/i }));
+    await user.click(screen.getByRole("button", { name: /choose transport/i }));
+    await user.click(screen.getByRole("radio", { name: /rider - logistics pro/i }));
+    await user.click(screen.getByRole("button", { name: /use selected transport/i }));
+
+    await waitFor(() => {
+      expect(JSON.parse(window.localStorage.getItem("kapitbiz-relay-v2") ?? "null")).toMatchObject({
+        step: "reservation",
+        selectedHostId: "northline",
+        selectedTransportId: "rider",
+      });
+    });
+    firstVisit.unmount();
+    render(<KapitBizRelayApp />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Rider - Logistics Pro" })).toBeInTheDocument();
+      expect(screen.getByText("₱450.00")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /confirm rescue reservation/i })).toBeEnabled();
+    });
+  });
+
+  it("clears the selected transport when a different eligible host is chosen", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(screen.getByRole("button", { name: /start inventory rescue/i }));
+    await user.click(screen.getByRole("button", { name: /find rescue capacity/i }));
+    await user.click(screen.getByRole("button", { name: /select northline cold storage/i }));
+    await user.click(screen.getByRole("button", { name: /choose transport/i }));
+    await user.click(screen.getByRole("radio", { name: /rider - logistics pro/i }));
+    await user.click(screen.getByRole("button", { name: /use selected transport/i }));
+    expect(screen.getByText("₱450.00")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /confirm rescue reservation/i })).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: "Go back" }));
+    await user.click(screen.getByRole("button", { name: /select tagum north cold chain/i }));
+
+    expect(screen.getByRole("heading", { name: "Tagum North Cold Chain" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /choose transport/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /confirm rescue reservation/i })).toBeDisabled();
   });
 });

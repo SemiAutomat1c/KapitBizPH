@@ -23,6 +23,7 @@ function previousStep(step: RelayStep): RelayStep {
 
 export default function KapitBizRelayApp() {
   const relay = useKapitBiz();
+  const isFocusedTransaction = relay.state.step === "reservation" || relay.state.step === "handoff";
   const goBack = () =>
     relay.dispatch({ type: "go-to", step: previousStep(relay.state.step) });
 
@@ -64,7 +65,7 @@ export default function KapitBizRelayApp() {
           </section>
         )}
       </section>
-      <BottomNav />
+      {!isFocusedTransaction ? <BottomNav /> : null}
     </main>
   );
 }
