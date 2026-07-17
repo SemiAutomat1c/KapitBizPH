@@ -36,12 +36,15 @@ vi.mock("mapbox-gl", () => ({ default: mapboxTestDouble.mapbox }));
 vi.mock("qrcode", () => ({ default: qrcodeTestDouble }));
 
 function createHandoffState() {
-  let handoffState = relayReducer(createSeedState(1_000_000), { type: "start-rescue" });
-  handoffState = relayReducer(handoffState, { type: "go-to", step: "capacity" });
-  handoffState = relayReducer(handoffState, { type: "select-host", hostId: "northline" });
-  handoffState = relayReducer(handoffState, { type: "go-to", step: "reservation" });
-  handoffState = relayReducer(handoffState, { type: "select-transport", transportId: "rider" });
-  return relayReducer(handoffState, { type: "confirm-reservation", at: 1_000_100 });
+  return relayReducer(createReservationState(), { type: "confirm-reservation", at: 1_000_100 });
+}
+
+function createReservationState() {
+  let reservationState = relayReducer(createSeedState(1_000_000), { type: "start-rescue" });
+  reservationState = relayReducer(reservationState, { type: "go-to", step: "capacity" });
+  reservationState = relayReducer(reservationState, { type: "select-host", hostId: "northline" });
+  reservationState = relayReducer(reservationState, { type: "go-to", step: "reservation" });
+  return relayReducer(reservationState, { type: "select-transport", transportId: "rider" });
 }
 
 function createCompleteState() {
@@ -71,6 +74,24 @@ describe("KapitBiz Relay flow", () => {
     expect(screen.queryByText("KiloKita")).not.toBeInTheDocument();
   });
 
+  it("never flashes a fresh incident while restoring reservation progress", async () => {
+    window.localStorage.setItem(
+      "kapitbiz-relay-v2",
+      JSON.stringify(createReservationState()),
+    );
+
+    render(<KapitBizRelayApp />);
+
+    expect(
+      screen.queryByRole("heading", { name: "Localized power interruption alert" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "Confirm reservation" }),
+      ).toBeInTheDocument();
+    });
+  });
+
   it("returns the document to the top when the rescue step changes", async () => {
     const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
     const user = userEvent.setup();
@@ -83,6 +104,9 @@ describe("KapitBiz Relay flow", () => {
 
     await waitFor(() => {
       expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: "auto" });
+      expect(
+        screen.getByRole("region", { name: "Triage rescue step" }),
+      ).toHaveFocus();
     });
     scrollTo.mockRestore();
   });

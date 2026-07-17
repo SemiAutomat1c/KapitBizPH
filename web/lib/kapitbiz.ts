@@ -318,12 +318,10 @@ export function useKapitBiz() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setState((current) => loadState() ?? current);
-      setHydrated(true);
-    }, 0);
-
-    return () => window.clearTimeout(timer);
+    // One-time browser storage restoration before the transaction UI is revealed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setState((current) => loadState() ?? current);
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
@@ -338,5 +336,5 @@ export function useKapitBiz() {
   const reservation = useMemo(() => calculateReservation(state), [state]);
   const availableHosts = useMemo(() => eligibleHosts(state), [state]);
 
-  return { state, dispatch, selection, reservation, eligibleHosts: availableHosts, resetDemo };
+  return { state, hydrated, dispatch, selection, reservation, eligibleHosts: availableHosts, resetDemo };
 }

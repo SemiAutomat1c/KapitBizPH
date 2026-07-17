@@ -5,6 +5,16 @@
   padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
+.restoreShell {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  background: #f7fafa;
+  color: #00535b;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-weight: 700;
+}
+
 .workspace {
   min-width: 0;
   padding: 0 16px 32px;

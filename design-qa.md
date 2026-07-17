@@ -8,9 +8,9 @@
 
 ## Viewports
 
-- Mobile: 390 x 844
-- Tablet: 768 x 1024
-- Desktop: 1440 x 900
+- Mobile browser canvas: 390 x 844. The in-app browser captured 375 x 812 after its own scrollbar and chrome were removed from the image.
+- Tablet browser canvas: 768 x 1024.
+- Desktop browser canvas: 1440 x 900.
 
 ## Functional Pass
 
@@ -24,7 +24,7 @@
 
 ## Responsive Pass
 
-- Mobile has no horizontal overflow and keeps the recommended capacity action on one line.
+- Mobile has no horizontal overflow. A DOM layout assertion measured the recommended capacity action at one text line with no content overflow.
 - Step changes return the document to the top so the active task is immediately visible.
 - Tablet uses the compact progress header without showing the desktop rail.
 - Desktop uses the 320 px incident rail, a constrained 920 px workspace, and the full map presentation.
@@ -40,16 +40,18 @@
 
 ## Evidence
 
-- `.superpowers/qa/mobile-incident.png`
-- `.superpowers/qa/mobile-triage.png`
-- `.superpowers/qa/mobile-capacity-list.png`
-- `.superpowers/qa/mobile-capacity-map-fallback.png`
-- `.superpowers/qa/mobile-reservation.png`
-- `.superpowers/qa/mobile-transport-sheet.png`
-- `.superpowers/qa/mobile-qr-handoff.png`
-- `.superpowers/qa/mobile-completion.png`
-- `.superpowers/qa/tablet-incident.png`
-- `.superpowers/qa/desktop-incident.png`
-- `.superpowers/qa/desktop-capacity-map.png`
+The committed evidence is reproducible from a clean checkout:
+
+- `docs/qa/kapitbiz/mobile-incident.jpg`
+- `docs/qa/kapitbiz/mobile-triage.jpg`
+- `docs/qa/kapitbiz/mobile-capacity-list-final.jpg`
+- `docs/qa/kapitbiz/mobile-capacity-map-fallback.jpg`
+- `docs/qa/kapitbiz/mobile-reservation.jpg`
+- `docs/qa/kapitbiz/mobile-transport-sheet.jpg`
+- `docs/qa/kapitbiz/mobile-qr-handoff.jpg`
+- `docs/qa/kapitbiz/mobile-completion.jpg`
+- `docs/qa/kapitbiz/tablet-capacity-final.jpg`
+- `docs/qa/kapitbiz/desktop-capacity-final.jpg`
+- `docs/qa/kapitbiz/viewport-results.json`
 
 Result: passed.

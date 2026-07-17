@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useKapitBiz, type RelayStep } from "@/lib/kapitbiz";
 import { AppHeader, BottomNav, IncidentRail, ProgressHeader } from "./AppChrome";
 import ActiveDisruptionScreen from "./ActiveDisruptionScreen";
@@ -20,25 +20,53 @@ const stepOrder: RelayStep[] = [
   "complete",
 ];
 
+const stepLabels: Record<RelayStep, string> = {
+  incident: "Incident",
+  triage: "Triage",
+  capacity: "Capacity",
+  reservation: "Reservation",
+  handoff: "Handoff",
+  complete: "Complete",
+};
+
 function previousStep(step: RelayStep): RelayStep {
   return stepOrder[Math.max(0, stepOrder.indexOf(step) - 1)];
 }
 
 export default function KapitBizRelayApp() {
   const relay = useKapitBiz();
+  const workspaceRef = useRef<HTMLElement>(null);
+  const previousStepRef = useRef(relay.state.step);
   const isFocusedTransaction = relay.state.step === "reservation" || relay.state.step === "handoff";
 
   useEffect(() => {
+    if (!relay.hydrated) return;
+    if (previousStepRef.current === relay.state.step) return;
+    previousStepRef.current = relay.state.step;
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [relay.state.step]);
+    workspaceRef.current?.focus({ preventScroll: true });
+  }, [relay.hydrated, relay.state.step]);
 
   const goBack = () =>
     relay.dispatch({ type: "go-to", step: previousStep(relay.state.step) });
 
+  if (!relay.hydrated) {
+    return (
+      <main className={styles.restoreShell}>
+        <p role="status">Restoring rescue transaction...</p>
+      </main>
+    );
+  }
+
   return (
     <main className={styles.appShell}>
       <IncidentRail state={relay.state} selection={relay.selection} />
-      <section className={styles.workspace}>
+      <section
+        ref={workspaceRef}
+        className={styles.workspace}
+        aria-label={`${stepLabels[relay.state.step]} rescue step`}
+        tabIndex={-1}
+      >
         <AppHeader step={relay.state.step} onBack={goBack} />
         <ProgressHeader step={relay.state.step} />
         {relay.state.step === "incident" ? (

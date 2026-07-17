@@ -1,0 +1,35 @@
+{
+  "mobile": {
+    "configuredViewport": { "width": 390, "height": 844 },
+    "documentClient": { "width": 375, "height": 844 },
+    "capturePixels": { "width": 375, "height": 812 },
+    "horizontalOverflow": false,
+    "desktopRailDisplay": "none",
+    "compactProgressDisplay": "none",
+    "recommendedAction": {
+      "width": 303,
+      "height": 48,
+      "textLines": 1,
+      "contentOverflow": false,
+      "whiteSpace": "nowrap"
+    }
+  },
+  "tablet": {
+    "configuredViewport": { "width": 768, "height": 1024 },
+    "horizontalOverflow": false,
+    "desktopRailDisplay": "none",
+    "compactProgress": {
+      "display": "flex",
+      "width": 680,
+      "top": 64,
+      "bottom": 112
+    }
+  },
+  "desktop": {
+    "configuredViewport": { "width": 1440, "height": 900 },
+    "horizontalOverflow": false,
+    "desktopRail": { "display": "block", "width": 320 },
+    "workspaceWidth": 920,
+    "offlineMap": { "width": 760, "height": 451 }
+  }
+}
