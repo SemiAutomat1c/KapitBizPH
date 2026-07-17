@@ -156,13 +156,12 @@ export function relayReducer(state: RelayDemoState, action: RelayAction): RelayD
       return eligibleHosts(state).some((host) => host.id === action.hostId) ? { ...state, selectedHostId: action.hostId, selectedTransportId: null } : state;
     case "select-transport": {
       const transport = state.transportOptions.find((option) => option.id === action.transportId);
-      return transport && transport.capacityKg >= deriveSelection(state).selectedWeightKg ? { ...state, selectedTransportId: transport.id } : state;
+      return transport && isTransportEligible(state, transport) ? { ...state, selectedTransportId: transport.id } : state;
     }
     case "confirm-reservation": {
       const hostIsEligible = eligibleHosts(state).some((host) => host.id === state.selectedHostId);
       const transport = state.transportOptions.find((option) => option.id === state.selectedTransportId);
-      const transportHasCapacity = transport && transport.capacityKg >= deriveSelection(state).selectedWeightKg;
-      return state.step === "reservation" && hostIsEligible && transportHasCapacity
+      return state.step === "reservation" && hostIsEligible && transport && isTransportEligible(state, transport)
         ? { ...state, step: "handoff", reservationConfirmedAt: action.at, handoffId: "RE-4892-X" }
         : state;
     }
@@ -187,6 +186,15 @@ function canGoTo(state: RelayDemoState, nextStep: RelayStep): boolean {
     case "complete": return state.receiverConfirmedAt !== null;
     case "incident": return true;
   }
+}
+
+function isTransportEligible(state: RelayDemoState, transport: TransportOption): boolean {
+  const host = state.hosts.find((option) => option.id === state.selectedHostId);
+  return Boolean(
+    host
+      && transport.capacityKg >= deriveSelection(state).selectedWeightKg
+      && transport.arrivalMinutes + host.transferMinutes <= shortestRescueWindow(state),
+  );
 }
 
 function updateInventory(state: RelayDemoState, itemId: string, update: (item: InventoryItem) => InventoryItem): RelayDemoState {

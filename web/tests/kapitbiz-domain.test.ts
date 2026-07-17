@@ -46,6 +46,35 @@ describe("KapitBiz relay domain", () => {
     expect(calculateReservation(withTransport)).toEqual({ storageFee: 300, transportFee: 150, total: 450 });
   });
 
+  it("rejects a capable transport that cannot reach the host within the rescue window", () => {
+    const state = createSeedState(1_000_000);
+    const withSlowTransport = {
+      ...state,
+      transportOptions: state.transportOptions.map((option) =>
+        option.id === "rider" ? { ...option, arrivalMinutes: 60 } : option,
+      ),
+    };
+    const withHost = relayReducer(withSlowTransport, { type: "select-host", hostId: "northline" });
+
+    expect(relayReducer(withHost, { type: "select-transport", transportId: "rider" }).selectedTransportId).toBeNull();
+  });
+
+  it("does not confirm a reservation when its transport misses the rescue window", () => {
+    const triage = relayReducer(createSeedState(1_000_000), { type: "start-rescue" });
+    const capacity = relayReducer(triage, { type: "go-to", step: "capacity" });
+    const withHost = relayReducer(capacity, { type: "select-host", hostId: "northline" });
+    const reservation = relayReducer(withHost, { type: "go-to", step: "reservation" });
+    const withLateTransport = {
+      ...reservation,
+      transportOptions: reservation.transportOptions.map((option) =>
+        option.id === "rider" ? { ...option, arrivalMinutes: 60 } : option,
+      ),
+      selectedTransportId: "rider",
+    };
+
+    expect(relayReducer(withLateTransport, { type: "confirm-reservation", at: 1_000_100 })).toBe(withLateTransport);
+  });
+
   it("guards invalid forward transitions", () => {
     const state = createSeedState(1_000_000);
     expect(relayReducer(state, { type: "go-to", step: "complete" }).step).toBe("incident");

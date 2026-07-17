@@ -36,3 +36,39 @@ Result: exit code 0 with no lint output.
 ## Evidence Note
 
 The full implementation and test coverage were already present and uncommitted when this closeout began. The earlier RED phase for missing exports was not personally observed, so this report does not claim RED evidence. No implementation fix was necessary during the compliance review.
+
+## Review Fix: Rescue Transport Window
+
+An Important review finding identified that transport validation checked capacity but did not require `arrivalMinutes + selectedHost.transferMinutes` to fit within the shortest selected rescue window.
+
+Two focused regression assertions were added: selection must reject a capable but late transport, and reservation confirmation must reject an already-selected late transport. The fixture uses a 60-minute rider arrival plus Northline's 38-minute transfer against the selected inventory's 90-minute shortest rescue window.
+
+### RED Evidence
+
+Command run from `web/`:
+
+```text
+npm test -- tests/kapitbiz-domain.test.ts
+```
+
+Observed result before the implementation change: exit code 1; 2 failed and 10 passed. Selection returned `"rider"` instead of `null`, and confirmation advanced from `reservation` to `handoff` instead of returning the unchanged state.
+
+### Implementation
+
+Added a shared transport eligibility guard used by both `select-transport` and `confirm-reservation`. It requires the selected host to exist, verifies transport capacity, and verifies that transport arrival plus host transfer time does not exceed the shortest selected rescue window.
+
+### GREEN Evidence
+
+Commands run from `web/` after the implementation change:
+
+```text
+npm test -- tests/kapitbiz-domain.test.ts
+```
+
+Result: exit code 0; 1 test file passed, 12 tests passed.
+
+```text
+npm run lint -- lib/kapitbiz.ts tests/kapitbiz-domain.test.ts
+```
+
+Result: exit code 0 with no lint output.
