@@ -1,4 +1,5 @@
 import type { RelayDemoState, RelaySelection, RelayStep } from "@/lib/kapitbiz";
+import { Bell, ChevronLeft, History, House, ListTodo, Menu, Network, type LucideIcon } from "lucide-react";
 import styles from "./KapitBizRelay.module.css";
 
 const steps: { id: RelayStep; label: string }[] = [
@@ -19,13 +20,19 @@ export function AppHeader({ step, onBack }: { step: RelayStep; onBack: () => voi
 
   return (
     <header className={styles.appHeader}>
-      <div>
-        <p className={styles.eyebrow}>Continuity rescue dispatch</p>
+      <div className={styles.headerTitle}>
+        <button className={styles.iconButton} type="button" aria-label="Open menu" title="Open menu">
+          <Menu aria-hidden="true" />
+        </button>
         <h1>KapitBiz Relay</h1>
       </div>
-      {canGoBack && (
-        <button className={styles.backButton} type="button" onClick={onBack} aria-label="Go back">
-          Back
+      {canGoBack ? (
+        <button className={styles.iconButton} type="button" onClick={onBack} aria-label="Go back" title="Go back">
+          <ChevronLeft aria-hidden="true" />
+        </button>
+      ) : (
+        <button className={styles.iconButton} type="button" aria-label="Notifications" title="Notifications">
+          <Bell aria-hidden="true" />
         </button>
       )}
     </header>
@@ -76,11 +83,19 @@ export function ProgressHeader({ step }: { step: RelayStep }) {
 }
 
 export function BottomNav() {
+  const items: { label: string; icon: LucideIcon }[] = [
+    { label: "Home", icon: House },
+    { label: "Requests", icon: ListTodo },
+    { label: "Network", icon: Network },
+    { label: "Activity", icon: History },
+  ];
+
   return (
     <nav className={styles.bottomNav} aria-label="Primary navigation">
-      {['Home', 'Requests', 'Network', 'Activity'].map((item) => (
-        <button key={item} type="button" aria-current={item === "Home" ? "page" : undefined}>
-          {item}
+      {items.map(({ label, icon: Icon }) => (
+        <button key={label} type="button" aria-current={label === "Home" ? "page" : undefined}>
+          <Icon aria-hidden="true" />
+          <span>{label}</span>
         </button>
       ))}
     </nav>

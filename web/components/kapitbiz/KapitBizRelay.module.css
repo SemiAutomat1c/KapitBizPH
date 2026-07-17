@@ -2,12 +2,12 @@
   min-height: 100dvh;
   background: #f7fafa;
   color: #181c1d;
-  padding-bottom: 76px;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
 .workspace {
   min-width: 0;
-  padding: 20px 16px 32px;
+  padding: 0 16px 32px;
 }
 
 .appHeader,
@@ -23,12 +23,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 20px;
+  min-height: 64px;
+  gap: 12px;
+  border-bottom: 1px solid #bec8ca;
 }
 
 .appHeader h1,
-.incidentScreen h2,
 .placeholder h2,
 .incidentRail h2 {
   margin: 0;
@@ -37,15 +37,15 @@
   letter-spacing: 0;
 }
 
-.appHeader h1 { font-size: 1.35rem; }
-.incidentScreen h2 { font-size: 1.75rem; line-height: 1.2; }
+.headerTitle { display: flex; align-items: center; gap: 10px; }
+.appHeader h1 { color: #00535b; font-size: 1.5rem; line-height: 2rem; font-weight: 700; }
 .placeholder h2 { font-size: 1.4rem; }
 .incidentRail h2 { font-size: 1.15rem; }
 
 .eyebrow,
 .statusBadge,
 .incidentFacts span,
-.incidentFacts small,
+.riskFacts span,
 .railStats dt,
 .progressHeader,
 .demoNotice {
@@ -60,28 +60,34 @@
   text-transform: uppercase;
 }
 
-.backButton,
 .bottomNav button {
   border: 0;
   background: transparent;
   color: #37575a;
 }
 
-.backButton {
-  min-height: 44px;
-  padding: 0 10px;
-  font-weight: 600;
+.iconButton {
+  display: inline-grid;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #00535b;
 }
 
 .progressHeader {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  color: #527376;
-  font-size: 0.78rem;
+  display: none;
 }
 
-.incidentScreen,
+.incidentScreen {
+  display: grid;
+  gap: 16px;
+  padding-top: 16px;
+}
+
 .placeholder {
   border: 1px solid #cbd8d9;
   border-radius: 8px;
@@ -89,19 +95,45 @@
   padding: 24px;
 }
 
+.alertPanel,
+.disruptionPanel,
+.merchantPanel {
+  border: 1px solid #bec8ca;
+  border-radius: 8px;
+}
+
+.alertPanel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-color: #ba1a1a;
+  background: #ffdad6;
+  color: #93000a;
+  padding: 16px;
+}
+
+.alertPanel svg { width: 24px; min-width: 24px; height: 24px; margin-top: 2px; stroke-width: 2.25; }
+.alertPanel h2,
+.alertPanel p { margin: 0; }
+.alertPanel h2 { font-size: 1.25rem; line-height: 1.5rem; font-weight: 600; }
+.alertPanel p { margin-top: 4px; color: #3e494a; font-size: 1rem; line-height: 1.5rem; }
+
+.disruptionPanel { background: #fff; padding: 16px; }
+.panelHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #bec8ca; padding-bottom: 12px; }
+.panelHeading h3 { margin: 0; color: #3e494a; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+
 .statusBadge {
-  display: inline-block;
-  margin: 0 0 14px;
+  flex: none;
+  margin: 0;
   border-radius: 4px;
-  background: #fbe9e7;
-  color: #a33a2a;
-  padding: 5px 8px;
-  font-size: 0.72rem;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 4px 8px;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.incidentCopy,
 .railCopy,
 .placeholder p {
   color: #4e5e60;
@@ -110,41 +142,82 @@
 
 .incidentFacts {
   display: grid;
-  gap: 1px;
-  margin: 24px 0;
-  border: 1px solid #d8e3e4;
-  border-radius: 6px;
-  overflow: hidden;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 20px 0 16px;
 }
 
 .incidentFacts div {
   display: grid;
   gap: 4px;
-  background: #f8fbfb;
-  padding: 14px;
 }
 
 .incidentFacts span,
-.incidentFacts small,
-.railStats dt { color: #527376; font-size: 0.74rem; }
+.riskFacts span,
+.railStats dt { color: #3e494a; font-family: var(--font-geist), sans-serif; font-size: 0.875rem; line-height: 1.25rem; }
 .incidentFacts strong,
-.railStats dd { font-family: var(--font-mono), ui-monospace, monospace; font-size: 1.12rem; }
+.riskFacts strong,
+.railStats dd { font-family: var(--font-mono), ui-monospace, monospace; font-size: 1.25rem; font-weight: 600; letter-spacing: 0; line-height: 1.5rem; }
+
+.riskFacts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  border: 1px dashed #6f797a;
+  border-radius: 6px;
+  background: #f1f4f4;
+  padding: 16px;
+}
+
+.riskFacts div { display: grid; gap: 4px; min-width: 0; }
+.riskFacts div:last-child { text-align: right; }
+.riskFacts div:first-child strong { color: #ba1a1a; }
+.riskFacts div:last-child strong { color: #00535b; }
+
+.merchantPanel {
+  display: grid;
+  min-height: 176px;
+  align-content: center;
+  justify-items: center;
+  background: #ebeeef;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.merchantPanel h3 { margin: 0; color: #00535b; font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; }
+.merchantPanel p { margin: 8px 0 20px; color: #3e494a; font-size: 1rem; line-height: 1.5rem; }
+.merchantPanel span { display: flex; align-items: center; gap: 8px; color: #ba1a1a; font-size: 1rem; font-weight: 600; }
+.merchantPanel span svg { width: 12px; height: 12px; fill: currentColor; stroke-width: 0; }
 
 .primaryButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   width: 100%;
   min-height: 48px;
   border: 0;
   border-radius: 6px;
   background: #006d77;
   color: #fff;
+  font-size: 1.25rem;
   font-weight: 700;
+  line-height: 1.5rem;
 }
 
+.primaryButton svg { width: 24px; height: 24px; stroke-width: 2.5; }
+.primaryButton:hover { background: #00535b; }
+
 .demoNotice {
-  margin: 18px 0 0;
-  color: #527376;
-  font-size: 0.75rem;
-  line-height: 1.55;
+  margin: 0;
+  color: #3e494a;
+  font-family: var(--font-geist), sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1rem;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .placeholder { min-height: 220px; }
@@ -160,14 +233,20 @@
   grid-template-columns: repeat(4, 1fr);
   border-top: 1px solid #cbd8d9;
   background: #fff;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .bottomNav button {
-  min-height: 60px;
-  font-size: 0.76rem;
+  display: grid;
+  min-height: 80px;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
+.bottomNav svg { width: 24px; height: 24px; stroke-width: 2.25; }
 .bottomNav button[aria-current="page"] { color: #006d77; }
 
 @media (min-width: 960px) {
@@ -181,7 +260,7 @@
     display: block;
     min-height: 100dvh;
     border-right: 1px solid #cbd8d9;
-    background: #fff;
+    background: #f1f4f4;
     padding: 32px 24px;
   }
 
@@ -193,7 +272,11 @@
   .stepList li { color: #789092; font-size: 0.86rem; }
   .stepList li[data-active="true"] { color: #006d77; font-weight: 700; }
   .stepList li[data-complete="true"] { color: #181c1d; }
-  .workspace { width: 100%; max-width: 920px; margin: 0 auto; padding: 36px 48px; }
+  .workspace { width: 100%; max-width: 920px; margin: 0 auto; padding: 0 48px 48px; }
+  .appHeader { max-width: none; }
+  .incidentScreen { max-width: 680px; padding-top: 32px; }
+  .alertPanel h2 { font-size: 1.375rem; line-height: 1.75rem; }
+  .merchantPanel { min-height: 240px; }
   .bottomNav { display: none; }
 }
 
