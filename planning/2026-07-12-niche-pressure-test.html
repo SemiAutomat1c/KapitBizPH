@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hackathon Tagum — Niche Pressure-Test (2026-07-12)</title>
+  <meta name="color-scheme" content="light only" />
+  <style>
+    /* High-contrast light theme only — readable on dark-mode OS */
+    :root {
+      color-scheme: light only;
+      --bg: #ffffff;
+      --paper: #ffffff;
+      --ink: #111111;
+      --muted: #333333;
+      --line: #cccccc;
+      --green: #0b5c2e;
+      --green-soft: #d8f0e0;
+      --gold: #6b4e00;
+      --gold-soft: #fff3c4;
+      --coral: #8b1e16;
+      --coral-soft: #ffd9d4;
+      --teal: #0a4a50;
+      --teal-soft: #d4eef0;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      --radius: 14px;
+      --max: 860px;
+    }
+
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      background: #ffffff !important;
+      color-scheme: light only;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #111111 !important;
+      background: #ffffff !important;
+      line-height: 1.65;
+      font-size: 18px;
+      -webkit-text-fill-color: #111111;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #ffffff !important;
+      border-bottom: 2px solid #111111;
+    }
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+      font-weight: 800;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    nav a {
+      font-size: 0.8rem;
+      text-decoration: none;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+      background: #f0f0f0 !important;
+      border: 1px solid #333333;
+      border-radius: 999px;
+      padding: 0.35rem 0.7rem;
+      font-weight: 600;
+    }
+    nav a:hover {
+      background: #111111 !important;
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff;
+    }
+
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 4rem;
+      background: #ffffff;
+    }
+
+    .hero {
+      background: #ffffff !important;
+      border: 2px solid #111111;
+      border-radius: var(--radius);
+      padding: 2rem 1.6rem;
+      margin-bottom: 1.5rem;
+    }
+    .eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #0b5c2e !important;
+      -webkit-text-fill-color: #0b5c2e;
+      font-weight: 800;
+      margin: 0 0 0.6rem;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      line-height: 1.2;
+      margin: 0 0 0.8rem;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+    }
+    .lede {
+      color: #222222 !important;
+      -webkit-text-fill-color: #222222;
+      font-size: 1.05rem;
+      max-width: 42rem;
+      margin: 0 0 1.2rem;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .pill {
+      background: #d8f0e0 !important;
+      color: #0b5c2e !important;
+      -webkit-text-fill-color: #0b5c2e;
+      border: 1px solid #0b5c2e;
+      border-radius: 999px;
+      padding: 0.3rem 0.75rem;
+      font-weight: 700;
+    }
+    .pill.warn {
+      background: #ffd9d4 !important;
+      color: #8b1e16 !important;
+      -webkit-text-fill-color: #8b1e16;
+      border-color: #8b1e16;
+    }
+    .pill.gold {
+      background: #fff3c4 !important;
+      color: #5a4000 !important;
+      -webkit-text-fill-color: #5a4000;
+      border-color: #5a4000;
+    }
+
+    /* HIGH CONTRAST callout — dark text on pale yellow, not light text on dark green */
+    .callout {
+      background: #fff8dc !important;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+      border: 3px solid #111111;
+      border-radius: var(--radius);
+      padding: 1.4rem 1.3rem;
+      margin: 1.2rem 0 0;
+    }
+    .callout h2 {
+      margin: 0 0 0.7rem;
+      font-size: 1.25rem;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+    }
+    .callout ol {
+      margin: 0;
+      padding-left: 1.25rem;
+      color: #111111 !important;
+    }
+    .callout li {
+      margin: 0.45rem 0;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+      font-size: 1.05rem;
+    }
+    .callout strong {
+      color: #0b5c2e !important;
+      -webkit-text-fill-color: #0b5c2e;
+      font-weight: 800;
+    }
+
+    section.card {
+      background: #ffffff !important;
+      border: 2px solid #111111;
+      border-radius: var(--radius);
+      padding: 1.5rem 1.35rem;
+      margin: 1.25rem 0;
+      color: #111111 !important;
+    }
+    h2 {
+      font-size: 1.45rem;
+      margin: 0 0 0.7rem;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+    }
+    h3 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #0b5c2e !important;
+      -webkit-text-fill-color: #0b5c2e;
+      margin: 1.3rem 0 0.5rem;
+      font-weight: 800;
+    }
+    p, li {
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+    }
+    ul, ol { padding-left: 1.2rem; }
+    li { margin: 0.35rem 0; }
+    .muted {
+      color: #222222 !important;
+      -webkit-text-fill-color: #222222;
+    }
+    code {
+      background: #f0f0f0;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-size: 0.92em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      margin: 0.8rem 0 0.4rem;
+      border: 2px solid #111111;
+      background: #ffffff;
+    }
+    th, td {
+      padding: 0.75rem 0.8rem;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid #cccccc;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+      background: #ffffff !important;
+    }
+    th {
+      background: #eeeeee !important;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+      font-weight: 800;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .rank-1 td:first-child { color: #0b5c2e !important; -webkit-text-fill-color: #0b5c2e; font-weight: 800; }
+    .rank-4 td:first-child { color: #8b1e16 !important; -webkit-text-fill-color: #8b1e16; font-weight: 800; }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.4rem 0 0.8rem;
+    }
+    .badge {
+      font-size: 0.78rem;
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid currentColor;
+    }
+    .badge.green {
+      background: #d8f0e0 !important;
+      color: #0b5c2e !important;
+      -webkit-text-fill-color: #0b5c2e;
+    }
+    .badge.coral {
+      background: #ffd9d4 !important;
+      color: #8b1e16 !important;
+      -webkit-text-fill-color: #8b1e16;
+    }
+    .badge.teal {
+      background: #d4eef0 !important;
+      color: #0a4a50 !important;
+      -webkit-text-fill-color: #0a4a50;
+    }
+    .badge.gold {
+      background: #fff3c4 !important;
+      color: #5a4000 !important;
+      -webkit-text-fill-color: #5a4000;
+    }
+
+    .loop-box {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 0.8rem;
+      margin-top: 0.7rem;
+    }
+    @media (max-width: 700px) {
+      .loop-box { grid-template-columns: 1fr; }
+    }
+    .loop-box > div {
+      border: 2px solid #111111;
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      background: #f7f7f7 !important;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+    }
+    .loop-box .k {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #111111 !important;
+      -webkit-text-fill-color: #111111;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+    }
+
+    .weak {
+      border-left: 6px solid #8b1e16;
+      background: #fff5f3 !important;
+    }
+    .strong {
+      border-left: 6px solid #0b5c2e;
+      background: #f3fbf5 !important;
+    }
+
+    .disagree {
+      background: #fff8dc !important;
+      border: 2px solid #111111;
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      color: #111111 !important;
+    }
+
+    footer {
+      margin-top: 2rem;
+      color: #222222 !important;
+      -webkit-text-fill-color: #222222;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .print-note {
+      font-size: 0.9rem;
+      color: #222222 !important;
+      -webkit-text-fill-color: #222222;
+      margin-top: 0.8rem;
+    }
+
+    @media print {
+      .topbar { position: static; }
+      nav { display: none; }
+      body { background: white !important; font-size: 12pt; color: black !important; }
+      section.card, .hero, .callout { box-shadow: none; break-inside: avoid; }
+    }
+
+    /* Defeat OS dark-mode auto-styling of form controls / forced colors where possible */
+    @media (prefers-color-scheme: dark) {
+      html, body, main, .hero, section.card, .callout, .topbar, th, td, .loop-box > div {
+        background: #ffffff !important;
+        color: #111111 !important;
+        -webkit-text-fill-color: #111111;
+      }
+      .callout strong, h3, .badge.green, .pill {
+        color: #0b5c2e !important;
+        -webkit-text-fill-color: #0b5c2e;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Hackathon Tagum · Pressure-Test</div>
+      <nav>
+        <a href="#summary">Summary</a>
+        <a href="#freshtrack">FreshTrack</a>
+        <a href="#sagingworth">SagingWorth</a>
+        <a href="#divertrack">DiverTrack</a>
+        <a href="#aksyon">AksyonNgayon</a>
+        <a href="#originals">My ideas</a>
+        <a href="#locks">Locks</a>
+      </nav>
+    </div>
+  </div>
+
+  <main>
+    <header class="hero" id="summary">
+      <p class="eyebrow">Independent second opinion · 2026-07-12</p>
+      <h1>Four overlooked niches — pressure-tested</h1>
+      <p class="lede">
+        Honest read on FreshTrack, SagingWorth, DiverTrack, and AksyonNgayon for Hackathon Challenge 2026
+        (Tagum City). Hard filters: Tagum-local, decision tool (no marketplace / avoidable hardware),
+        non-obvious, public-source validatable, one working loop.
+      </p>
+      <div class="meta">
+        <span class="pill">MSME Week theme</span>
+        <span class="pill gold">Area drawn by lot</span>
+        <span class="pill warn">Await Ryan lock before rewrites</span>
+      </div>
+
+      <div class="callout">
+        <h2>Read this first</h2>
+        <ol>
+          <li><strong>SagingWorth</strong> — strongest. Lock for Circular Agri.</li>
+          <li><strong>AksyonNgayon</strong> (MSME-sharpened) — keep if first user is stall/sari-sari, not BDRRMO.</li>
+          <li><strong>FreshTrack</strong> — keep. Better than pond sensors for a software-only team.</li>
+          <li><strong>DiverTrack</strong> — weakest. Real problem, wrong buyer for MSME Week. Replace with BasuraBill.</li>
+        </ol>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Rank table</h2>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Candidate</th>
+              <th>Area</th>
+              <th>Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="rank-1">
+              <td>1</td>
+              <td><strong>SagingWorth</strong></td>
+              <td>Circular Agri</td>
+              <td>Strongest. Banana Capital + reject ₱ value + one-sided advisor (no cold-start).</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>AksyonNgayon</strong></td>
+              <td>Resilience</td>
+              <td>Strong if first user = stall/sari-sari. Tagum flood evidence is recent and named-barangay specific.</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><strong>FreshTrack</strong></td>
+              <td>Aquaculture</td>
+              <td>Viable wedge. Post-harvest &gt; pond sensors for CS team. Inland caveat, but market path holds.</td>
+            </tr>
+            <tr class="rank-4">
+              <td>4</td>
+              <td><strong>DiverTrack</strong></td>
+              <td>Waste-to-Value</td>
+              <td>Weakest. Problem real; first user is LGU, not MSME — wrong for this event’s judges.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FreshTrack -->
+    <section class="card" id="freshtrack">
+      <div class="badge-row">
+        <span class="badge teal">Aquaculture</span>
+        <span class="badge green">Keep · rank 3</span>
+      </div>
+      <h2>1. FreshTrack</h2>
+      <p class="muted">Post-harvest fish spoilage clock + ice advisor for small wet-market vendors.</p>
+
+      <h3>Evidence the pain is real</h3>
+      <ul>
+        <li>SE Asian artisanal fish chains often lose <strong>~15–30%</strong> post-harvest (weak cold chain, delayed selling).</li>
+        <li>Globally only ~<strong>54%</strong> of harvested fish goes to direct human food; ~<strong>17%</strong> is post-harvest waste.</li>
+        <li>PH framing: Oceana + national cold-storage push aiming for spoilage near <strong>10–15%</strong> (implies higher today).</li>
+        <li>Tagum has an active <strong>public wet market with fish stalls</strong>; ice + open air is the default retail cold chain.</li>
+      </ul>
+
+      <h3>Does this already exist?</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Prior art</th><th>What it is</th><th>Why not a kill</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>FAO / SEAFDEC guides</td><td>PDFs &amp; training</td><td>Not a same-day decision app</td></tr>
+            <tr><td>Fish ports + cold storage</td><td>Capex infrastructure</td><td>Complementary, not competing</td></tr>
+            <tr><td>Exporter IoT monitors</td><td>Sensors for big players</td><td>Hardware + price; not Taglish vendor UX</td></tr>
+            <tr><td>BantayPond / Aqsen</td><td>Pond water quality</td><td>Different job; hardware risk</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Wedge:</strong> one-sided last-mile rules engine — species + hours + ice state → spoilage clock + ice kg + sell / ice more / process / discount. No buyers to recruit. Offline-capable.</p>
+
+      <div class="loop-box">
+        <div>
+          <div class="k">Demo loop</div>
+          Vendor enters species, kg, time since catch, ice on hand → hours-to-risk + ice advice + ₱-at-risk → save → dashboard.
+        </div>
+        <div>
+          <div class="k">Impact metric</div>
+          <strong>₱ spoilage avoided</strong> (or kg fish saved). Secondary: ice cost optimized.
+        </div>
+      </div>
+
+      <h3>Independent opinion</h3>
+      <p><strong>Keep.</strong> Better weekend product than BantayPond for a no-hardware CS team. Pitch answer for BUGSAI: “fisheries value chain ends in Tagum wet market.” Use transparent FAO ice rules — not fake ML.</p>
+    </section>
+
+    <!-- SagingWorth -->
+    <section class="card strong" id="sagingworth">
+      <div class="badge-row">
+        <span class="badge green">Circular Agriculture</span>
+        <span class="badge green">Lock · rank 1</span>
+      </div>
+      <h2>2. SagingWorth</h2>
+      <p class="muted">One-sided advisor for Cavendish <em>export-reject</em> bananas — ranks best alt use + ₱ value. Not a marketplace.</p>
+
+      <h3>Evidence the pain is real</h3>
+      <ul>
+        <li>Davao del Norte = <strong>Banana Capital</strong>; clusters include Tagum, Kapalong, Sto. Tomas, Asuncion, Panabo, Carmen.</li>
+        <li><strong>~5–20%</strong> of PH banana crop rejected for not meeting fresh-export specs.</li>
+        <li>Mindanao-scale reject narrative (~1M MT/year) is public industry talk — directionally huge even if ballpark.</li>
+        <li>Local value paths already exist: animal feed (Panabo), chips, flour — but small growers still underprice or dump.</li>
+        <li>Fedco 2025: <strong>10–15%</strong> Cavendish production drop + vacant farms in Tagum-area munis.</li>
+      </ul>
+
+      <h3>Does this already exist?</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Prior art</th><th>What it is</th><th>Why not a kill</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>BanaLoop (prior default)</td><td>Byproduct exchange / matching</td><td>Marketplace cold-start; SagingWorth is one-sided</td></tr>
+            <tr><td>Plantation reject channels</td><td>Informal buyer relationships</td><td>Invisible to unaffiliated smallholders</td></tr>
+            <tr><td>Academic value-chain papers</td><td>Analyses</td><td>Prove demand, not a product</td></tr>
+            <tr><td>Processors (chips/feed/fiber)</td><td>Downstream buyers</td><td>Complementary later; not a decision UI</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Wedge:</strong> decision ranking, not matching. Reject kg + quality grade → ranked uses (local fresh / chips / feed / compost / flour) with rough ₱/kg.</p>
+
+      <div class="loop-box">
+        <div>
+          <div class="k">Demo loop</div>
+          Optional photo + kg + reject reason → ranked options with ₱ estimate → save decision → dashboard.
+        </div>
+        <div>
+          <div class="k">Impact metric</div>
+          <strong>₱ recovered from rejects</strong> (or kg diverted from dump). Circulab: named waste stream → value.
+        </div>
+      </div>
+
+      <h3>Independent opinion</h3>
+      <p><strong>Lock as agri default.</strong> Strongest Tagum story of the four. Beats BanaLoop for a 48-hour build because it does not depend on two sides. Label ₱ tables as “indicative.” Don’t drift back into marketplace features.</p>
+    </section>
+
+    <!-- DiverTrack -->
+    <section class="card weak" id="divertrack">
+      <div class="badge-row">
+        <span class="badge coral">Waste-to-Value</span>
+        <span class="badge coral">Weakest · rank 4</span>
+      </div>
+      <h2>3. DiverTrack</h2>
+      <p class="muted">B2G barangay waste-diversion (RA 9003) compliance + improvement tracker. LGU is the first user.</p>
+
+      <h3>Evidence the pain is real</h3>
+      <ul>
+        <li><strong>RA 9003</strong>: barangays handle bio/recyclable collection; diversion target starts ≥<strong>25%</strong>; DILG still pushing higher (Aug 2025).</li>
+        <li>Tagum <strong>Ordinance 768-s-2016</strong> requires barangays to submit waste diversion + enforcement reports.</li>
+        <li>2025 peer-reviewed work: solid waste diversion model for LGUs in <strong>Davao del Norte</strong>.</li>
+        <li>Many barangays still lack functional MRF records (EMB / World Bank SWM assessments).</li>
+      </ul>
+
+      <h3>Does this already exist?</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Prior art</th><th>What it is</th><th>Note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>TrashCash, ScrapCycle, SM trash-to-cash</td><td>Consumer recycle-for-cash</td><td>Different user; crowded</td></tr>
+            <tr><td>Baguio OGP waste tracking</td><td>Household incentives</td><td>City-specific</td></tr>
+            <tr><td>Legazpi smart waste + truck tracker</td><td>City ops + sensors</td><td>Hardware / city IT</td></tr>
+            <tr><td>Student barangay waste portals</td><td>Common hackathon pattern</td><td>Raises the “so what?” bar</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="loop-box">
+        <div>
+          <div class="k">Demo loop</div>
+          Barangay staff logs kg by stream → diversion % vs target → one improvement tip → save → report PDF.
+        </div>
+        <div>
+          <div class="k">Impact metric</div>
+          <strong>% diversion</strong> (and kg diverted) toward RA 9003 target.
+        </div>
+      </div>
+
+      <h3>Independent opinion — weakest of the four</h3>
+      <p>
+        Problem is real. Product is coherent. <strong>Buyer is wrong for this event.</strong>
+        MSME Development Week judges (DTI, Chamber, Wadhwani) will ask: who is the first user?
+        Answer: barangay secretary / SWM focal — not an MSME. That fights the theme, the Negosyo Center pilot story,
+        and income language. Student “LGU compliance dashboard” is also a hackathon cliché.
+      </p>
+      <p><strong>Do not lock as waste default.</strong> Replace with BasuraBill (below).</p>
+    </section>
+
+    <!-- AksyonNgayon -->
+    <section class="card" id="aksyon">
+      <div class="badge-row">
+        <span class="badge gold">Resilience</span>
+        <span class="badge green">Keep · rank 2 · MSME frame</span>
+      </div>
+      <h2>4. AksyonNgayon</h2>
+      <p class="muted">Live anticipatory disaster-action trigger — barangay flood risk + advisory → same-day action list. Not a static BCP.</p>
+
+      <h3>Evidence the pain is real</h3>
+      <ul>
+        <li>Tagum sits on the <strong>Tagum–Libuganon River Basin</strong> (ADB flood-risk projects exist for this basin).</li>
+        <li><strong>Feb 20, 2026:</strong> CDRRMO preemptive advisory for <strong>13 named Tagum barangays</strong> after Saug / Hijor / Tagum-Liboganon rivers hit critical levels (PNA).</li>
+        <li>Academic flood-preparedness work on <strong>Brgy. San Miguel, Tagum</strong>.</li>
+        <li>PH institutionalizing <strong>anticipatory action</strong> (imminent-disaster legislation; WFP / Red Cross protocols).</li>
+        <li>PDRF MSME tools are mostly assessments + guidebooks — not same-day trigger → action lists.</li>
+      </ul>
+
+      <h3>Does this already exist?</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Prior art</th><th>What it is</th><th>Why not a kill</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>PAGASA flood advisories</td><td>Official warnings</td><td>Generic; not MSME action cards</td></tr>
+            <tr><td>HazardHunterPH</td><td>Static hazard exposure</td><td>Not “what do I do today”</td></tr>
+            <tr><td>PDRF digital tools</td><td>Readiness assessment</td><td>Prep, not anticipatory trigger</td></tr>
+            <tr><td>BCP Buddy</td><td>Plan generator</td><td>Complementary phase-0, not live</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Wedge:</strong> forecast/advisory + barangay risk → same-day action list for a <em>business</em>, not a family pamphlet and not a 10-page BCP.</p>
+
+      <div class="loop-box">
+        <div>
+          <div class="k">Demo loop</div>
+          Select barangay + business type (sari-sari / wet-market stall / food cart) + alert level → prioritized same-day actions → mark done → dashboard.
+        </div>
+        <div>
+          <div class="k">Impact metric</div>
+          <strong># same-day actions completed</strong> or estimated <strong>₱ inventory protected</strong>.
+        </div>
+      </div>
+
+      <h3>Independent opinion</h3>
+      <p><strong>Keep, but sharpen with StallShield framing.</strong> Generic barangay flood app loses to CDRRMO. MSME-specific action packs win the room. Seed last real advisory for offline demo at the venue. Don’t claim to replace official warnings.</p>
+    </section>
+
+    <!-- Originals -->
+    <section class="card" id="originals">
+      <h2>Original niches (not in prior banks)</h2>
+
+      <h3>A. WiltNext — agri bench, not default</h3>
+      <p>Fusarium / abandoned Cavendish parcel → ranked recovery land-uses + rough time-to-cash. Tagum-area vacant farms are public (Fedco). Longer horizon than SagingWorth → bench #2 only.</p>
+
+      <h3>B. BasuraBill — waste replacement for DiverTrack</h3>
+      <p>
+        Market stall / carinderia / sari-sari estimates weekly waste by type → app shows
+        <strong>tipping cost avoided</strong>, diversion options, and ₱ value if sorted
+        (junkshop ranges, compost/BSF as information — not matching).
+      </p>
+      <ul>
+        <li>First user = <strong>MSME</strong> (fixes DiverTrack’s fatal flaw)</li>
+        <li>Circular + Circulab language; metric: kg diverted + ₱ recovered/avoided</li>
+        <li>Competitors (TrashCash/ScrapCycle) are sell-side marketplaces — different job</li>
+      </ul>
+
+      <h3>C. StallShield — resilience framing, not a fifth app</h3>
+      <p>Force AksyonNgayon’s first screen to business type. Deliverables are stall-specific (elevate stock, pre-sell perishables, move ice chest, GCash float, supplier SMS). Same product, correct customer.</p>
+    </section>
+
+    <!-- Locks -->
+    <section class="card" id="locks">
+      <h2>Recommended four defaults</h2>
+      <p class="muted">Pending your lock — do not rewrite decks / <code>web/lib/core.ts</code> until confirmed.</p>
+
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Area</th><th>Lock this</th><th>Demote</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Circular Agriculture</td>
+              <td><strong>SagingWorth</strong></td>
+              <td>BanaLoop marketplace → stretch only</td>
+            </tr>
+            <tr>
+              <td>Waste-to-Value</td>
+              <td><strong>BasuraBill</strong></td>
+              <td>DiverTrack as primary</td>
+            </tr>
+            <tr>
+              <td>Aquaculture &amp; Fisheries</td>
+              <td><strong>FreshTrack</strong></td>
+              <td>BantayPond hardware (optional flash only)</td>
+            </tr>
+            <tr>
+              <td>Business Continuity &amp; Resiliency</td>
+              <td><strong>AksyonNgayon + StallShield</strong></td>
+              <td>BCP Buddy = offline fallback</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Hard disagreements with prior framing</h3>
+      <div class="disagree">
+        <ol>
+          <li>DiverTrack should not sit as a peer-tier default just because RA 9003 is “harder.” Original ≠ win if the buyer is LGU.</li>
+          <li>BantayPond should not be the mental aqua default for a no-hardware team.</li>
+          <li>BanaLoop marketplace remains a trap; SagingWorth is the correct agri evolution.</li>
+          <li>AksyonNgayon without MSME personas will read as another DRRM app — force StallShield framing.</li>
+        </ol>
+      </div>
+
+      <h3>Your call</h3>
+      <ol>
+        <li><strong>Lock my four</strong> (SagingWorth / BasuraBill / FreshTrack / AksyonNgayon+StallShield) → then rewrite decks + core configs.</li>
+        <li><strong>Keep DiverTrack</strong> anyway (e.g. hybrid: vendors log → barangay dashboard).</li>
+        <li><strong>Swap something else</strong> (WiltNext for agri, or BCP Buddy as resilience primary).</li>
+      </ol>
+      <p class="print-note">Tip: use browser Print → Save as PDF if you want an offline copy. Full markdown also at <code>planning/2026-07-12-niche-pressure-test.md</code>.</p>
+    </section>
+
+    <footer>
+      Hackathon Challenge 2026 · Tagum City · Independent pressure-test · 2026-07-12
+    </footer>
+  </main>
+</body>
+</html>

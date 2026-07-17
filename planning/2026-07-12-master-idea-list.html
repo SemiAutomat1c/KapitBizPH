@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light only" />
+  <title>Hackathon Tagum — Master Idea List</title>
+  <style>
+    :root {
+      color-scheme: light only;
+      --ink: #111111;
+      --muted: #222222;
+      --line: #222222;
+      --bg: #ffffff;
+      --soft: #f4f4f4;
+      --green: #0b5c2e;
+      --green-bg: #d8f0e0;
+      --coral: #8b1e16;
+      --coral-bg: #ffd9d4;
+      --gold: #5a4000;
+      --gold-bg: #fff3c4;
+      --teal: #0a4a50;
+      --teal-bg: #d4eef0;
+      --max: 960px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: #fff !important; color-scheme: light only; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+      background: #fff !important;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      background: #fff !important;
+      border-bottom: 2px solid #111;
+    }
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.7rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+    }
+    nav { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    nav a {
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+      background: #f0f0f0 !important;
+      border: 1px solid #333;
+      border-radius: 999px;
+      padding: 0.3rem 0.65rem;
+    }
+    nav a:hover {
+      background: #111 !important;
+      color: #fff !important;
+      -webkit-text-fill-color: #fff;
+    }
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3.5rem;
+      background: #fff;
+    }
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      margin: 0 0 0.5rem;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+      line-height: 1.2;
+    }
+    h2 {
+      font-size: 1.35rem;
+      margin: 0 0 0.75rem;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+    }
+    h3 {
+      font-size: 0.95rem;
+      margin: 1.1rem 0 0.45rem;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+      font-weight: 800;
+    }
+    p, li, td, th {
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+    }
+    .lede {
+      color: #222 !important;
+      -webkit-text-fill-color: #222;
+      margin: 0 0 1rem;
+      max-width: 48rem;
+    }
+    .card {
+      background: #fff !important;
+      border: 2px solid #111;
+      border-radius: 12px;
+      padding: 1.15rem 1.1rem;
+      margin: 1rem 0;
+    }
+    .hero { border-width: 3px; }
+    .filters {
+      background: #f7f7f7 !important;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 0.75rem 0.9rem;
+      margin: 0.8rem 0;
+      font-size: 0.92rem;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.75rem 0 0;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      border: 1px solid #333;
+      border-radius: 999px;
+      padding: 0.2rem 0.55rem;
+      background: #fff !important;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+      white-space: nowrap;
+    }
+    .tag.star { background: #d8f0e0 !important; border-color: #0b5c2e; color: #0b5c2e !important; -webkit-text-fill-color: #0b5c2e; }
+    .tag.fire { background: #ffe0cc !important; border-color: #a04000; color: #a04000 !important; -webkit-text-fill-color: #a04000; }
+    .tag.ml { background: #d4eef0 !important; border-color: #0a4a50; color: #0a4a50 !important; -webkit-text-fill-color: #0a4a50; }
+    .tag.warn { background: #fff3c4 !important; border-color: #5a4000; color: #5a4000 !important; -webkit-text-fill-color: #5a4000; }
+    .tag.no { background: #ffd9d4 !important; border-color: #8b1e16; color: #8b1e16 !important; -webkit-text-fill-color: #8b1e16; }
+    .tag.pack { background: #eee !important; }
+
+    .defaults {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+    }
+    .def {
+      border: 2px solid #0b5c2e;
+      background: #f3fbf5 !important;
+      border-radius: 10px;
+      padding: 0.85rem 0.9rem;
+    }
+    .def .area {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #0b5c2e !important;
+      -webkit-text-fill-color: #0b5c2e;
+      margin-bottom: 0.25rem;
+    }
+    .def .name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+    }
+    .def .why {
+      font-size: 0.88rem;
+      margin-top: 0.3rem;
+      color: #222 !important;
+      -webkit-text-fill-color: #222;
+    }
+
+    .area-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .area-num {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+    }
+
+    .table-wrap { overflow-x: auto; margin-top: 0.5rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 2px solid #111;
+      font-size: 0.9rem;
+      background: #fff;
+      min-width: 640px;
+    }
+    th, td {
+      padding: 0.65rem 0.7rem;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid #ccc;
+      background: #fff !important;
+      color: #111 !important;
+      -webkit-text-fill-color: #111;
+    }
+    th {
+      background: #eee !important;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-weight: 800;
+    }
+    tr:last-child td { border-bottom: 0; }
+    tr.default-row td { background: #f3fbf5 !important; }
+    tr.reject-row td { background: #fff5f3 !important; }
+    .idea-name { font-weight: 800; }
+    .metric { font-weight: 600; white-space: nowrap; }
+
+    .rejected {
+      margin-top: 0.9rem;
+      border: 2px solid #8b1e16;
+      background: #fff5f3 !important;
+      border-radius: 10px;
+      padding: 0.75rem 0.9rem;
+    }
+    .rejected h3 { margin-top: 0; color: #8b1e16 !important; -webkit-text-fill-color: #8b1e16; }
+    .rejected table { min-width: 0; border-color: #8b1e16; }
+    .rejected th { background: #ffd9d4 !important; }
+
+    footer {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #222 !important;
+      -webkit-text-fill-color: #222;
+    }
+    .note {
+      font-size: 0.88rem;
+      color: #222 !important;
+      -webkit-text-fill-color: #222;
+      margin: 0.6rem 0 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html, body, main, .card, .topbar, th, td {
+        background: #fff !important;
+        color: #111 !important;
+        -webkit-text-fill-color: #111;
+      }
+    }
+    @media print {
+      .topbar { position: static; }
+      nav { display: none; }
+      .card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Hackathon Tagum · Master Idea List</div>
+      <nav>
+        <a href="#defaults">Defaults</a>
+        <a href="#agri">Agri</a>
+        <a href="#waste">Waste</a>
+        <a href="#aqua">Aqua</a>
+        <a href="#resilience">Resilience</a>
+        <a href="#other">Other</a>
+        <a href="#pivot">Pivots</a>
+      </nav>
+    </div>
+  </div>
+
+  <main>
+    <header class="card hero" id="defaults">
+      <h1>Master idea list — all focus areas</h1>
+      <p class="lede">
+        Every idea discussed for Hackathon Challenge 2026 (Tagum). Area is drawn
+        <strong>by lot</strong> — prep all four. Updated 2026-07-12.
+      </p>
+      <div class="filters">
+        <strong>Hard filters:</strong> Tagum-local · decision tool (not marketplace if avoidable) ·
+        no chemistry plant · avoid hardware if possible · public-source validatable ·
+        intake → answer → save → impact · MSME-first preferred.
+      </div>
+      <div class="legend">
+        <span class="tag star">⭐ leaning default</span>
+        <span class="tag fire">🔥 Ryan likes</span>
+        <span class="tag ml">🧪 ML-friendly</span>
+        <span class="tag warn">⚠️ weak / crowded</span>
+        <span class="tag no">❌ rejected / demoted</span>
+        <span class="tag pack">📦 has old deck/seed</span>
+      </div>
+
+      <h2 style="margin-top:1.25rem;font-size:1.15rem;">Latest leaning defaults</h2>
+      <div class="defaults">
+        <div class="def">
+          <div class="area">Circular Agri</div>
+          <div class="name">SakaFeed ⭐</div>
+          <div class="why">Banana lane too common in Tagum</div>
+        </div>
+        <div class="def">
+          <div class="area">Waste-to-Value</div>
+          <div class="name">KiloKita (junkshop) ⭐🔥</div>
+          <div class="why">Ryan preference · MSME-first</div>
+        </div>
+        <div class="def">
+          <div class="area">Aquaculture</div>
+          <div class="name">FreshTrack ⭐🧪</div>
+          <div class="why">Post-harvest · software-only</div>
+        </div>
+        <div class="def">
+          <div class="area">Resilience</div>
+          <div class="name">AksyonNgayon + StallShield ⭐</div>
+          <div class="why">Live action &gt; static plan</div>
+        </div>
+      </div>
+      <p class="note">Not formally locked — no deck rewrite until Ryan confirms.</p>
+    </header>
+
+    <!-- AGRI -->
+    <section class="card" id="agri">
+      <div class="area-head">
+        <div>
+          <div class="area-num">Area 1</div>
+          <h2>Circular Agriculture &amp; Agribusiness</h2>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Idea</th>
+              <th>One-liner</th>
+              <th>Metric</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="default-row">
+              <td class="idea-name">SakaFeed</td>
+              <td>Least-cost feed ration from local byproducts (rice bran, copra, market waste; banana optional ingredient not brand)</td>
+              <td class="metric">₱ feed saved / week</td>
+              <td><span class="tag star">⭐</span> <span class="tag ml">🧪</span></td>
+              <td>Best non-banana agri default</td>
+            </tr>
+            <tr>
+              <td class="idea-name">WiltNext / LupaBawi</td>
+              <td>Abandoned / Fusarium-hit parcel → ranked recovery income paths</td>
+              <td class="metric">Days-to-income / ₱ path</td>
+              <td><span class="tag">Bench</span></td>
+              <td>Overlooked; Tagum-area vacant farms public</td>
+            </tr>
+            <tr>
+              <td class="idea-name">SagingWorth</td>
+              <td>One-sided export-reject Cavendish value advisor (rank alt use + ₱)</td>
+              <td class="metric">₱ recovered from rejects</td>
+              <td><span class="tag">Bench</span> <span class="tag ml">🧪</span></td>
+              <td>Strong wedge but banana = common in room</td>
+            </tr>
+            <tr>
+              <td class="idea-name">BanaLoop</td>
+              <td>Banana byproduct exchange / matching</td>
+              <td class="metric">kg diverted + ₱</td>
+              <td><span class="tag warn">⚠️</span> <span class="tag pack">📦</span> <span class="tag no">❌ marketplace</span></td>
+              <td>Original top pick; cold-start; crowded</td>
+            </tr>
+            <tr>
+              <td class="idea-name">KompostKita</td>
+              <td>Barangay compost credit loop (QR weigh-in → credits)</td>
+              <td class="metric">tons / barangay / mo</td>
+              <td><span class="tag">Stretch</span></td>
+              <td>Needs co-op story</td>
+            </tr>
+            <tr>
+              <td class="idea-name">AbonoKita</td>
+              <td>Fertilizer vs compost / organic mix decision for smallholders</td>
+              <td class="metric">₱ input saved</td>
+              <td><span class="tag">Bench</span></td>
+              <td>Can feel generic without Tagum prices</td>
+            </tr>
+            <tr>
+              <td class="idea-name">PresyoLuto (veg spoilage)</td>
+              <td>Public-market vegetable spoilage clock (FreshTrack for produce)</td>
+              <td class="metric">₱ spoilage avoided</td>
+              <td><span class="tag">Bench</span></td>
+              <td>Overlaps FreshTrack shape</td>
+            </tr>
+            <tr>
+              <td class="idea-name">BalotVerde</td>
+              <td>Compostable packaging supply link (leaf wraps, fiber trays)</td>
+              <td class="metric">plastics displaced / mo</td>
+              <td><span class="tag">Stretch</span></td>
+              <td>Pairs with banana chain; stretch</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rejected">
+        <h3>Rejected / hard-filter fails</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Idea</th><th>Why out</th></tr></thead>
+            <tbody>
+              <tr class="reject-row"><td class="idea-name">Cacao-focused tools</td><td>Not Tagum-local enough (region-only)</td></tr>
+              <tr class="reject-row"><td class="idea-name">Physical conversion plants</td><td>Team can’t build/demo chemistry</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- WASTE -->
+    <section class="card" id="waste">
+      <div class="area-head">
+        <div>
+          <div class="area-num">Area 2</div>
+          <h2>Waste-to-Value Innovations</h2>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Idea</th>
+              <th>One-liner</th>
+              <th>Metric</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="default-row">
+              <td class="idea-name">KiloKita (junkshop ops)</td>
+              <td>Shop-side ops: buy log, price board, stock, optional pickup queue</td>
+              <td class="metric">kg processed + ₱ volume</td>
+              <td><span class="tag star">⭐</span> <span class="tag fire">🔥</span> <span class="tag ml">🧪</span></td>
+              <td>Consumer apps crowded; flip to junkshop</td>
+            </tr>
+            <tr>
+              <td class="idea-name">BasuraBill</td>
+              <td>Stall / carinderia / sari-sari: waste profile → tipping avoided + diversion ₱</td>
+              <td class="metric">kg diverted + ₱ avoided</td>
+              <td><span class="tag">Bench</span> <span class="tag ml">🧪</span></td>
+              <td>MSME-first; good alt to KiloKita</td>
+            </tr>
+            <tr>
+              <td class="idea-name">Palengke Loop</td>
+              <td>Market food waste → BSF/compost route (flag bins, routes, kg→feed)</td>
+              <td class="metric">kg → feed produced</td>
+              <td><span class="tag">Bench</span> <span class="tag pack">📦</span></td>
+              <td>PH-proven BSF; routing layer</td>
+            </tr>
+            <tr>
+              <td class="idea-name">DiverTrack</td>
+              <td>Barangay RA 9003 diversion compliance + tips</td>
+              <td class="metric">% diversion</td>
+              <td><span class="tag warn">⚠️</span> <span class="tag no">❌ primary</span></td>
+              <td>Real pain; LGU first user wrong for MSME Week</td>
+            </tr>
+            <tr>
+              <td class="idea-name">WasteXchange</td>
+              <td>Multi-stream route to junkshop/compost/BSF</td>
+              <td class="metric">kg diverted</td>
+              <td><span class="tag warn">⚠️</span></td>
+              <td>Early name; evolved into Palengke / KiloKita</td>
+            </tr>
+            <tr>
+              <td class="idea-name">KiloKita (consumer)</td>
+              <td>Household recycle-for-cash</td>
+              <td class="metric">points / kg</td>
+              <td><span class="tag no">❌ crowded</span></td>
+              <td>TrashCash, ScrapCycle, SM</td>
+            </tr>
+            <tr>
+              <td class="idea-name">BalotVerde</td>
+              <td>Compostable packaging for food MSMEs</td>
+              <td class="metric">plastics displaced</td>
+              <td><span class="tag">Stretch</span></td>
+              <td>Supply-link stretch</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rejected">
+        <h3>Rejected / hard-filter fails</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Idea</th><th>Why out</th></tr></thead>
+            <tbody>
+              <tr class="reject-row"><td class="idea-name">Used cooking oil → biodiesel</td><td>Chemistry / physical conversion team can’t demo</td></tr>
+              <tr class="reject-row"><td class="idea-name">Pure two-sided waste marketplace</td><td>Cold-start</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- AQUA -->
+    <section class="card" id="aqua">
+      <div class="area-head">
+        <div>
+          <div class="area-num">Area 3</div>
+          <h2>Aquaculture &amp; Fisheries Innovation</h2>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Idea</th>
+              <th>One-liner</th>
+              <th>Metric</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="default-row">
+              <td class="idea-name">FreshTrack</td>
+              <td>Post-harvest fish spoilage clock + ice advisor for wet-market vendors</td>
+              <td class="metric">₱ spoilage avoided / kg saved</td>
+              <td><span class="tag star">⭐</span> <span class="tag ml">🧪</span></td>
+              <td>Differentiated vs pond sensors</td>
+            </tr>
+            <tr>
+              <td class="idea-name">PondLog</td>
+              <td>Offline feed / mortality log → FCR + ₱/day</td>
+              <td class="metric">FCR · ₱ feed / day</td>
+              <td><span class="tag">Bench</span> <span class="tag ml">🧪</span></td>
+              <td>Zero hardware; feed ≈ 70% cost</td>
+            </tr>
+            <tr>
+              <td class="idea-name">BantayPond</td>
+              <td>ESP32 water quality (temp/pH/turbidity) + alerts (ex AquaSense Lite)</td>
+              <td class="metric">mortality risk / alerts</td>
+              <td><span class="tag pack">📦</span> <span class="tag warn">⚠️ hardware</span></td>
+              <td>Renamed (Aqsen); sim fallback mandatory</td>
+            </tr>
+            <tr>
+              <td class="idea-name">IsdaLink</td>
+              <td>Harvest pre-sell board (operators post; buyers reserve)</td>
+              <td class="metric">% pre-sold · ₱ premium</td>
+              <td><span class="tag warn">⚠️ stretch</span></td>
+              <td>Near-marketplace; needs buyers</td>
+            </tr>
+            <tr>
+              <td class="idea-name">YeloLedger</td>
+              <td>Ice cost vs spoilage ledger</td>
+              <td class="metric">₱ ice optimized</td>
+              <td><span class="tag">Absorbed</span></td>
+              <td>Fold into FreshTrack</td>
+            </tr>
+            <tr>
+              <td class="idea-name">Harvest-timing advisor</td>
+              <td>When to harvest vs market / biomass</td>
+              <td class="metric">₱ timing gain</td>
+              <td><span class="tag">Bench</span> <span class="tag ml">🧪</span></td>
+              <td>ML-friendly stretch</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rejected">
+        <h3>Rejected / hard-filter fails</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Idea</th><th>Why out</th></tr></thead>
+            <tbody>
+              <tr class="reject-row"><td class="idea-name">Name “AquaSense” / “Aquasense”</td><td>Commercial prior art (Aqsen)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESILIENCE -->
+    <section class="card" id="resilience">
+      <div class="area-head">
+        <div>
+          <div class="area-num">Area 4</div>
+          <h2>Business Continuity &amp; Disaster Resiliency</h2>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Idea</th>
+              <th>One-liner</th>
+              <th>Metric</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="default-row">
+              <td class="idea-name">AksyonNgayon + StallShield</td>
+              <td>Live advisory + barangay risk → same-day <strong>MSME</strong> action pack</td>
+              <td class="metric"># actions · ₱ inventory protected</td>
+              <td><span class="tag star">⭐</span> <span class="tag ml">🧪</span></td>
+              <td>Not generic BDRRMO app</td>
+            </tr>
+            <tr>
+              <td class="idea-name">BCP Buddy Tagum</td>
+              <td>Taglish 10-min BCP generator + risk score + 1-page PDF</td>
+              <td class="metric"># MSMEs with BCP</td>
+              <td><span class="tag">Bench</span> <span class="tag pack">📦</span></td>
+              <td>Theme match; offline fallback</td>
+            </tr>
+            <tr>
+              <td class="idea-name">DamageSnap MSME</td>
+              <td>Photos → claim/aid-ready damage report PDF</td>
+              <td class="metric">days shaved off filing</td>
+              <td><span class="tag">Bench</span> <span class="tag ml">🧪</span></td>
+              <td>Vision ML flex</td>
+            </tr>
+            <tr>
+              <td class="idea-name">BangonBoard</td>
+              <td>Post-disaster open/closed/need-help map</td>
+              <td class="metric">recovery heatmap</td>
+              <td><span class="tag">Stretch</span></td>
+              <td>Trust / participation risk</td>
+            </tr>
+            <tr>
+              <td class="idea-name">FairFare Tagum (tricycle)</td>
+              <td>ML fair fare estimate (distance, fuel, weather, time)</td>
+              <td class="metric">₱ transparency</td>
+              <td><span class="tag warn">⚠️ stretch only</span></td>
+              <td>Ryan’s ML1 project exists; theme fit weak</td>
+            </tr>
+            <tr>
+              <td class="idea-name">Cloud backup for MSME records</td>
+              <td>Backup business docs</td>
+              <td class="metric">—</td>
+              <td><span class="tag no">❌</span></td>
+              <td>Felt obvious; rejected</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rejected">
+        <h3>Rejected / hard-filter fails</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Idea</th><th>Why out</th></tr></thead>
+            <tbody>
+              <tr class="reject-row"><td class="idea-name">Generic DRRM citizen app only</td><td>Competes with LGU/PAGASA; not MSME-first</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- OTHER -->
+    <section class="card" id="other">
+      <h2>Cross-cutting / out of area</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="idea-name">Tagum Tricycle Fare Predictor</td>
+              <td>Shipped ML app (<code>tagum-tricycle-fare-predictor</code> + backend). Portfolio gold. Not a clean fit for Agri/Waste/Aqua; Resilience stretch only.</td>
+            </tr>
+            <tr>
+              <td class="idea-name">Reusable core app</td>
+              <td><code>hackathontagum/web</code> — one loop for all areas (config-driven).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Prep decks already built (names may lag)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Area</th><th>Current deck/seed</th><th>Aligns to</th></tr></thead>
+          <tbody>
+            <tr><td>Agri</td><td class="idea-name">BanaLoop</td><td>Old default → replace if locking SakaFeed</td></tr>
+            <tr><td>Waste</td><td class="idea-name">Palengke Loop</td><td>Old default → replace if locking KiloKita</td></tr>
+            <tr><td>Aqua</td><td class="idea-name">BantayPond</td><td>Old default → replace if locking FreshTrack</td></tr>
+            <tr><td>Resilience</td><td class="idea-name">BCP Buddy</td><td>Still valid fallback / alt</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PIVOT -->
+    <section class="card" id="pivot">
+      <h2>Quick pick guide</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>If judges hate…</th><th>Pivot to…</th></tr></thead>
+          <tbody>
+            <tr><td>Banana cliché</td><td class="idea-name">SakaFeed or WiltNext</td></tr>
+            <tr><td>LGU compliance apps</td><td class="idea-name">KiloKita or BasuraBill</td></tr>
+            <tr><td>Hardware risk</td><td class="idea-name">FreshTrack or PondLog</td></tr>
+            <tr><td>Static plans only</td><td class="idea-name">AksyonNgayon</td> · keep BCP Buddy as PDF fallback</td></tr>
+            <tr><td>“Doesn’t ScrapCycle exist?”</td><td class="idea-name">KiloKita shop-side</td>, not consumer</td></tr>
+            <tr><td>“Doesn’t this exist?” (general)</td><td>Distribution: Taglish, offline, free, Negosyo Center 30-day pilot</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Also available as Markdown in the repo and as
+        <code>hackathontagum-idea-list.md</code> in Obsy. Print → Save as PDF works from the browser.
+      </p>
+    </section>
+
+    <footer>
+      Hackathon Challenge 2026 · Tagum · Master Idea List · 2026-07-12
+    </footer>
+  </main>
+</body>
+</html>

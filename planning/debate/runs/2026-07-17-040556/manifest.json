@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "status": "complete",
+  "brief": "00-brief.md",
+  "createdAt": "2026-07-17T04:05:56.981Z",
+  "updatedAt": "2026-07-17T04:17:01.085Z",
+  "stages": [
+    {
+      "id": "claude-position",
+      "provider": "claude",
+      "output": "01-claude-position.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T04:08:55.304Z",
+      "completedAt": "2026-07-17T04:10:26.476Z",
+      "error": null,
+      "command": "/Users/ryandeniega/.local/bin/claude",
+      "exitCode": 0
+    },
+    {
+      "id": "codex-position",
+      "provider": "codex",
+      "output": "02-codex-position.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T04:10:26.477Z",
+      "completedAt": "2026-07-17T04:12:03.669Z",
+      "error": null,
+      "command": "/Applications/ChatGPT.app/Contents/Resources/codex",
+      "exitCode": 0
+    },
+    {
+      "id": "claude-rebuttal",
+      "provider": "claude",
+      "output": "03-claude-rebuttal.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T04:12:03.670Z",
+      "completedAt": "2026-07-17T04:13:21.296Z",
+      "error": null,
+      "command": "/Users/ryandeniega/.local/bin/claude",
+      "exitCode": 0
+    },
+    {
+      "id": "codex-rebuttal",
+      "provider": "codex",
+      "output": "04-codex-rebuttal.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T04:13:21.297Z",
+      "completedAt": "2026-07-17T04:14:52.201Z",
+      "error": null,
+      "command": "/Applications/ChatGPT.app/Contents/Resources/codex",
+      "exitCode": 0
+    },
+    {
+      "id": "claude-synthesis",
+      "provider": "claude",
+      "output": "05-claude-synthesis.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T04:14:52.202Z",
+      "completedAt": "2026-07-17T04:15:53.379Z",
+      "error": null,
+      "command": "/Users/ryandeniega/.local/bin/claude",
+      "exitCode": 0
+    },
+    {
+      "id": "final-verdict",
+      "provider": "codex",
+      "output": "06-final-verdict.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T04:15:53.380Z",
+      "completedAt": "2026-07-17T04:17:01.084Z",
+      "error": null,
+      "command": "/Applications/ChatGPT.app/Contents/Resources/codex",
+      "exitCode": 0
+    }
+  ]
+}

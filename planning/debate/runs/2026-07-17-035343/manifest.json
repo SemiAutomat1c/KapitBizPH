@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "status": "complete",
+  "brief": "00-brief.md",
+  "createdAt": "2026-07-17T03:53:43.122Z",
+  "updatedAt": "2026-07-17T03:53:43.456Z",
+  "stages": [
+    {
+      "id": "claude-position",
+      "provider": "claude",
+      "output": "01-claude-position.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T03:53:43.123Z",
+      "completedAt": "2026-07-17T03:53:43.203Z",
+      "error": null,
+      "command": "/opt/homebrew/Cellar/node/25.4.0/bin/node",
+      "exitCode": 0
+    },
+    {
+      "id": "codex-position",
+      "provider": "codex",
+      "output": "02-codex-position.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T03:53:43.204Z",
+      "completedAt": "2026-07-17T03:53:43.254Z",
+      "error": null,
+      "command": "/opt/homebrew/Cellar/node/25.4.0/bin/node",
+      "exitCode": 0
+    },
+    {
+      "id": "claude-rebuttal",
+      "provider": "claude",
+      "output": "03-claude-rebuttal.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T03:53:43.254Z",
+      "completedAt": "2026-07-17T03:53:43.305Z",
+      "error": null,
+      "command": "/opt/homebrew/Cellar/node/25.4.0/bin/node",
+      "exitCode": 0
+    },
+    {
+      "id": "codex-rebuttal",
+      "provider": "codex",
+      "output": "04-codex-rebuttal.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T03:53:43.305Z",
+      "completedAt": "2026-07-17T03:53:43.356Z",
+      "error": null,
+      "command": "/opt/homebrew/Cellar/node/25.4.0/bin/node",
+      "exitCode": 0
+    },
+    {
+      "id": "claude-synthesis",
+      "provider": "claude",
+      "output": "05-claude-synthesis.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T03:53:43.356Z",
+      "completedAt": "2026-07-17T03:53:43.404Z",
+      "error": null,
+      "command": "/opt/homebrew/Cellar/node/25.4.0/bin/node",
+      "exitCode": 0
+    },
+    {
+      "id": "final-verdict",
+      "provider": "codex",
+      "output": "06-final-verdict.md",
+      "status": "complete",
+      "startedAt": "2026-07-17T03:53:43.405Z",
+      "completedAt": "2026-07-17T03:53:43.456Z",
+      "error": null,
+      "command": "/opt/homebrew/Cellar/node/25.4.0/bin/node",
+      "exitCode": 0
+    }
+  ]
+}
