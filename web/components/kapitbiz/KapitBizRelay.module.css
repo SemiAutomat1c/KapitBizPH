@@ -598,6 +598,83 @@
 .navItem[aria-current="page"] { color: #006d77; }
 .navItemUnavailable { cursor: default; opacity: 0.72; }
 
+.handoffScreen,
+.completeScreen { width: 100%; max-width: 680px; margin-inline: auto; padding-top: 16px; }
+.handoffScreen { padding-bottom: 164px; }
+.handoffIntro { display: flex; align-items: end; justify-content: space-between; gap: 12px; border-bottom: 1px solid #bec8ca; padding-bottom: 18px; }
+.handoffIntro h2, .completeHero h2, .timelineSection h3 { margin: 0; font-weight: 700; }
+.handoffIntro h2 { font-size: 2rem; line-height: 2.5rem; }
+.handoffId { color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 1rem; font-weight: 700; }
+.handoffParties { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 10px; padding: 20px 0; }
+.handoffParties div { display: grid; gap: 5px; min-width: 0; }
+.handoffParties div:last-child { text-align: right; }
+.handoffParties span:not(.handoffArrow) { color: #526163; font-size: 0.74rem; font-weight: 700; text-transform: uppercase; }
+.handoffParties strong { color: #00535b; font-size: 1.2rem; line-height: 1.55rem; overflow-wrap: anywhere; }
+.handoffArrow { color: #526163; font-size: 2rem; font-weight: 700; }
+.qrPanel { display: grid; justify-items: center; gap: 12px; border: 1px solid #bec8ca; border-radius: 8px; background: #fff; padding: 26px 18px; }
+.qrFrame { display: grid; width: min(100%, 330px); aspect-ratio: 1; place-items: center; border: 2px solid #00535b; border-radius: 5px; background: #f7fafa; padding: 12px; }
+.qrCode { display: block; width: 100%; height: 100%; object-fit: contain; }
+.qrFallback { display: grid; justify-items: center; gap: 8px; color: #00535b; text-align: center; }
+.qrFallback svg { width: 36px; height: 36px; }
+.qrFallback span, .handoffTimestamp { color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.76rem; }
+.waitingStatus { display: inline-flex; align-items: center; gap: 8px; margin: 0; border: 1px solid #bec8ca; border-radius: 999px; background: #f1f4f4; color: #3e494a; padding: 8px 12px; }
+.waitingStatus span { width: 10px; height: 10px; border-radius: 50%; background: #ba7a00; }
+.inlineNotice, .evidenceNote { margin: 0; color: #526163; font-size: 0.8rem; line-height: 1.25rem; text-align: center; }
+.handoffTimestamp { margin: 0; }
+.handoffMetrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.handoffMetrics div { display: grid; gap: 7px; border: 1px solid #bec8ca; border-radius: 6px; background: #fff; padding: 16px; }
+.handoffMetrics span { color: #526163; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+.handoffMetrics strong { color: #181c1d; font-family: var(--font-mono), ui-monospace, monospace; font-size: 1.05rem; }
+.evidenceSection { margin-top: 20px; }
+.evidenceInputLabel { display: inline-flex; min-height: 44px; align-items: center; gap: 6px; color: #00535b; font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+.evidenceInputLabel svg { width: 18px; height: 18px; }
+.evidenceRow { display: flex; min-height: 112px; margin-top: 12px; }
+.evidencePreview, .evidenceEmpty { width: 112px; height: 112px; border-radius: 6px; object-fit: cover; }
+.evidenceEmpty { display: grid; place-items: center; gap: 4px; border: 2px dashed #bec8ca; color: #718486; font-size: 0.72rem; text-align: center; }
+.evidenceEmpty svg { width: 30px; height: 30px; }
+.evidenceNote { margin-top: 10px; text-align: left; }
+.handoffAction { position: fixed; z-index: 20; right: 0; bottom: 0; left: 0; display: grid; gap: 10px; border-top: 1px solid #bec8ca; background: rgba(247, 250, 250, .98); padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); }
+.handoffAction > span { display: inline-flex; align-items: center; gap: 7px; color: #3e494a; font-size: 0.8rem; }
+.handoffAction > span svg { width: 18px; height: 18px; color: #006d77; }
+.completeScreen { padding-bottom: 28px; }
+.completeHero { margin-inline: -16px; display: grid; justify-items: center; gap: 10px; background: #006d77; color: #fff; padding: 28px 16px 48px; text-align: center; }
+.completeHero > span { display: grid; width: 64px; height: 64px; place-items: center; border-radius: 18px; background: rgba(255, 255, 255, .18); }
+.completeHero > span svg { width: 40px; height: 40px; }
+.completeHero h2 { font-size: 1.8rem; line-height: 2.2rem; }
+.completeHero p { margin: 0; color: #d4f4f6; }
+.completeSummary { position: relative; z-index: 1; display: grid; gap: 16px; margin: -28px 8px 0; border: 1px solid #bec8ca; border-radius: 6px; background: #fff; padding: 18px; }
+.completeSummaryTop { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; }
+.completeSummaryTop div { display: grid; gap: 6px; }
+.completeSummaryTop div:last-child { text-align: right; }
+.completeSummaryTop span, .completeStats { color: #526163; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+.completeSummaryTop strong { font-size: 1.18rem; line-height: 1.5rem; }
+.completeSummaryTop div:last-child strong { color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; }
+.deadlineNotice { display: flex; align-items: center; gap: 10px; border: 1px solid #d7e0e1; border-radius: 4px; background: #f1f4f4; padding: 12px; }
+.deadlineNotice svg { flex: none; width: 24px; height: 24px; color: #006d77; }
+.deadlineNotice p { margin: 0; line-height: 1.4rem; }
+.completeStats { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-mono), ui-monospace, monospace; }
+.timelineSection { margin-top: 28px; }
+.timelineSection h3 { font-size: 1.1rem; text-transform: uppercase; }
+.auditTimeline { display: grid; gap: 0; margin: 18px 0 0; padding: 0; list-style: none; }
+.auditTimeline li { position: relative; display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 12px; min-height: 78px; padding-bottom: 20px; }
+.auditTimeline li::before { position: absolute; top: 18px; bottom: -2px; left: 8px; width: 2px; background: #bec8ca; content: ""; }
+.auditTimeline li:last-child::before { display: none; }
+.auditTimeline li > span { z-index: 1; display: block; width: 18px; height: 18px; border: 3px solid #fff; border-radius: 50%; background: #bec8ca; box-shadow: 0 0 0 1px #bec8ca; }
+.auditTimeline li[data-complete="true"] > span { background: #006d77; box-shadow: 0 0 0 1px #006d77; }
+.auditTimeline strong { font-size: 1rem; }
+.auditTimeline p { margin: 4px 0 0; color: #526163; font-size: 0.84rem; line-height: 1.25rem; }
+.auditTimeline time { color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.78rem; }
+.verifiedRecord { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; border: 1px solid #bec8ca; border-radius: 5px; background: #f1f4f4; padding: 16px; }
+.verifiedRecord svg { width: 28px; height: 28px; color: #006d77; }
+.verifiedRecord strong { color: #00535b; }
+.verifiedRecord span { grid-column: 2; color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.75rem; }
+.completeActions { display: grid; gap: 10px; margin-top: 20px; }
+.secondaryAction, .resetButton { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 8px; border-radius: 4px; background: #fff; padding: 10px 14px; font-weight: 700; }
+.secondaryAction { border: 1px solid #00535b; color: #00535b; }
+.resetButton { border: 1px solid #bec8ca; color: #3e494a; }
+.secondaryAction svg, .resetButton svg { width: 19px; height: 19px; }
+.shareStatus { margin: 0; border-left: 3px solid #006d77; background: #e8f3f3; color: #18484d; padding: 10px 12px; font-size: 0.84rem; line-height: 1.3rem; }
+
 @media (min-width: 960px) {
   .appShell {
     display: grid;
@@ -626,6 +703,11 @@
   .incidentScreen { max-width: 680px; padding-top: 32px; }
   .triageScreen { max-width: 760px; padding-top: 32px; padding-bottom: 0; }
   .reservationScreen { max-width: 720px; padding-top: 32px; }
+  .handoffScreen, .completeScreen { max-width: 720px; padding-top: 32px; }
+  .handoffScreen { padding-bottom: 32px; }
+  .handoffAction { position: static; margin-top: 20px; border: 1px solid #bec8ca; border-radius: 6px; background: #fff; }
+  .completeHero { margin-inline: 0; border-radius: 8px 8px 0 0; }
+  .completeSummary { margin-inline: 24px; }
   .triageIntro { padding-bottom: 28px; }
   .inventoryRow { padding: 24px 8px; }
   .triageAction {

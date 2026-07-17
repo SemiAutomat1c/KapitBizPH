@@ -6,6 +6,8 @@ import ActiveDisruptionScreen from "./ActiveDisruptionScreen";
 import CapacityMatchScreen from "./CapacityMatchScreen";
 import InventoryTriageScreen from "./InventoryTriageScreen";
 import ReservationScreen from "./ReservationScreen";
+import HandoffScreen from "./HandoffScreen";
+import RescueCompleteScreen from "./RescueCompleteScreen";
 import styles from "./KapitBizRelay.module.css";
 
 const stepOrder: RelayStep[] = [
@@ -53,6 +55,18 @@ export default function KapitBizRelayApp() {
           />
         ) : relay.state.step === "reservation" ? (
           <ReservationScreen
+            state={relay.state}
+            selection={relay.selection}
+            dispatch={relay.dispatch}
+          />
+        ) : relay.state.step === "handoff" ? (
+          <HandoffScreen
+            state={relay.state}
+            selection={relay.selection}
+            dispatch={relay.dispatch}
+          />
+        ) : relay.state.step === "complete" ? (
+          <RescueCompleteScreen
             state={relay.state}
             selection={relay.selection}
             dispatch={relay.dispatch}

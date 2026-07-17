@@ -29,16 +29,33 @@ const mapboxTestDouble = vi.hoisted(() => {
   return { mapbox: { accessToken: "", Map, Marker, Popup } };
 });
 
+const qrcodeTestDouble = vi.hoisted(() => ({ toDataURL: vi.fn() }));
+
 vi.mock("mapbox-gl", () => ({ default: mapboxTestDouble.mapbox }));
+vi.mock("qrcode", () => ({ default: qrcodeTestDouble }));
+
+function createCompleteState() {
+  let completeState = relayReducer(createSeedState(1_000_000), { type: "start-rescue" });
+  completeState = relayReducer(completeState, { type: "go-to", step: "capacity" });
+  completeState = relayReducer(completeState, { type: "select-host", hostId: "northline" });
+  completeState = relayReducer(completeState, { type: "go-to", step: "reservation" });
+  completeState = relayReducer(completeState, { type: "select-transport", transportId: "rider" });
+  completeState = relayReducer(completeState, { type: "confirm-reservation", at: 1_000_100 });
+  return relayReducer(completeState, { type: "confirm-receiver", at: 1_000_200 });
+}
 
 describe("KapitBiz Relay flow", () => {
   beforeEach(() => {
     cleanup();
     window.localStorage.clear();
+    qrcodeTestDouble.toDataURL.mockResolvedValue("data:image/png;base64,kapitbiz-test-qr");
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    qrcodeTestDouble.toDataURL.mockReset();
   });
 
   it("opens directly to the simulated incident", () => {
@@ -339,6 +356,87 @@ describe("KapitBiz Relay flow", () => {
     expect(screen.getByLabelText("Current rescue step")).toHaveTextContent("Handoff");
   });
 
+  it("completes the rescue through QR handoff confirmation", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(screen.getByRole("button", { name: /start inventory rescue/i }));
+    await user.click(screen.getByRole("button", { name: /find rescue capacity/i }));
+    await user.click(screen.getByRole("button", { name: /select northline cold storage/i }));
+    await user.click(screen.getByRole("button", { name: /choose transport/i }));
+    await user.click(screen.getByRole("radio", { name: /rider - logistics pro/i }));
+    await user.click(screen.getByRole("button", { name: /use selected transport/i }));
+    await user.click(screen.getByRole("button", { name: /confirm rescue reservation/i }));
+
+    expect(screen.getByText(/waiting for receiver confirmation/i)).toBeInTheDocument();
+    expect(await screen.findByAltText("KapitBiz handoff QR code")).toBeInTheDocument();
+    expect(qrcodeTestDouble.toDataURL).toHaveBeenCalledWith(
+      JSON.stringify({
+        id: "RE-4892-X",
+        sender: "Maya's Frozen Goods",
+        receiver: "Northline Cold Storage",
+        value: 16_500,
+        weightKg: 42,
+      }),
+      expect.objectContaining({ width: 320, margin: 2 }),
+    );
+    await user.click(screen.getByRole("button", { name: /confirm inventory received/i }));
+    expect(screen.getByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
+    expect(screen.getByText("Chain of custody verified")).toBeInTheDocument();
+    expect(screen.getByText("₱450 rescue cost")).toBeInTheDocument();
+  });
+
+  it("keeps manual confirmation available when QR generation fails", async () => {
+    qrcodeTestDouble.toDataURL.mockRejectedValueOnce(new Error("renderer unavailable"));
+    const user = userEvent.setup();
+    let handoffState = relayReducer(createSeedState(1_000_000), { type: "start-rescue" });
+    handoffState = relayReducer(handoffState, { type: "go-to", step: "capacity" });
+    handoffState = relayReducer(handoffState, { type: "select-host", hostId: "northline" });
+    handoffState = relayReducer(handoffState, { type: "go-to", step: "reservation" });
+    handoffState = relayReducer(handoffState, { type: "select-transport", transportId: "rider" });
+    handoffState = relayReducer(handoffState, { type: "confirm-reservation", at: 1_000_100 });
+    window.localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(handoffState));
+    render(<KapitBizRelayApp />);
+
+    expect(await screen.findByText("QR unavailable")).toBeInTheDocument();
+    expect(screen.getByText(/manual receiver confirmation/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /confirm inventory received/i }));
+    expect(screen.getByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
+  });
+
+  it("copies the exact recovery record when Web Share is unavailable", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(window.navigator, "share", { configurable: true, value: undefined });
+    Object.defineProperty(window.navigator, "clipboard", { configurable: true, value: { writeText } });
+    window.localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(createCompleteState()));
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await screen.findByRole("heading", { name: "₱16,500 inventory protected" });
+    await user.click(screen.getByRole("button", { name: /share recovery record/i }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Recovery record copied to clipboard."));
+    expect(screen.getByRole("status")).toHaveTextContent("Recovery record copied to clipboard.");
+  });
+
+  it("resets a completed rescue to a fresh persisted incident", async () => {
+    vi.spyOn(Date, "now").mockReturnValue(9_000_000);
+    window.localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(createCompleteState()));
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await screen.findByRole("heading", { name: "₱16,500 inventory protected" });
+    await user.click(screen.getByRole("button", { name: /reset demo/i }));
+    expect(screen.getByRole("button", { name: /start inventory rescue/i })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(JSON.parse(window.localStorage.getItem("kapitbiz-relay-v2") ?? "null")).toMatchObject({
+        step: "incident",
+        scenarioStartedAt: 9_000_000,
+        handoffId: null,
+        receiverConfirmedAt: null,
+      });
+    });
+  });
+
   it("closes the transport sheet with Escape and restores focus to its trigger", async () => {
     const user = userEvent.setup();
     render(<KapitBizRelayApp />);
@@ -396,14 +494,7 @@ describe("KapitBiz Relay flow", () => {
     expect(screen.queryByRole("navigation", { name: "Primary navigation" })).not.toBeInTheDocument();
 
     activeFlow.unmount();
-    let completeState = relayReducer(createSeedState(1_000_000), { type: "start-rescue" });
-    completeState = relayReducer(completeState, { type: "go-to", step: "capacity" });
-    completeState = relayReducer(completeState, { type: "select-host", hostId: "northline" });
-    completeState = relayReducer(completeState, { type: "go-to", step: "reservation" });
-    completeState = relayReducer(completeState, { type: "select-transport", transportId: "rider" });
-    completeState = relayReducer(completeState, { type: "confirm-reservation", at: 1_000_100 });
-    completeState = relayReducer(completeState, { type: "confirm-receiver", at: 1_000_200 });
-    window.localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(completeState));
+    window.localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(createCompleteState()));
     render(<KapitBizRelayApp />);
 
     await waitFor(() => {
