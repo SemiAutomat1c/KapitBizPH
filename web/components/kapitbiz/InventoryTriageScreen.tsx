@@ -69,7 +69,7 @@ export default function InventoryTriageScreen({
             </label>
 
             <div className={styles.inventoryDetails}>
-              <h3>{item.name}</h3>
+              <h3 id={`${item.id}-name`}>{item.name}</h3>
               <span
                 className={styles.rescueBadge}
                 data-safe={item.rescueWindowMinutes === null}
@@ -78,7 +78,14 @@ export default function InventoryTriageScreen({
                 {formatRescueWindow(item.rescueWindowMinutes)}
               </span>
 
-              <div className={styles.quantityControl} aria-label={`${item.name} quantity`}>
+              <div
+                className={styles.quantityControl}
+                role="group"
+                aria-labelledby={`${item.id}-name ${item.id}-quantity-label`}
+              >
+                <span className={styles.visuallyHidden} id={`${item.id}-quantity-label`}>
+                  quantity
+                </span>
                 <button
                   type="button"
                   aria-label={`Decrease ${item.name} quantity`}
@@ -93,7 +100,11 @@ export default function InventoryTriageScreen({
                 >
                   <Minus aria-hidden="true" />
                 </button>
-                <output aria-live="polite">{item.selectedQuantity}</output>
+                <output
+                  aria-label={`${item.name} selected quantity: ${item.selectedQuantity} ${item.unit}`}
+                >
+                  {item.selectedQuantity}
+                </output>
                 <button
                   type="button"
                   aria-label={`Increase ${item.name} quantity`}
@@ -124,7 +135,12 @@ export default function InventoryTriageScreen({
       </ul>
 
       <aside className={styles.triageAction} aria-label="Selected for rescue">
-        <div className={styles.triageSummary} role="status" aria-live="polite">
+        <div
+          className={styles.triageSummary}
+          role="status"
+          aria-label="Selected for rescue"
+          aria-live="polite"
+        >
           <div>
             <span>Selected for rescue</span>
             <strong>

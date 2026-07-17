@@ -95,6 +95,71 @@ describe("KapitBiz Relay flow", () => {
     ).toBeEnabled();
   });
 
+  it("resumes edited inventory triage after remounting", async () => {
+    const user = userEvent.setup();
+    const firstVisit = render(<KapitBizRelayApp />);
+
+    await user.click(
+      screen.getByRole("button", { name: /start inventory rescue/i }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: /decrease ice cream quantity/i }),
+    );
+
+    await waitFor(() => {
+      const persisted = window.localStorage.getItem("kapitbiz-relay-v2");
+      expect(persisted).not.toBeNull();
+      expect(JSON.parse(persisted as string)).toMatchObject({
+        step: "triage",
+        inventory: expect.arrayContaining([
+          expect.objectContaining({ id: "ice-cream", selectedQuantity: 10 }),
+        ]),
+      });
+    });
+
+    firstVisit.unmount();
+    render(<KapitBizRelayApp />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "Inventory triage" }),
+      ).toBeInTheDocument();
+      expect(screen.getByText("10 of 18 tubs")).toBeInTheDocument();
+      expect(screen.getByText("41.55 kg | ₱16,100")).toBeInTheDocument();
+    });
+  });
+
+  it("gives each quantity control and value item-specific context", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizRelayApp />);
+
+    await user.click(
+      screen.getByRole("button", { name: /start inventory rescue/i }),
+    );
+
+    for (const itemName of ["Ice cream", "Frozen chicken", "Processed meat"]) {
+      expect(
+        screen.getByRole("group", { name: `${itemName} quantity` }),
+      ).toBeInTheDocument();
+    }
+
+    expect(
+      screen.getByRole("button", { name: "Decrease Ice cream quantity" }),
+    ).toBeEnabled();
+    expect(
+      screen.getByRole("button", { name: "Increase Ice cream quantity" }),
+    ).toBeEnabled();
+    const iceCreamOutput = screen.getByLabelText(
+      "Ice cream selected quantity: 11 tubs",
+    );
+    expect(iceCreamOutput).toHaveTextContent("11");
+    expect(iceCreamOutput).not.toHaveAttribute("aria-live");
+    expect(screen.getByRole("status", { name: "Selected for rescue" })).toHaveAttribute(
+      "aria-live",
+      "polite",
+    );
+  });
+
   it("requires inventory before continuing to rescue capacity", async () => {
     const user = userEvent.setup();
     render(<KapitBizRelayApp />);
