@@ -150,7 +150,6 @@ export default function OnboardingFlow({
           </div>
           <div className={styles.onboardingActions}>
             <button className={styles.onboardingBack} type="button" onClick={() => moveTo("verify")}>Back</button>
-            <button className={styles.onboardingSkip} type="button" onClick={() => moveTo("role")}>Skip</button>
           </div>
         </section>
       </main>

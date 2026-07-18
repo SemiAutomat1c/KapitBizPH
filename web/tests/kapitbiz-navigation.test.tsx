@@ -1,9 +1,18 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
+import { seedCompletedOnboarding } from "./kapitbiz-test-helpers";
 
-afterEach(cleanup);
+beforeEach(() => {
+  cleanup();
+  localStorage.clear();
+});
+
+afterEach(() => {
+  cleanup();
+  localStorage.clear();
+});
 
 describe("KapitBiz complete demo navigation", () => {
   it("completes onboarding and opens Maya's merchant home", async () => {
@@ -18,8 +27,18 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(screen.getByRole("button", { name: "Continue as Merchant" }));
     await user.click(screen.getByRole("button", { name: "Enter KapitBiz Relay" }));
 
-    expect(screen.getByRole("heading", { name: "Good morning, Maya" })).toBeInTheDocument();
-    expect(screen.getByText("Maya's Frozen Goods")).toBeInTheDocument();
+    const merchantGreeting = screen.getByRole("heading", { name: "Good morning, Maya" });
+    expect(merchantGreeting).toBeInTheDocument();
+    expect(within(merchantGreeting.closest("header")!).getByText("Maya's Frozen Goods")).toBeInTheDocument();
+  });
+
+  it("opens the existing merchant rescue experience after completed onboarding", async () => {
+    seedCompletedOnboarding();
+    render(<KapitBizDemoApp />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Localized power interruption alert" })).toBeInTheDocument();
+    });
   });
 
   it("resumes the saved onboarding step after remount", async () => {

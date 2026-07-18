@@ -1,6 +1,7 @@
 "use client";
 
 import { useKapitBizDemoSession } from "@/lib/kapitbiz-demo";
+import KapitBizRelayApp from "./KapitBizRelayApp";
 import OnboardingFlow from "./OnboardingFlow";
 import styles from "./KapitBizRelay.module.css";
 
@@ -28,7 +29,7 @@ export default function KapitBizDemoApp() {
   }
 
   return (
-    <main className={styles.merchantHome}>
+    <>
       <header className={styles.merchantWelcome}>
         <div>
           <p>Merchant home</p>
@@ -36,6 +37,7 @@ export default function KapitBizDemoApp() {
         </div>
         <strong>Maya&apos;s Frozen Goods</strong>
       </header>
-    </main>
+      <KapitBizRelayApp />
+    </>
   );
 }
