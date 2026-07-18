@@ -15,11 +15,11 @@ const filters: Array<{ id: RequestFilter; label: string }> = [
 
 export default function RequestsScreen({
   state,
-  startedFromHazardAssist,
+  startedFromHazardAssist = false,
   onOpenRescue,
 }: {
   state: RelayDemoState;
-  startedFromHazardAssist: boolean;
+  startedFromHazardAssist?: boolean;
   onOpenRescue: () => void;
 }) {
   const [filter, setFilter] = useState<RequestFilter>("active");

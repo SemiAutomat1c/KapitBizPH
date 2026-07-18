@@ -4,6 +4,8 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
+import RequestsScreen from "@/components/kapitbiz/RequestsScreen";
+import { createSeedState } from "@/lib/kapitbiz";
 import {
   createCompleteStateForTest,
   seedCompletedOnboarding,
@@ -22,6 +24,13 @@ afterEach(() => {
 });
 
 describe("KapitBiz complete demo navigation", () => {
+  it("renders Requests without a Hazard Assist source by default", () => {
+    render(<RequestsScreen state={createSeedState(1_000_000)} onOpenRescue={vi.fn()} />);
+
+    expect(screen.getByRole("heading", { name: "Rescue requests" })).toBeInTheDocument();
+    expect(screen.queryByText("Started from Safety Check")).not.toBeInTheDocument();
+  });
+
   it("omits Back on the first intro and enables it on later intros", async () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
