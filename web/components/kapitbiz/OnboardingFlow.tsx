@@ -195,7 +195,7 @@ export default function OnboardingFlow({
   }
 
   const intro = introductions[step];
-  const canGoBack = previousStep[step] !== null;
+  const backStep = previousStep[step];
 
   return (
     <main className={styles.onboardingShell}>
@@ -206,14 +206,11 @@ export default function OnboardingFlow({
         <h1 id={`onboarding-${step}-heading`}>{intro.title}</h1>
         <p className={styles.onboardingCopy}>{intro.body}</p>
         <div className={styles.onboardingActions}>
-          <button
-            className={styles.onboardingBack}
-            type="button"
-            disabled={!canGoBack}
-            onClick={() => previousStep[step] && moveTo(previousStep[step])}
-          >
-            Back
-          </button>
+          {backStep ? (
+            <button className={styles.onboardingBack} type="button" onClick={() => moveTo(backStep)}>
+              Back
+            </button>
+          ) : null}
           <button className={styles.onboardingSkip} type="button" onClick={() => moveTo("role")}>Skip</button>
           <button className={styles.primaryButton} type="button" onClick={() => moveTo(nextStep[step] as OnboardingStep)}>
             {intro.actionLabel}

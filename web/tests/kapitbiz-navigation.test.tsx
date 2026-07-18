@@ -15,6 +15,22 @@ afterEach(() => {
 });
 
 describe("KapitBiz complete demo navigation", () => {
+  it("omits Back on the first intro and enables it on later intros", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await screen.findByRole("heading", { name: "Protect what is at risk" });
+    expect(screen.queryByRole("button", { name: "Back" })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByRole("heading", { name: "Relay to available capacity" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Back" }));
+    expect(screen.getByRole("heading", { name: "Protect what is at risk" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Back" })).not.toBeInTheDocument();
+  });
+
   it("completes onboarding and opens Maya's merchant home", async () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
