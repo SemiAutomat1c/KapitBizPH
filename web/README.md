@@ -40,8 +40,9 @@ Root Directory: web
 Framework Preset: Next.js
 Install Command: npm ci
 Build Command: npm run build
-Output Directory: Next.js default
 ```
+
+Leave **Output Directory** on Auto / blank — do not type anything into it. Vercel's dashboard shows "Next.js default" as greyed-out placeholder text meaning "leave this empty, we'll detect `.next` automatically." Typing that placeholder text in as a literal value breaks the build with `Error: The Next.js output directory "Next.js default" was not found`.
 
 Set `NEXT_PUBLIC_MAPBOX_TOKEN` only if you want the optional Mapbox presentation. The PWA install flow should be tested on the deployed HTTPS URL, not only on local network URLs.
 
