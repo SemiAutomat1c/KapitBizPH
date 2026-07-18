@@ -101,4 +101,17 @@ describe("KapitBiz Hazard Assist UI", () => {
     expect(screen.getByRole("dialog", { name: "Good Samaritan capacity" })).toBeInTheDocument();
     expect(screen.getByText("Prefilled help request: temporary cold storage for the selected 42 kg frozen-stock relay.")).toBeInTheDocument();
   });
+
+  it("keeps Good Samaritan dialog actions at least 44px high", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "View neighbor capacity" }));
+
+    const actions = screen.getAllByRole("button", { name: /Use .* in Relay/ });
+    expect(actions).toHaveLength(3);
+    actions.forEach((action) => {
+      expect(action.className).toContain("responderAction");
+    });
+  });
 });

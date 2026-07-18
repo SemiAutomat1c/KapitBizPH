@@ -37,7 +37,7 @@ export default function GoodSamaritanPanel({
               </div>
               <div className={styles.responderTrust}>
                 <span>{responder.trustLabel}</span>
-                <button className={styles.inlineAction} type="button" onClick={() => onUsePartner(responder.partnerId)}>
+                <button className={styles.responderAction} type="button" onClick={() => onUsePartner(responder.partnerId)}>
                   Use {responder.partnerName} in Relay
                 </button>
               </div>

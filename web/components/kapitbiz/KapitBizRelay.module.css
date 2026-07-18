@@ -271,6 +271,8 @@
 .responderRow small { display: block; margin-top: 4px; color: #526163; font-size: 0.72rem; line-height: 1.15rem; }
 .responderTrust { display: grid; justify-items: end; gap: 5px; text-align: right; }
 .responderTrust span { color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+.responderAction { display: inline-flex; min-height: 44px; align-items: center; gap: 4px; border: 0; border-radius: 4px; background: transparent; color: #00535b; padding: 6px 0 6px 8px; font-size: 0.8rem; font-weight: 700; }
+.responderAction:hover { color: #006d77; }
 
 @media (max-width: 620px) {
   .hazardAlertStrip { grid-template-columns: auto minmax(0, 1fr); }
