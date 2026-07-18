@@ -15,9 +15,11 @@ const filters: Array<{ id: RequestFilter; label: string }> = [
 
 export default function RequestsScreen({
   state,
+  startedFromHazardAssist,
   onOpenRescue,
 }: {
   state: RelayDemoState;
+  startedFromHazardAssist: boolean;
   onOpenRescue: () => void;
 }) {
   const [filter, setFilter] = useState<RequestFilter>("active");
@@ -48,7 +50,7 @@ export default function RequestsScreen({
       </fieldset>
 
       {filter === "active" ? (
-        rescueComplete ? <p className={styles.emptyState}>No active rescue requests.</p> : <ActiveRequest state={state} onOpenRescue={onOpenRescue} />
+        rescueComplete ? <p className={styles.emptyState}>No active rescue requests.</p> : <ActiveRequest state={state} startedFromHazardAssist={startedFromHazardAssist} onOpenRescue={onOpenRescue} />
       ) : null}
       {filter === "pending" ? <PendingRequest /> : null}
       {filter === "completed" ? <CompletedRequests complete={rescueComplete} /> : null}
@@ -56,7 +58,7 @@ export default function RequestsScreen({
   );
 }
 
-function ActiveRequest({ state, onOpenRescue }: { state: RelayDemoState; onOpenRescue: () => void }) {
+function ActiveRequest({ state, startedFromHazardAssist, onOpenRescue }: { state: RelayDemoState; startedFromHazardAssist: boolean; onOpenRescue: () => void }) {
   const rescueStatus = state.step === "incident" ? "Ready to begin" : "In progress";
 
   return (
@@ -65,6 +67,7 @@ function ActiveRequest({ state, onOpenRescue }: { state: RelayDemoState; onOpenR
       <div className={styles.requestCopy}>
         <div className={styles.requestTitleRow}><h3>RE-4892-X</h3><span className={styles.currentBadge}>{rescueStatus}</span></div>
         <p>42 kg selected · PHP16,500 protected value</p>
+        {startedFromHazardAssist ? <small className={styles.requestSource}>Started from Safety Check</small> : null}
         <small>Northline Cold Storage · PHP300 storage · PHP150 rider · PHP450 total</small>
       </div>
       <button className={styles.inlineAction} type="button" onClick={onOpenRescue} aria-label="Resume rescue RE-4892-X">

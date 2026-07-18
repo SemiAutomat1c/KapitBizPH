@@ -1,6 +1,7 @@
 import { CheckCircle2, Clock3, FileCheck2, Store } from "lucide-react";
 import type { RelayDemoState } from "@/lib/kapitbiz";
 import type { KapitBizDemoSession } from "@/lib/kapitbiz-demo";
+import type { KapitBizHazardAssistState } from "@/lib/kapitbiz-hazard-assist";
 import { buildActivityFeed } from "@/lib/kapitbiz-activity";
 import styles from "./KapitBizRelay.module.css";
 
@@ -16,13 +17,15 @@ function formatTime(timestamp: number): string {
 export default function ActivityScreen({
   state,
   session,
+  hazardState,
   onOpenRecord,
 }: {
   state: RelayDemoState;
   session: KapitBizDemoSession;
+  hazardState: KapitBizHazardAssistState;
   onOpenRecord: () => void;
 }) {
-  const feed = buildActivityFeed(state, session);
+  const feed = buildActivityFeed(state, session, hazardState);
   const seededAt = state.scenarioStartedAt - 24 * 60 * 60 * 1_000;
 
   return (

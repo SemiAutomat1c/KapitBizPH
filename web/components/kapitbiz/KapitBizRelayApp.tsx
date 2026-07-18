@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useKapitBiz, type RelayStep } from "@/lib/kapitbiz";
 import type { MerchantTab } from "@/lib/kapitbiz-demo";
+import type { HazardRelayContext } from "@/lib/kapitbiz-hazard-assist";
 import { AppHeader, BottomNav, IncidentRail, ProgressHeader } from "./AppChrome";
 import ActiveDisruptionScreen from "./ActiveDisruptionScreen";
 import CapacityMatchScreen from "./CapacityMatchScreen";
@@ -42,6 +43,7 @@ export interface KapitBizRelayAppProps {
   onClose: () => void;
   onNavigate: (tab: Exclude<MerchantTab, "menu">) => void;
   onOpenMenu: () => void;
+  hazardContext: HazardRelayContext | null;
 }
 
 interface KapitBizRelayWorkspaceProps extends Partial<KapitBizRelayAppProps> {
@@ -55,6 +57,7 @@ function KapitBizRelayWorkspace({
   onClose,
   onNavigate,
   onOpenMenu,
+  hazardContext,
 }: KapitBizRelayWorkspaceProps) {
   const workspaceRef = useRef<HTMLElement>(null);
   const previousStepRef = useRef(relay.state.step);
@@ -95,6 +98,13 @@ function KapitBizRelayWorkspace({
           onMenu={onOpenMenu}
           onNotifications={onNavigate ? () => onNavigate("activity") : undefined}
         />
+        {hazardContext !== null ? (
+          <aside className={styles.relayContextBand} aria-label="Hazard Assist rescue context">
+            <span>{hazardContext.sourceLabel}</span>
+            <strong>{hazardContext.eventLabel}</strong>
+            <small>{hazardContext.decisionNote}</small>
+          </aside>
+        ) : null}
         <ProgressHeader step={relay.state.step} />
         {relay.state.step === "incident" ? (
           <ActiveDisruptionScreen state={relay.state} onStart={() => relay.dispatch({ type: "start-rescue" })} />
@@ -156,5 +166,5 @@ export function KapitBizRelayApp(props: KapitBizRelayAppProps) {
 
 export default function StandaloneKapitBizRelayApp() {
   const relay = useKapitBiz();
-  return <KapitBizRelayWorkspace relay={relay} showHomeLink />;
+  return <KapitBizRelayWorkspace relay={relay} hazardContext={null} showHomeLink />;
 }

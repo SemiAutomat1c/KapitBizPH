@@ -2,7 +2,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
-import { seedCompletedOnboarding } from "./kapitbiz-test-helpers";
+import { seedCompletedOnboarding, seedRescueAtCapacity } from "./kapitbiz-test-helpers";
 
 beforeEach(() => {
   cleanup();
@@ -113,5 +113,52 @@ describe("KapitBiz Hazard Assist UI", () => {
     actions.forEach((action) => {
       expect(action.className).toContain("responderAction");
     });
+  });
+
+  it("shows all three Hazard Assist context labels inside the existing Relay flow", async () => {
+    seedCompletedOnboarding({ rescueOpen: true });
+    seedRescueAtCapacity();
+    localStorage.setItem("kapitbiz-hazard-assist-v1", JSON.stringify({
+      version: 1,
+      alertAcknowledged: true,
+      safetyCheckAnswer: "stock-at-risk",
+      generatorEstimatePhp: 714,
+      relayEstimatePhp: 450,
+      calamityModePreviewOpen: false,
+      goodSamaritanAskedAt: 900_000,
+      selectedGoodSamaritanPartnerId: "northline",
+      relayStartedFromHazardAssist: true,
+      recoveryPacketPreviewOpen: false,
+    }));
+    render(<KapitBizDemoApp />);
+
+    expect(await screen.findByText("Started from Safety Check")).toBeInTheDocument();
+    expect(screen.getByText("Simulated brownout + flood-risk alert")).toBeInTheDocument();
+    expect(screen.getByText("Relay chosen over generator estimate: PHP714")).toBeInTheDocument();
+  });
+
+  it("shows Hazard Assist source in Requests and the unified Activity timeline", async () => {
+    localStorage.setItem("kapitbiz-hazard-assist-v1", JSON.stringify({
+      version: 1,
+      alertAcknowledged: true,
+      safetyCheckAnswer: "stock-at-risk",
+      generatorEstimatePhp: 714,
+      relayEstimatePhp: 450,
+      calamityModePreviewOpen: false,
+      goodSamaritanAskedAt: 900_000,
+      selectedGoodSamaritanPartnerId: "northline",
+      relayStartedFromHazardAssist: true,
+      recoveryPacketPreviewOpen: false,
+    }));
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Requests" }));
+    expect(screen.getByText("Started from Safety Check")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Activity" }));
+    expect(screen.getByText("Simulated alert received")).toBeInTheDocument();
+    expect(screen.getByText("Fuel comparison generated")).toBeInTheDocument();
+    expect(screen.getByText("Good Samaritan capacity opened")).toBeInTheDocument();
+    expect(screen.getByText("Relay started from Safety Check")).toBeInTheDocument();
   });
 });

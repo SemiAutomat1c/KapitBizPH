@@ -5,6 +5,10 @@ import {
   type RelayDemoState,
 } from "@/lib/kapitbiz";
 import type { KapitBizDemoSession } from "@/lib/kapitbiz-demo";
+import {
+  buildHazardActivityItems,
+  type KapitBizHazardAssistState,
+} from "@/lib/kapitbiz-hazard-assist";
 
 export interface ActivityItem {
   id: string;
@@ -17,8 +21,11 @@ export interface ActivityItem {
 export function buildActivityFeed(
   state: RelayDemoState,
   session: KapitBizDemoSession,
+  hazardState: KapitBizHazardAssistState,
 ): ActivityItem[] {
-  const feed = candidateEvents(state, session)
+  const hazardItems = buildHazardActivityItems(hazardState, state.scenarioStartedAt)
+    .map((item) => ({ ...item, status: "complete" as const }));
+  const feed = [...hazardItems, ...candidateEvents(state, session)]
     .filter((item): item is ActivityItem => item !== null)
     .sort((left, right) => left.at - right.at);
 

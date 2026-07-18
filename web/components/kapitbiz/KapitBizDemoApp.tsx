@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useKapitBizDemoSession } from "@/lib/kapitbiz-demo";
 import { useKapitBiz } from "@/lib/kapitbiz";
 import { useHazardAssist } from "@/lib/use-hazard-assist";
-import type { SafetyCheckAnswer } from "@/lib/kapitbiz-hazard-assist";
+import { buildHazardRelayContext, type SafetyCheckAnswer } from "@/lib/kapitbiz-hazard-assist";
 import { KapitBizRelayApp } from "./KapitBizRelayApp";
 import ActivityScreen from "./ActivityScreen";
 import HomeScreen from "./HomeScreen";
@@ -65,6 +65,7 @@ export default function KapitBizDemoApp() {
         onClose={() => dispatch({ type: "close-rescue" })}
         onNavigate={(tab) => dispatch({ type: "select-tab", tab })}
         onOpenMenu={() => dispatch({ type: "select-tab", tab: "menu" })}
+        hazardContext={buildHazardRelayContext(hazardAssist.state)}
       />
     );
   }
@@ -130,12 +131,14 @@ export default function KapitBizDemoApp() {
       ) : session.activeTab === "requests" ? (
         <RequestsScreen
           state={relay.state}
+          startedFromHazardAssist={hazardAssist.state.relayStartedFromHazardAssist}
           onOpenRescue={() => dispatch({ type: "open-rescue" })}
         />
       ) : session.activeTab === "activity" ? (
         <ActivityScreen
           state={relay.state}
           session={session}
+          hazardState={hazardAssist.state}
           onOpenRecord={() => dispatch({ type: "open-rescue" })}
         />
       ) : session.activeTab === "menu" ? (

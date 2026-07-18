@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { buildActivityFeed } from "@/lib/kapitbiz-activity";
 import { createDemoSession } from "@/lib/kapitbiz-demo";
+import {
+  createHazardAssistState,
+  hazardAssistReducer,
+} from "@/lib/kapitbiz-hazard-assist";
 import { createCompleteStateForTest } from "./kapitbiz-test-helpers";
 
 describe("KapitBiz activity feed", () => {
@@ -12,7 +16,7 @@ describe("KapitBiz activity feed", () => {
       riderArrivedAt: 4_200_000,
     };
 
-    const feed = buildActivityFeed(complete, session);
+    const feed = buildActivityFeed(complete, session, createHazardAssistState());
 
     expect(feed.map((item) => item.label)).toEqual([
       "Rescue initiated",
@@ -23,5 +27,35 @@ describe("KapitBiz activity feed", () => {
       "Transfer confirmed",
     ]);
     expect(feed.every((item, index) => index === 0 || item.at >= feed[index - 1].at)).toBe(true);
+  });
+
+  it("merges Hazard Assist decisions before custody events", () => {
+    const complete = createCompleteStateForTest();
+    const session = {
+      ...createDemoSession(),
+      onboardingComplete: true,
+      riderArrivedAt: 4_200_000,
+    };
+    let hazard = createHazardAssistState();
+    hazard = hazardAssistReducer(hazard, { type: "acknowledge-alert" });
+    hazard = hazardAssistReducer(hazard, { type: "answer-safety-check", answer: "stock-at-risk" });
+    hazard = hazardAssistReducer(hazard, { type: "ask-good-samaritans", at: 1_000_020 });
+    hazard = hazardAssistReducer(hazard, { type: "start-relay" });
+
+    const feed = buildActivityFeed(complete, session, hazard);
+
+    expect(feed.map((item) => item.label)).toEqual([
+      "Simulated alert received",
+      "Safety Check answered",
+      "Fuel comparison generated",
+      "Good Samaritan capacity opened",
+      "Relay started from Safety Check",
+      "Rescue initiated",
+      "Northline reserved",
+      "Rider dispatched",
+      "Rider arrived",
+      "Arrival at facility",
+      "Transfer confirmed",
+    ]);
   });
 });
