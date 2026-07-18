@@ -331,10 +331,15 @@ export function useKapitBiz() {
   const dispatch = useCallback((action: RelayAction) => {
     setState((current) => relayReducer(current, action));
   }, []);
-  const resetDemo = useCallback(() => dispatch({ type: "reset", at: Date.now() }), [dispatch]);
+  const resetRescue = useCallback(() => {
+    const next = createSeedState(Date.now());
+    setState(next);
+    persistState(next);
+  }, []);
+  const resetDemo = resetRescue;
   const selection = useMemo(() => deriveSelection(state), [state]);
   const reservation = useMemo(() => calculateReservation(state), [state]);
   const availableHosts = useMemo(() => eligibleHosts(state), [state]);
 
-  return { state, hydrated, dispatch, selection, reservation, eligibleHosts: availableHosts, resetDemo };
+  return { state, hydrated, dispatch, selection, reservation, eligibleHosts: availableHosts, resetRescue, resetDemo };
 }

@@ -139,9 +139,9 @@ describe("KapitBiz complete demo navigation", () => {
   });
 
   it.each([
-    ["Preview Storage Host", "Host preparation"],
-    ["Preview Rider", "Rider preparation"],
-  ] as const)("returns from the %s preparation screen to Menu", async (controlName, heading) => {
+    ["Preview Storage Host", "Storage Host preview"],
+    ["Preview Rider", "Rider preview"],
+  ] as const)("returns from the %s preview to Menu", async (controlName, heading) => {
     seedCompletedOnboarding({ activeTab: "menu" });
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
@@ -150,6 +150,21 @@ describe("KapitBiz complete demo navigation", () => {
     expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Return to Merchant" }));
     expect(screen.getByRole("heading", { name: "Business menu" })).toBeInTheDocument();
+  });
+
+  it("routes controlled rescue Menu, notification, and bottom-navigation actions", async () => {
+    seedCompletedOnboarding({ rescueOpen: true });
+    seedRescueAtCapacity();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await screen.findByRole("heading", { name: "2 matches found" });
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+    expect(screen.getByRole("heading", { name: "Business menu" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Home" }));
+    await user.click(screen.getByRole("button", { name: "Resume rescue" }));
+    await user.click(screen.getByRole("button", { name: "Notifications" }));
+    expect(screen.getByRole("heading", { name: "Business activity" })).toBeInTheDocument();
   });
 
   it("offers a resume action for an active rescue without changing it first", async () => {

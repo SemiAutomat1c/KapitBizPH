@@ -516,25 +516,6 @@ describe("KapitBiz Relay flow", () => {
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(SHARE_TEXT));
   });
 
-  it("resets a completed rescue to a fresh persisted incident", async () => {
-    vi.spyOn(Date, "now").mockReturnValue(9_000_000);
-    window.localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(createCompleteState()));
-    const user = userEvent.setup();
-    render(<KapitBizRelayApp />);
-
-    await screen.findByRole("heading", { name: "₱16,500 inventory protected" });
-    await user.click(screen.getByRole("button", { name: /reset demo/i }));
-    expect(screen.getByRole("button", { name: /start inventory rescue/i })).toBeInTheDocument();
-    await waitFor(() => {
-      expect(JSON.parse(window.localStorage.getItem("kapitbiz-relay-v2") ?? "null")).toMatchObject({
-        step: "incident",
-        scenarioStartedAt: 9_000_000,
-        handoffId: null,
-        receiverConfirmedAt: null,
-      });
-    });
-  });
-
   it("closes the transport sheet with Escape and restores focus to its trigger", async () => {
     const user = userEvent.setup();
     render(<KapitBizRelayApp />);

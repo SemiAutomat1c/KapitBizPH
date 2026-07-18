@@ -1,0 +1,94 @@
+"use client";
+
+import { useState } from "react";
+import { CheckCircle2, Clock3, MapPin, PackageCheck, Truck, Warehouse } from "lucide-react";
+import type { RelayDemoState, RelaySelection } from "@/lib/kapitbiz";
+import type { DemoRole, KapitBizDemoSession } from "@/lib/kapitbiz-demo";
+import styles from "./KapitBizRelay.module.css";
+
+type PreviewRole = Exclude<DemoRole, "merchant">;
+
+function riderEta(state: RelayDemoState): string {
+  return `${state.transportOptions.find((option) => option.id === "rider")?.arrivalMinutes ?? 15} min`;
+}
+
+export default function RolePreviewScreen({
+  role,
+  state,
+  selection,
+  session,
+  onMarkRiderArrived,
+  onConfirmReceived,
+  onReturn,
+}: {
+  role: PreviewRole;
+  state: RelayDemoState;
+  selection: RelaySelection;
+  session: KapitBizDemoSession;
+  onMarkRiderArrived: () => void;
+  onConfirmReceived: () => boolean;
+  onReturn: () => void;
+}) {
+  const [status, setStatus] = useState<string | null>(null);
+  const host = state.hosts.find((candidate) => candidate.id === "northline");
+  const isRider = role === "rider";
+
+  const markArrived = () => {
+    onMarkRiderArrived();
+    setStatus(session.riderArrivedAt === null ? "Arrival recorded" : "Arrival already recorded");
+  };
+  const confirmReceived = () => {
+    setStatus(onConfirmReceived() ? "Custody transfer confirmed" : "Waiting for QR handoff");
+  };
+
+  return (
+    <main className={styles.rolePreviewShell} aria-labelledby="role-preview-heading">
+      <section className={styles.rolePreviewContent}>
+        <header className={styles.rolePreviewHeader}>
+          <span className={styles.rolePreviewIcon}>{isRider ? <Truck aria-hidden="true" /> : <Warehouse aria-hidden="true" />}</span>
+          <div>
+            <p className={styles.onboardingEyebrow}>{isRider ? "Rider dispatch" : "Storage handoff"}</p>
+            <h1 id="role-preview-heading">{isRider ? "Rider preview" : "Storage Host preview"}</h1>
+          </div>
+        </header>
+
+        {isRider ? (
+          <>
+            <section className={styles.rolePreviewRoute} aria-label="Rider route">
+              <div><MapPin aria-hidden="true" /><span>Pickup</span><strong>Maya&apos;s Frozen Goods</strong></div>
+              <div><Warehouse aria-hidden="true" /><span>Destination</span><strong>{host?.name ?? "Northline Cold Storage"}</strong></div>
+            </section>
+            <dl className={styles.rolePreviewMetrics}>
+              <div><dt>Payload</dt><dd>{selection.selectedWeightKg} kg / PHP{selection.selectedValue.toLocaleString("en-PH")}</dd></div>
+              <div><dt>Delivery fee</dt><dd>PHP150 fee</dd></div>
+              <div><dt>Vehicle</dt><dd>KB-4922</dd></div>
+              <div><dt>Rider ETA</dt><dd>{riderEta(state)} to pickup</dd></div>
+            </dl>
+            <button className={styles.primaryButton} type="button" onClick={markArrived}>
+              <PackageCheck aria-hidden="true" /> Mark arrived
+            </button>
+          </>
+        ) : (
+          <>
+            <section className={styles.rolePreviewRoute} aria-label="Storage reservation">
+              <div><Warehouse aria-hidden="true" /><span>Reserved storage</span><strong>{host?.name ?? "Northline Cold Storage"}</strong></div>
+              <div><Clock3 aria-hidden="true" /><span>Rider ETA</span><strong>{riderEta(state)} to pickup</strong></div>
+            </section>
+            <dl className={styles.rolePreviewMetrics}>
+              <div><dt>Reserved payload</dt><dd>{selection.selectedWeightKg} kg</dd></div>
+              <div><dt>Storage window</dt><dd>{host?.windowHours ?? 12} hours</dd></div>
+              <div><dt>Storage fee</dt><dd>PHP{host?.fee ?? 300}</dd></div>
+              <div><dt>Handoff record</dt><dd>{state.handoffId ?? "RE-4892-X"}</dd></div>
+            </dl>
+            <button className={styles.primaryButton} type="button" onClick={confirmReceived}>
+              <CheckCircle2 aria-hidden="true" /> Confirm inventory received
+            </button>
+          </>
+        )}
+
+        {status ? <p className={styles.rolePreviewStatus} role="status" aria-live="polite">{status}</p> : null}
+        <button className={styles.secondaryAction} type="button" onClick={onReturn}>Return to Merchant</button>
+      </section>
+    </main>
+  );
+}

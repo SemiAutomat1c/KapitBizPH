@@ -203,6 +203,37 @@
   font-weight: 700;
 }
 
+.rolePreviewShell {
+  min-height: 100dvh;
+  background: #f7fafa;
+  color: #181c1d;
+  padding: 24px 16px;
+}
+
+.rolePreviewContent {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+.rolePreviewHeader { display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #bec8ca; padding-bottom: 16px; }
+.rolePreviewHeader h1 { margin: 0; color: #181c1d; font-size: 1.6rem; line-height: 2rem; }
+.rolePreviewIcon { display: grid; width: 48px; height: 48px; flex: none; place-items: center; border: 1px solid #006d77; border-radius: 8px; background: #e8f3f3; color: #00535b; }
+.rolePreviewIcon svg { width: 25px; height: 25px; }
+.rolePreviewRoute { display: grid; gap: 12px; }
+.rolePreviewRoute div { display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 10px; align-items: center; border-bottom: 1px solid #bec8ca; padding: 12px 0; }
+.rolePreviewRoute svg { width: 20px; height: 20px; grid-row: span 2; color: #006d77; }
+.rolePreviewRoute span, .rolePreviewMetrics dt { color: #526163; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+.rolePreviewRoute strong { color: #00535b; font-size: 1rem; line-height: 1.3rem; }
+.rolePreviewMetrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0; border: 1px solid #bec8ca; border-radius: 6px; overflow: hidden; background: #fff; }
+.rolePreviewMetrics div { display: grid; gap: 5px; min-height: 84px; align-content: center; padding: 12px; }
+.rolePreviewMetrics div:nth-child(odd) { border-right: 1px solid #bec8ca; }
+.rolePreviewMetrics div:nth-child(-n + 2) { border-bottom: 1px solid #bec8ca; }
+.rolePreviewMetrics dd { margin: 0; color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.9rem; font-weight: 700; line-height: 1.3rem; overflow-wrap: anywhere; }
+.rolePreviewStatus { margin: 0; border-left: 3px solid #006d77; background: #e8f3f3; color: #18484d; padding: 10px 12px; font-size: 0.88rem; line-height: 1.3rem; }
+
 .workspace {
   min-width: 0;
   padding: 0 16px 32px;

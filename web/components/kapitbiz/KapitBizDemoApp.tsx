@@ -1,8 +1,8 @@
 "use client";
 
-import { useKapitBizDemoSession, type DemoRole } from "@/lib/kapitbiz-demo";
+import { useKapitBizDemoSession } from "@/lib/kapitbiz-demo";
 import { useKapitBiz } from "@/lib/kapitbiz";
-import { KapitBizRelayWorkspace } from "./KapitBizRelayApp";
+import { KapitBizRelayApp } from "./KapitBizRelayApp";
 import ActivityScreen from "./ActivityScreen";
 import HomeScreen from "./HomeScreen";
 import MenuScreen from "./MenuScreen";
@@ -10,6 +10,7 @@ import MerchantShell from "./MerchantShell";
 import NetworkScreen from "./NetworkScreen";
 import OnboardingFlow from "./OnboardingFlow";
 import RequestsScreen from "./RequestsScreen";
+import RolePreviewScreen from "./RolePreviewScreen";
 import styles from "./KapitBizRelay.module.css";
 
 export default function KapitBizDemoApp() {
@@ -29,16 +30,37 @@ export default function KapitBizDemoApp() {
   }
 
   if (session.role !== "merchant") {
-    return <RolePreparationScreen role={session.role} onReturn={() => dispatch({ type: "select-role", role: "merchant" })} />;
+    return (
+      <RolePreviewScreen
+        role={session.role}
+        state={relay.state}
+        selection={relay.selection}
+        session={session}
+        onMarkRiderArrived={() => dispatch({ type: "mark-rider-arrived", at: Date.now() })}
+        onConfirmReceived={() => {
+          if (relay.state.step !== "handoff") return false;
+          relay.dispatch({ type: "confirm-receiver", at: Date.now() });
+          return true;
+        }}
+        onReturn={() => dispatch({ type: "select-role", role: "merchant" })}
+      />
+    );
   }
 
   if (session.rescueOpen) {
-    return <KapitBizRelayWorkspace relay={relay} onClose={() => dispatch({ type: "close-rescue" })} />;
+    return (
+      <KapitBizRelayApp
+        relay={relay}
+        onClose={() => dispatch({ type: "close-rescue" })}
+        onNavigate={(tab) => dispatch({ type: "select-tab", tab })}
+        onOpenMenu={() => dispatch({ type: "select-tab", tab: "menu" })}
+      />
+    );
   }
 
   const resetDemo = () => {
-    relay.resetDemo();
     resetSession();
+    relay.resetRescue();
   };
   const selectTab = (tab: "home" | "requests" | "network" | "activity") => {
     dispatch({ type: "select-tab", tab });
@@ -77,30 +99,5 @@ export default function KapitBizDemoApp() {
         <NetworkScreen state={relay.state} onStartRequest={() => dispatch({ type: "open-rescue" })} />
       )}
     </MerchantShell>
-  );
-}
-
-function RolePreparationScreen({
-  role,
-  onReturn,
-}: {
-  role: Exclude<DemoRole, "merchant">;
-  onReturn: () => void;
-}) {
-  const roleLabel = role === "host" ? "Host" : "Rider";
-
-  return (
-    <main className={styles.onboardingShell} aria-labelledby="role-preparation-heading">
-      <section className={styles.onboardingContent}>
-        <p className={styles.onboardingEyebrow}>Demo role</p>
-        <h1 id="role-preparation-heading">{roleLabel} preparation</h1>
-        <p className={styles.onboardingCopy} role="status">
-          {roleLabel} role selected for this demo.
-        </p>
-        <button className={styles.primaryButton} type="button" onClick={onReturn}>
-          Return to Merchant
-        </button>
-      </section>
-    </main>
   );
 }

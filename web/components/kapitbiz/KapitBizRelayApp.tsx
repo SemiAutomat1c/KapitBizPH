@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useKapitBiz, type RelayStep } from "@/lib/kapitbiz";
-import { AppHeader, IncidentRail, ProgressHeader } from "./AppChrome";
+import type { MerchantTab } from "@/lib/kapitbiz-demo";
+import { AppHeader, BottomNav, IncidentRail, ProgressHeader } from "./AppChrome";
 import ActiveDisruptionScreen from "./ActiveDisruptionScreen";
 import CapacityMatchScreen from "./CapacityMatchScreen";
 import InventoryTriageScreen from "./InventoryTriageScreen";
@@ -36,15 +37,25 @@ function previousStep(step: RelayStep): RelayStep {
 
 type RelayController = ReturnType<typeof useKapitBiz>;
 
-export function KapitBizRelayWorkspace({
+export interface KapitBizRelayAppProps {
+  relay: RelayController;
+  onClose: () => void;
+  onNavigate: (tab: Exclude<MerchantTab, "menu">) => void;
+  onOpenMenu: () => void;
+}
+
+interface KapitBizRelayWorkspaceProps extends Partial<KapitBizRelayAppProps> {
+  relay: RelayController;
+  showHomeLink?: boolean;
+}
+
+function KapitBizRelayWorkspace({
   relay,
   showHomeLink = false,
   onClose,
-}: {
-  relay: RelayController;
-  showHomeLink?: boolean;
-  onClose?: () => void;
-}) {
+  onNavigate,
+  onOpenMenu,
+}: KapitBizRelayWorkspaceProps) {
   const workspaceRef = useRef<HTMLElement>(null);
   const previousStepRef = useRef(relay.state.step);
   const isFocusedTransaction = relay.state.step === "reservation" || relay.state.step === "handoff";
@@ -77,7 +88,13 @@ export function KapitBizRelayWorkspace({
         aria-label={`${stepLabels[relay.state.step]} rescue step`}
         tabIndex={-1}
       >
-        <AppHeader step={relay.state.step} onBack={goBack} onClose={onClose} />
+        <AppHeader
+          step={relay.state.step}
+          onBack={goBack}
+          onClose={onClose}
+          onMenu={onOpenMenu}
+          onNotifications={onNavigate ? () => onNavigate("activity") : undefined}
+        />
         <ProgressHeader step={relay.state.step} />
         {relay.state.step === "incident" ? (
           <ActiveDisruptionScreen state={relay.state} onStart={() => relay.dispatch({ type: "start-rescue" })} />
@@ -113,7 +130,6 @@ export function KapitBizRelayWorkspace({
           <RescueCompleteScreen
             state={relay.state}
             selection={relay.selection}
-            dispatch={relay.dispatch}
           />
         ) : (
           <section className={styles.placeholder} aria-labelledby="next-step-heading">
@@ -123,7 +139,9 @@ export function KapitBizRelayWorkspace({
           </section>
         )}
       </section>
-      {showHomeLink && !isFocusedTransaction ? (
+      {onNavigate && !isFocusedTransaction ? (
+        <BottomNav activeTab="home" onSelect={onNavigate} />
+      ) : showHomeLink && !isFocusedTransaction ? (
         <nav className={styles.bottomNav} aria-label="Primary navigation">
           <Link className={styles.navItem} href="/" aria-current="page">Home</Link>
         </nav>
@@ -132,7 +150,11 @@ export function KapitBizRelayWorkspace({
   );
 }
 
-export default function KapitBizRelayApp() {
+export function KapitBizRelayApp(props: KapitBizRelayAppProps) {
+  return <KapitBizRelayWorkspace {...props} />;
+}
+
+export default function StandaloneKapitBizRelayApp() {
   const relay = useKapitBiz();
   return <KapitBizRelayWorkspace relay={relay} showHomeLink />;
 }

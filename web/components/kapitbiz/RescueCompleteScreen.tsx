@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, type Dispatch } from "react";
-import { CheckCircle2, Clipboard, Clock3, Share2, ShieldCheck, RotateCcw } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, Clipboard, Clock3, Share2, ShieldCheck } from "lucide-react";
 import {
   calculateReservation,
   expectedFacilityArrivalAt,
-  type RelayAction,
   type RelayDemoState,
   type RelaySelection,
 } from "@/lib/kapitbiz";
@@ -24,11 +23,9 @@ function formatDeadline(timestamp: number): string {
 export default function RescueCompleteScreen({
   state,
   selection,
-  dispatch,
 }: {
   state: RelayDemoState;
   selection: RelaySelection;
-  dispatch: Dispatch<RelayAction>;
 }) {
   const [shareStatus, setShareStatus] = useState<string | null>(null);
   const host = state.hosts.find((candidate) => candidate.id === state.selectedHostId);
@@ -94,7 +91,6 @@ export default function RescueCompleteScreen({
       <div className={styles.completeActions}>
         <button className={styles.primaryButton} type="button" onClick={shareRecord}><Share2 aria-hidden="true" /> Share recovery record</button>
         <button className={styles.secondaryAction} type="button" onClick={() => setShareStatus(SHARE_TEXT)}><Clipboard aria-hidden="true" /> View handoff record</button>
-        <button className={styles.resetButton} type="button" onClick={() => dispatch({ type: "reset", at: Date.now() })}><RotateCcw aria-hidden="true" /> Reset demo</button>
         {shareStatus ? <p className={styles.shareStatus} role="status" aria-live="polite">{shareStatus}</p> : null}
       </div>
     </section>

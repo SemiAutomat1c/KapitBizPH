@@ -29,17 +29,21 @@ export function AppHeader({
   step,
   onBack,
   onClose,
+  onMenu,
+  onNotifications,
 }: {
   step: RelayStep;
   onBack: () => void;
   onClose?: () => void;
+  onMenu?: () => void;
+  onNotifications?: () => void;
 }) {
   const canGoBack = step !== "incident";
 
   return (
     <header className={styles.appHeader}>
       <h1>KapitBiz Relay</h1>
-      {canGoBack || onClose ? (
+      {canGoBack || onClose || onMenu || onNotifications ? (
         <div className={styles.headerActions}>
           {canGoBack ? (
             <button className={styles.iconButton} type="button" onClick={onBack} aria-label="Go back" title="Go back">
@@ -49,6 +53,16 @@ export function AppHeader({
           {onClose ? (
             <button className={styles.iconButton} type="button" onClick={onClose} aria-label="Close rescue" title="Close rescue">
               <X aria-hidden="true" />
+            </button>
+          ) : null}
+          {onNotifications ? (
+            <button className={styles.iconButton} type="button" onClick={onNotifications} aria-label="Notifications" title="Notifications">
+              <Bell aria-hidden="true" />
+            </button>
+          ) : null}
+          {onMenu ? (
+            <button className={styles.iconButton} type="button" onClick={onMenu} aria-label="Open menu" title="Open menu">
+              <Menu aria-hidden="true" />
             </button>
           ) : null}
         </div>
