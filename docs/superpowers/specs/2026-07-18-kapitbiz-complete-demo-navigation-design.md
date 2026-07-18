@@ -108,17 +108,19 @@ type MerchantTab = "home" | "requests" | "network" | "activity" | "menu";
 
 interface KapitBizDemoSession {
   version: 1;
+  onboardingStep: "protect" | "relay" | "verify" | "role" | "business";
   onboardingComplete: boolean;
   businessSetupComplete: boolean;
   role: DemoRole;
   activeTab: MerchantTab;
   rescueOpen: boolean;
+  riderArrivedAt: number | null;
 }
 ```
 
 - Demo session uses a new localStorage key and validates stored values before use.
 - Rescue state remains under the existing `kapitbiz-relay-v2` key.
-- A refresh restores onboarding progress, selected role, current tab, and active rescue state.
+- A refresh restores onboarding progress, selected role, current tab, rider-preview status, and active rescue state.
 - Reset clears both keys and returns to onboarding with a newly timed incident.
 - Invalid or older session data falls back to onboarding without damaging the rescue fixture.
 
