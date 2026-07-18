@@ -187,7 +187,8 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(screen.getByRole("radio", { name: "Pending" }));
     expect(screen.getByText("Host confirmation requested")).toBeInTheDocument();
     await user.click(screen.getByRole("radio", { name: "Completed" }));
-    expect(screen.getByText("No completed rescue requests yet")).toBeInTheDocument();
+    expect(screen.getByText("RE-4817-V")).toBeInTheDocument();
+    expect(screen.queryByText("No completed rescue requests yet")).not.toBeInTheDocument();
     await user.click(screen.getByRole("radio", { name: "Active" }));
     await user.click(screen.getByRole("button", { name: "Resume rescue RE-4892-X" }));
 

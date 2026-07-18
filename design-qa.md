@@ -1,57 +1,42 @@
 # KapitBiz Relay Design QA
 
-## Reference
+## Scope
 
-- Source: `/Users/ryandeniega/Downloads/stitch_kapitbiz_relay_mobile_app`
-- Design system: `kapitbiz_relay_design_system/DESIGN.md`
-- Compared screens: active disruption, inventory triage, available capacity, reservation and transport, QR handoff, and rescue completion.
+The final browser pass used the in-app browser against `http://localhost:3017` at 390 x 844, 768 x 1024, and 1440 x 900. KapitBiz Relay is a frontend-only, seeded, offline-capable, resumable demo. Browser `localStorage` restores the selected role, tab, rescue step, reservation, and custody state; only confirmed `Reset demo` clears both persisted stores and returns to onboarding.
 
-## Viewports
+## Judge Path
 
-- Mobile browser canvas: 390 x 844. The in-app browser captured 375 x 812 after its own scrollbar and chrome were removed from the image.
-- Tablet browser canvas: 768 x 1024.
-- Desktop browser canvas: 1440 x 900.
+```text
+Onboarding -> Merchant setup -> Home -> Start rescue -> Triage -> Network match
+-> Reservation -> Rider preview -> QR handoff -> Host confirmation
+-> Completion -> Requests/Activity record
+```
 
-## Functional Pass
+## Result
 
-- Incident continues to inventory triage.
-- Approved inventory totals remain 42 kg and PHP16,500.
-- Capacity list and offline map fallback both work.
-- Northline reservation and PHP150 rider dispatch produce the PHP450 rescue cost.
-- Refresh resumes the current rescue step and persisted transaction state.
-- QR handoff, evidence preview, receiver confirmation, record sharing fallback, and reset all work.
-- Reset Demo is the only action that starts a fresh incident.
+- All 74 automated tests passed before browser QA; the focused navigation regression passed 23/23 after the QA fix.
+- ESLint completed with 0 errors and one pre-existing warning in `web/components/IntakeForm.tsx:116` for `@next/next/no-img-element`.
+- Production build completed successfully.
+- Mobile: no horizontal overflow, no clipped measured buttons, working header and bottom navigation controls, working request filters, offline Network and rescue maps, partner filters, dialogs, close/resume, role previews, QR custody completion, completion records, refresh persistence, and confirmed reset.
+- Tablet: compact navigation and a 688 x 451.3 px offline map; the 520 x 428.6 px partner dialog stayed inside the 768 x 1024 viewport.
+- Desktop: merchant screens had no rescue rail or phone frame; rescue screens used the 320 px incident rail with a 920 px workspace; the desktop offline map was nonblank at 688 x 451.3 px.
 
-## Responsive Pass
+## QA Fix
 
-- Mobile has no horizontal overflow. A DOM layout assertion measured the recommended capacity action at one text line with no content overflow.
-- Step changes return the document to the top so the active task is immediately visible.
-- Tablet uses the compact progress header without showing the desktop rail.
-- Desktop uses the 320 px incident rail, a constrained 920 px workspace, and the full map presentation.
-- Reservation and handoff hide bottom navigation; completion restores it.
-- Transport dialog fits the mobile viewport and receives initial focus.
+The Completed Requests filter always displayed the seeded historical record `RE-4817-V`, while also displaying the contradictory empty state “No completed rescue requests yet.” The empty copy was removed and a regression assertion now confirms it is absent whenever the completed filter has its seeded record.
 
 ## Visual Comparison
 
-- Preserved the Stitch typography, teal utility palette, compact information density, squared controls, and operational tone.
-- Replaced reference-only values with the approved Tagum-Panabo scenario and retained the supplied hierarchy.
-- Capacity, QR handoff, and completion screenshots were compared directly with their matching Stitch references.
-- No incoherent overlaps, clipped labels, blank maps, or layout shifts were found in the final pass.
+The prototype retained the supplied Stitch design system: Geist-led typography, teal operational controls, compact logistics density, 8 px-or-less radii, and the flat offline-map treatment. Browser-captured incident, triage, reservation, QR handoff, and completion evidence was checked against the supplied Stitch screen sequence at the 390 x 844 browser viewport. The direct local-file reference page could not be opened by the in-app browser URL policy, so the comparison records hierarchy and visual-system alignment rather than a browser-to-browser pixel overlay.
 
 ## Evidence
 
-The committed evidence is reproducible from a clean checkout:
+`docs/qa/kapitbiz-complete-demo/` contains the committed 390 x 844 mobile states (onboarding, home, requests, Network map/dialog, activity, menu, host, rider, reservation, transport dialog, QR handoff, and completion), 768 x 1024 tablet Network states, 1440 x 900 desktop merchant/rescue/map states, and `viewport-results.json`.
 
-- `docs/qa/kapitbiz/mobile-incident.jpg`
-- `docs/qa/kapitbiz/mobile-triage.jpg`
-- `docs/qa/kapitbiz/mobile-capacity-list-final.jpg`
-- `docs/qa/kapitbiz/mobile-capacity-map-fallback.jpg`
-- `docs/qa/kapitbiz/mobile-reservation.jpg`
-- `docs/qa/kapitbiz/mobile-transport-sheet.jpg`
-- `docs/qa/kapitbiz/mobile-qr-handoff.jpg`
-- `docs/qa/kapitbiz/mobile-completion.jpg`
-- `docs/qa/kapitbiz/tablet-capacity-final.jpg`
-- `docs/qa/kapitbiz/desktop-capacity-final.jpg`
-- `docs/qa/kapitbiz/viewport-results.json`
+## Commands
 
-Result: passed.
+```bash
+cd web && npm test && npm run lint && npm run build
+npm run start -- --port 3017
+cd .. && git diff --check
+```

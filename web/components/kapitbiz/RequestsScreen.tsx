@@ -107,7 +107,7 @@ function CompletedRequests({ complete }: { complete: boolean }) {
             <small>PHP16,500 protected value · PHP450 total rescue cost</small>
           </div>
         </article>
-      ) : <p className={styles.emptyState}>No completed rescue requests yet</p>}
+      ) : null}
     </div>
   );
 }

@@ -31,16 +31,17 @@ Use a least-privilege public token restricted to the deployed origin. Do not com
 
 Mapbox is presentation-only. Host availability, affected-area status, route shape, distance, and travel time remain seeded demo data. The app does not call Directions, Geocoding, Traffic, or Optimization APIs.
 
-## Demo flow
+## Judge path
 
-1. Open the simulated localized power interruption.
-2. Start inventory rescue and triage 42 kg worth PHP 16,500.
-3. Review ranked cold-storage capacity and select Northline Cold Storage.
-4. Reserve 12 hours of storage for PHP 300 and a rider for PHP 150.
-5. Confirm the QR handoff using record `RE-4892-X`.
-6. Show the protected inventory, PHP 450 rescue cost, and custody timeline.
+```text
+Onboarding -> Merchant setup -> Home -> Start rescue -> Triage -> Network match
+-> Reservation -> Rider preview -> QR handoff -> Host confirmation
+-> Completion -> Requests/Activity record
+```
 
-Progress is stored in versioned browser `localStorage`, so refreshing resumes the current rescue step. **Reset demo** on the completion screen creates a fresh incident and clears the active transaction.
+Use the seeded merchant path and select Northline Cold Storage plus Rider - Logistics Pro. The Host preview confirms the QR-backed receipt; return to Merchant and open `View Custody Record` to show the completed transaction.
+
+This is a frontend-only, seeded, offline-capable, resumable demo. It has no authentication, backend, payment processing, live utility feed, live capacity, or live routing. Versioned browser `localStorage` restores onboarding progress, merchant tab, rescue step, reservation, and custody record after refresh. **Reset demo** is the only full restart: confirm it from Menu to clear both saved stores and start a newly timed incident.
 
 ## Verify
 
@@ -49,5 +50,13 @@ npm test
 npm run lint
 npm run build
 ```
+
+For the full browser QA pass, serve the built app at `http://localhost:3017`:
+
+```bash
+npm run start -- --port 3017
+```
+
+Committed screenshots and measurements are in `docs/qa/kapitbiz-complete-demo/`. The QA run is reproducible with the commands above and `git diff --check` from the repository root.
 
 The app is built with Next.js 16, React 19, TypeScript, Vitest, Testing Library, Lucide, Mapbox GL JS, QRCode, and localStorage persistence.

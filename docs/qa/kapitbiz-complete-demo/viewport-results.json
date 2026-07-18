@@ -1,0 +1,69 @@
+{
+  "mobile": {
+    "configuredViewport": { "width": 390, "height": 844 },
+    "document": { "clientWidth": 390, "scrollWidth": 390 },
+    "horizontalOverflow": false,
+    "clippedButtonCount": 0,
+    "activeNavigation": ["Home", "Requests", "Network", "Activity"],
+    "networkDialog": {
+      "x": 16,
+      "y": 376.19,
+      "width": 358,
+      "height": 451.81,
+      "right": 374,
+      "bottom": 828,
+      "withinViewport": true
+    },
+    "reservationRefreshRestored": true,
+    "completionRefreshRestored": true,
+    "onboardingRefreshRestored": true,
+    "networkRefreshRestored": true,
+    "offlineMap": { "visible": true, "nonblank": true },
+    "rescueRail": { "display": "none" }
+  },
+  "tablet": {
+    "configuredViewport": { "width": 768, "height": 1024 },
+    "document": { "clientWidth": 768, "scrollWidth": 768 },
+    "horizontalOverflow": false,
+    "offlineMap": { "x": 40, "y": 270.31, "width": 688, "height": 451.3, "nonblank": true },
+    "partnerDialog": {
+      "x": 124,
+      "y": 579.39,
+      "width": 520,
+      "height": 428.61,
+      "right": 644,
+      "bottom": 1008,
+      "withinViewport": true
+    },
+    "rescueRail": { "display": "none" }
+  },
+  "desktop": {
+    "configuredViewport": { "width": 1440, "height": 900 },
+    "horizontalOverflow": false,
+    "merchant": { "rescueRailPresent": false, "phoneFrameCount": 0 },
+    "rescue": {
+      "incidentRail": { "x": 0, "width": 320 },
+      "workspace": { "x": 420, "width": 920 }
+    },
+    "offlineMap": { "x": 376, "y": 270.31, "width": 688, "height": 451.3, "nonblank": true }
+  },
+  "screenshots": {
+    "mobile": [
+      "mobile-onboarding.png",
+      "mobile-home.png",
+      "mobile-requests.png",
+      "mobile-network-map.png",
+      "mobile-network-dialog.png",
+      "mobile-activity.png",
+      "mobile-menu.png",
+      "mobile-rider-reserved-preview.png",
+      "mobile-host-reserved-preview.png",
+      "mobile-reservation.png",
+      "mobile-transport-dialog.png",
+      "mobile-qr-handoff.png",
+      "mobile-completion.png"
+    ],
+    "tablet": ["tablet-network-map.png", "tablet-network-dialog.png"],
+    "desktop": ["desktop-home.png", "desktop-completion.png", "desktop-network-map.png"]
+  }
+}
