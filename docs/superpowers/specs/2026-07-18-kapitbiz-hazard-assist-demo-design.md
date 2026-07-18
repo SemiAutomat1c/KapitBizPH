@@ -18,7 +18,39 @@ The new judge story is:
 - Safety Check answers must lead to business-continuity actions, not generic advice.
 - Fuel-related copy must never advise stockpiling, hoarding, panic buying, or raising crisis prices.
 - Good Samaritan capacity is a voluntary demo response from vetted network members; it must not imply guaranteed rescue.
+- PRD v9 compliance features may appear as honest demo previews, but no screen may imply real legal verification, payment processing, escrow, government SRP integration, or institutional approval.
 - Reset demo remains the only full restart.
+
+## PRD v9 Coverage Map
+
+This spec implements one hackathon-ready slice of the broader KapitBiz Ph PRD v9. It must visibly connect to the product vision without pretending to ship the full marketplace.
+
+### Included in the Hackathon Demo
+
+- **Fast Lane emergency rescue:** The existing direct Relay flow remains the core transaction path for perishable stock and localized outages.
+- **Hazard Feed demo:** The app uses a clearly labeled simulated brownout and flood-risk event, plus simulated fuel reference data.
+- **Safety Check:** The owner answers one operational-safety question, and that answer routes into a continuity action.
+- **Good Samaritan alert:** Seeded vetted partners open temporary capacity for affected MSMEs.
+- **QR proof of delivery:** The existing QR handoff remains the evidence that the transaction happened.
+- **PHP Protected dashboard value:** Existing protected-value metrics stay visible as the pitch metric.
+
+### Visible Demo Previews
+
+These are shown as small, honest product previews so judges can see the PRD v9 direction without needing backend infrastructure:
+
+- **Verified badge preview:** Partner cards and marketplace-related rows show `Verified demo partner` or `KYC preview`, not real verification.
+- **Calamity Mode preview:** The decision surface shows a compact `Calamity Mode guardrail` note explaining that future live offers would be capped by official price ceilings during declared disasters.
+- **Auto-Proof Packet preview:** The completion or Activity surface shows a `Recovery packet preview` action summarizing what would be compiled from inventory, hazard context, QR handoff, and loss notes.
+
+### Deferred After the Hackathon
+
+- Full KYC upload, admin review, and verified marketplace permissions.
+- Slow Lane 24-72 hour blind offers, multi-acceptance, barter negotiation, and anonymous bidder sorting.
+- Real Calamity Mode with official SRP/price-ceiling data and admin controls.
+- Payment gateway authorization, 3.5% escrowed fee capture, cancellation fee, and PHP50 premium reveal.
+- SMS fallback, push notifications, and backend alert delivery.
+- Full Auto-Proof Packet PDF export and institutional review.
+- Nearby Tulong daily surplus marketplace.
 
 ## Demo Scenario
 
@@ -85,12 +117,14 @@ Actions:
 
 - `Start relay`
 - `Ask nearby hosts`
+- `View Calamity Mode`
 - `Mark safe for now`
 
 Behavior:
 
 - `Start relay` opens the existing rescue flow at the triage/incident entry point without creating a second rescue state model.
 - `Ask nearby hosts` opens the Good Samaritan response panel.
+- `View Calamity Mode` expands a compact demo preview: `Future live offers would be checked against official price ceilings during declared calamities. Demo data only.`
 - `Mark safe for now` records local status and returns to Home.
 
 ### 4. Good Samaritan Response Panel
@@ -106,7 +140,7 @@ Each response must show:
 - Partner name.
 - Help offered.
 - Estimated availability.
-- Trust label such as `Vetted demo partner`.
+- Trust label such as `Verified demo partner` or `KYC preview`.
 - Action: `Use in Relay` for eligible storage/transport rows.
 
 Behavior:
@@ -141,6 +175,20 @@ Activity gains hazard-specific timeline rows when the user interacts with Hazard
 
 These rows should merge into the existing custody and completion timeline. The result should feel like one audit trail.
 
+### 7. Recovery Packet Preview
+
+After the relay reaches completion, the demo exposes a compact `Recovery packet preview` from the completion record and Activity screen.
+
+It summarizes:
+
+- Business and inventory baseline: Maya's Frozen Goods and PHP21,800 at-risk stock.
+- Hazard context: simulated brownout plus flood-risk route.
+- Continuity decision: Relay chosen over PHP714 generator estimate.
+- Verified handoff evidence: existing QR custody record.
+- Next product step: exportable packet for recovery-loan or insurance documentation after backend/institutional validation.
+
+The preview must be visibly marked as a demo summary, not an accepted government form or guaranteed claim document.
+
 ## Navigation Model
 
 - Home remains the primary entry point.
@@ -148,6 +196,7 @@ These rows should merge into the existing custody and completion timeline. The r
 - Network gains a visible but compact `Good Samaritan capacity` affordance.
 - Activity shows Hazard Assist events after the user triggers them.
 - Requests can label the active rescue as `Started from Safety Check` after the new flow is used.
+- Completion and Activity can open the `Recovery packet preview` after QR handoff is complete.
 - No new bottom-nav tab is required for the first demo version.
 
 ## State and Persistence
@@ -163,9 +212,11 @@ interface KapitBizHazardAssistState {
   safetyCheckAnswer: SafetyCheckAnswer;
   generatorEstimatePhp: number;
   relayEstimatePhp: number;
+  calamityModePreviewOpen: boolean;
   goodSamaritanAskedAt: number | null;
   selectedGoodSamaritanPartnerId: string | null;
   relayStartedFromHazardAssist: boolean;
+  recoveryPacketPreviewOpen: boolean;
 }
 ```
 
@@ -183,7 +234,9 @@ Persistence rules:
 - `HazardAlertStrip`: compact Home alert entry.
 - `SafetyCheckPanel`: focused question and answer handling.
 - `ContinuityDecisionPanel`: generator-vs-relay calculation and recommendation.
+- `CalamityModePreview`: compact explanation of future price-ceiling guardrails with demo-only labeling.
 - `GoodSamaritanPanel`: seeded capacity/responder list and partner selection.
+- `RecoveryPacketPreview`: compact post-completion summary built from seeded business, hazard, decision, and QR handoff context.
 - Existing merchant screens: integrate the new components without changing the bottom-navigation model.
 - Existing Relay flow: accepts optional source/event labels from the current merchant shell, but does not duplicate rescue state.
 
@@ -194,6 +247,9 @@ Use plain, judge-readable language:
 - Say `simulated alert`, not `live alert`.
 - Say `fuel reference`, not `DOE API`.
 - Say `nearby partners opened capacity`, not `guaranteed rescue`.
+- Say `Verified demo partner` or `KYC preview`, not `verified by KapitBiz`.
+- Say `Calamity Mode guardrail preview`, not `official price enforcement`.
+- Say `Recovery packet preview`, not `approved recovery claim`.
 - Say `schedule delivery earlier` or `review costs`, never `stock up`, `hoard`, or `raise prices before impact`.
 - Say `recommended continuity move`, not `AI decision`.
 - Use `PHP` in code and records; display may use `PHP` or the existing app convention consistently.
@@ -204,7 +260,7 @@ Use plain, judge-readable language:
 - Answer buttons must expose pressed/selected state after activation.
 - Dynamic recommendation changes should use a polite live region.
 - Focus should move to the Safety Check heading when opened and to the recommendation heading after selecting `Stock at risk`.
-- Good Samaritan dialogs or panels must keep existing focus-trap and trigger-restoration standards when presented modally.
+- Good Samaritan, Calamity Mode, and Recovery Packet dialogs or panels must keep existing focus-trap and trigger-restoration standards when presented modally.
 - All touch targets must stay at least 44 by 44 pixels.
 
 ## Responsive Behavior
@@ -218,7 +274,7 @@ Use plain, judge-readable language:
 ## Testing and QA
 
 - Unit tests cover generator-cost calculation, recommendation selection, and Hazard Assist state parsing/fallback.
-- Component tests cover Safety Check actions, Good Samaritan partner selection, and `Start relay` entering the existing rescue flow.
+- Component tests cover Safety Check actions, Good Samaritan partner selection, Calamity Mode preview copy, Recovery Packet preview copy, and `Start relay` entering the existing rescue flow.
 - Navigation tests verify Home, Network, Requests, and Activity reflect Hazard Assist state after the flow is used.
 - Regression tests verify Reset demo clears Hazard Assist state.
 - Existing Relay tests must remain green.
@@ -229,12 +285,15 @@ Use plain, judge-readable language:
   - Good Samaritan response.
   - Relay screen with `Started from Safety Check`.
   - Activity timeline with Hazard Assist rows.
+  - Recovery packet preview after completion.
 
 ## Success Criteria
 
 - A judge can understand the new value in under 30 seconds: KapitBiz notices risk, asks one question, computes the cheaper continuity move, activates nearby help, and proves the handoff.
 - The product still feels like a business-continuity rescue exchange, not a preparedness checklist.
 - All three ideas are present in one flow: Safety Check, fuel-aware decision, and Good Samaritan response.
+- PRD v9 is visibly represented through honest demo previews for KYC/Verified Badge, Calamity Mode, and Auto-Proof Packet.
 - Every new visible control performs a real frontend action.
 - All data is honest seeded demo data; no screen implies a live government, utility, or AI integration.
+- No screen implies real KYC, escrow, SRP enforcement, payment capture, or government claim approval.
 - The existing reservation, rider, QR handoff, completion, Requests, Network, Activity, and Menu flow stays intact.
