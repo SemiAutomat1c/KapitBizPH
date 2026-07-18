@@ -1,7 +1,9 @@
 "use client";
 
 import type { RelayDemoState, RelaySelection } from "@/lib/kapitbiz";
-import { ArrowRight, FileCheck2, MapPinned, ShieldCheck, TriangleAlert } from "lucide-react";
+import type { KapitBizHazardAssistState } from "@/lib/kapitbiz-hazard-assist";
+import { ArrowRight, FileCheck2, MapPinned, ShieldCheck } from "lucide-react";
+import HazardAlertStrip from "./HazardAlertStrip";
 import styles from "./KapitBizRelay.module.css";
 
 function formatPhp(value: number): string {
@@ -13,11 +15,15 @@ export default function HomeScreen({
   selection,
   eligibleHostCount,
   onOpenRescue,
+  hazardAssistState,
+  onRunSafetyCheck,
 }: {
   state: RelayDemoState;
   selection: RelaySelection;
   eligibleHostCount: number;
   onOpenRescue: () => void;
+  hazardAssistState: KapitBizHazardAssistState;
+  onRunSafetyCheck: () => void;
 }) {
   const atRiskValue = state.inventory.reduce((total, item) => total + item.totalValue, 0);
   const rescueStarted = state.step !== "incident";
@@ -30,14 +36,10 @@ export default function HomeScreen({
         <p>Maya&apos;s Frozen Goods</p>
       </div>
 
-      <section className={styles.homeAlert} aria-labelledby="active-incident-heading">
-        <TriangleAlert aria-hidden="true" />
-        <div>
-          <p className={styles.eyebrow}>Active localized interruption</p>
-          <h3 id="active-incident-heading">Power interruption in Tagum City</h3>
-          <p>Seeded six-hour disruption scenario. Inventory protection can begin when you are ready.</p>
-        </div>
-      </section>
+      <HazardAlertStrip onRunSafetyCheck={onRunSafetyCheck} />
+      {hazardAssistState.safetyCheckAnswer === "safe" ? (
+        <p className={styles.safetyCheckRecorded}>Safety Check recorded: safe for now.</p>
+      ) : null}
 
       <section className={styles.homeMetrics} aria-label="Rescue summary">
         <div>

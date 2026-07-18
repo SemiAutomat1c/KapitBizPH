@@ -203,6 +203,68 @@
   font-weight: 700;
 }
 
+.hazardAlertStrip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  border: 1px solid #e8b5a9;
+  border-radius: 8px;
+  background: #fff7f5;
+  color: #8b2516;
+  padding: 14px;
+}
+
+.hazardAlertStrip > svg { width: 24px; height: 24px; margin-top: 3px; }
+.hazardAlertCopy h3, .hazardAlertCopy p { margin: 0; }
+.hazardAlertCopy h3 { color: #181c1d; font-size: 1rem; line-height: 1.35rem; }
+.hazardAlertCopy > p:not(.eyebrow) { margin-top: 4px; color: #3e494a; font-size: 0.88rem; line-height: 1.3rem; }
+.hazardAlertAction { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; gap: 7px; border: 1px solid #a52e2e; border-radius: 6px; background: #a52e2e; color: #fff; padding: 8px 12px; font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+.hazardAlertAction:hover { background: #8b2516; }
+.hazardAlertAction svg { width: 17px; height: 17px; }
+.hazardChips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.hazardChips li { border-radius: 4px; background: #ffe9e4; color: #8b2516; padding: 3px 6px; font-size: 0.68rem; font-weight: 700; }
+.safetyCheckRecorded { margin: -6px 0 0; color: #087a35; font-size: 0.82rem; font-weight: 700; }
+
+.hazardDialog {
+  width: min(100%, 640px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  border: 1px solid #bec8ca;
+  border-radius: 8px;
+  background: #fff;
+  color: #181c1d;
+  box-shadow: 0 12px 32px rgba(24, 28, 29, 0.22);
+}
+
+.hazardDialogHeader { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #bec8ca; background: #f1f4f4; color: #00535b; padding: 8px 12px 8px 18px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+.hazardDialogBody { display: grid; gap: 16px; padding: 22px; }
+.hazardDialogBody h2, .hazardDialogBody p { margin: 0; }
+.hazardDialogBody h2 { color: #181c1d; font-size: 1.45rem; line-height: 1.8rem; }
+.hazardDialogBody h2:focus { outline: 2px solid #006d77; outline-offset: 4px; }
+.hazardDialogBody > p { color: #3e494a; line-height: 1.45rem; }
+.safetyChoices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.safetyChoices button { min-height: 84px; border: 1px solid #bec8ca; border-radius: 6px; background: #fff; color: #00535b; padding: 10px; font-size: 0.86rem; font-weight: 700; }
+.safetyChoices button:hover, .safetyChoices button[aria-pressed="true"] { border-color: #006d77; background: #e8f3f3; }
+.continuityOptions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.continuityOptions section { display: grid; gap: 6px; min-width: 0; border: 1px solid #bec8ca; border-radius: 6px; background: #f7fafa; padding: 14px; }
+.continuityOptions section[data-recommended="true"] { border-color: #087a35; background: #effcf4; }
+.continuityOptions span { color: #3e494a; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+.continuityOptions strong { color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 1.45rem; }
+.continuityOptions small { color: #3e494a; font-size: 0.76rem; line-height: 1.2rem; }
+.continuityActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.continuityActions .primaryButton { grid-column: 1 / -1; min-height: 46px; font-size: 1rem; }
+.continuityActions .secondaryButton { min-height: 44px; }
+.calamityPreview { display: grid; gap: 7px; border-left: 4px solid #c66c00; background: #fff7e8; color: #523200; padding: 14px; }
+.calamityPreview p, .calamityPreview small { margin: 0; font-size: 0.82rem; line-height: 1.35rem; }
+.calamityPreview small { color: #6e4a13; font-weight: 700; }
+
+@media (max-width: 620px) {
+  .hazardAlertStrip { grid-template-columns: auto minmax(0, 1fr); }
+  .hazardAlertAction { grid-column: 1 / -1; width: 100%; }
+  .safetyChoices, .continuityOptions { grid-template-columns: 1fr; }
+}
+
 .rolePreviewShell {
   min-height: 100dvh;
   background: #f7fafa;
