@@ -223,7 +223,7 @@
 .hazardAlertAction { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; gap: 7px; border: 1px solid #a52e2e; border-radius: 6px; background: #a52e2e; color: #fff; padding: 8px 12px; font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
 .hazardAlertAction:hover { background: #8b2516; }
 .hazardAlertAction svg { width: 17px; height: 17px; }
-.hazardNeighborAction { border: 0; background: transparent; color: #00535b; padding: 5px 0; font-size: 0.78rem; font-weight: 700; }
+.hazardNeighborAction { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; border: 0; background: transparent; color: #00535b; padding: 6px 0; font-size: 0.78rem; font-weight: 700; }
 .hazardChips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
 .hazardChips li { border-radius: 4px; background: #ffe9e4; color: #8b2516; padding: 3px 6px; font-size: 0.68rem; font-weight: 700; }
 .safetyCheckRecorded { margin: -6px 0 0; color: #087a35; font-size: 0.82rem; font-weight: 700; }

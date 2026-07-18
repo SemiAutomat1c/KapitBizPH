@@ -1,0 +1,428 @@
+[
+  {
+    "label": "home-mobile",
+    "offscreen": [],
+    "scroll": {
+      "height": 943,
+      "overflowX": false,
+      "width": 390
+    },
+    "tinyButtons": [
+      {
+        "bottom": 47.5,
+        "height": 32,
+        "left": 16,
+        "right": 185.8671875,
+        "text": "KapitBiz Relay",
+        "top": 15.5,
+        "width": 169.8671875
+      },
+      {
+        "bottom": 139.9140625,
+        "height": 34.3984375,
+        "left": 16,
+        "right": 374,
+        "text": "Good morning, Maya",
+        "top": 105.515625,
+        "width": 358
+      },
+      {
+        "bottom": 240.8359375,
+        "height": 21.6015625,
+        "left": 69,
+        "right": 359,
+        "text": "Simulated brownout + flood-risk alert",
+        "top": 219.234375,
+        "width": 290
+      },
+      {
+        "bottom": 409.4609375,
+        "height": 28.7109375,
+        "left": 123.4453125,
+        "right": 266.5546875,
+        "text": "View neighbor capacity",
+        "top": 380.75,
+        "width": 143.109375
+      },
+      {
+        "bottom": 667.4609375,
+        "height": 24,
+        "left": 69,
+        "right": 357,
+        "text": "Prepared for relay",
+        "top": 643.4609375,
+        "width": 288
+      }
+    ],
+    "url": "http://127.0.0.1:3017/",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    },
+    "visibleText": "KapitBiz Relay\n\nMERCHANT HOME\n\nGood morning, Maya\n\nMaya's Frozen Goods\n\nSIMULATED DEMO EVENT\n\nSimulated brownout + flood-risk alert\n\nFeeder outage expected for 6 hours. Low-lying routes may delay deliveries.\n\nDemo feed\nFuel reference\nNeighbor capacity\nRun Safety Check\nView neighbor capacity\nAT RISK\nPHP21,800\nACTIVE REQUEST\nReady\nELIGIBLE HOSTS\n2\nPROTECTED VALUE\nPHP16,500\nPrepared for relay\n\n42 kg selected across 3 inventory groups. 2 hosts can accept this transfer.\n\nStart inventory rescue\n\nSeeded merchant, host, and rider data for this pilot demo.\n\nHome\nRequests\nNetwork\nActivity"
+  },
+  {
+    "label": "safety-focus",
+    "focusStart": "Is Maya's Frozen Goods safe to operate right now?",
+    "focusAfterTab": "Is Maya's Frozen Goods safe to operate right now?",
+    "focusAfterShiftTab": "Is Maya's Frozen Goods safe to operate right now?",
+    "focusAfterEscape": "Run Safety Check"
+  },
+  {
+    "label": "decision-mobile",
+    "offscreen": [],
+    "scroll": {
+      "height": 943,
+      "overflowX": false,
+      "width": 390
+    },
+    "tinyButtons": [
+      {
+        "bottom": 47.5,
+        "height": 32,
+        "left": 16,
+        "right": 185.8671875,
+        "text": "KapitBiz Relay",
+        "top": 15.5,
+        "width": 169.8671875
+      },
+      {
+        "bottom": 139.9140625,
+        "height": 34.3984375,
+        "left": 16,
+        "right": 374,
+        "text": "Good morning, Maya",
+        "top": 105.515625,
+        "width": 358
+      },
+      {
+        "bottom": 240.8359375,
+        "height": 21.6015625,
+        "left": 69,
+        "right": 359,
+        "text": "Simulated brownout + flood-risk alert",
+        "top": 219.234375,
+        "width": 290
+      },
+      {
+        "bottom": 409.4609375,
+        "height": 28.7109375,
+        "left": 123.4453125,
+        "right": 266.5546875,
+        "text": "View neighbor capacity",
+        "top": 380.75,
+        "width": 143.109375
+      },
+      {
+        "bottom": 667.4609375,
+        "height": 24,
+        "left": 69,
+        "right": 357,
+        "text": "Prepared for relay",
+        "top": 643.4609375,
+        "width": 288
+      }
+    ],
+    "url": "http://127.0.0.1:3017/",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    },
+    "visibleText": "KapitBiz Relay\n\nMERCHANT HOME\n\nGood morning, Maya\n\nMaya's Frozen Goods\n\nSIMULATED DEMO EVENT\n\nSimulated brownout + flood-risk alert\n\nFeeder outage expected for 6 hours. Low-lying routes may delay deliveries.\n\nDemo feed\nFuel reference\nNeighbor capacity\nRun Safety Check\nView neighbor capacity\nAT RISK\nPHP21,800\nACTIVE REQUEST\nReady\nELIGIBLE HOSTS\n2\nPROTECTED VALUE\nPHP16,500\nPrepared for relay\n\n42 kg selected across 3 inventory groups. 2 hosts can accept this transfer.\n\nStart inventory rescue\n\nSeeded merchant, host, and rider data for this pilot demo.\n\nSIMULATED DECISION SUPPORT\nRecommended: Relay the frozen stock\n\nIt costs less than running the generator today and gives you a QR custody record.\n\nRUN GENERATOR\nPHP714\n6 hours x 1.75 L/hr x PHP68/L\nRELAY TO COLD STORAGE\nPHP450\nSeeded storage plus rider reservation\nCalamity Mode guardrail preview\n\nFuture live offers would be checked against official price ceilings during declared calamities.\n\nDemo data only. No official SRP feed or enforcemen"
+  },
+  {
+    "label": "good-samaritan-desktop",
+    "offscreen": [],
+    "scroll": {
+      "height": 900,
+      "overflowX": false,
+      "width": 1440
+    },
+    "tinyButtons": [
+      {
+        "bottom": 47.5,
+        "height": 32,
+        "left": 376,
+        "right": 545.8671875,
+        "text": "KapitBiz Relay",
+        "top": 15.5,
+        "width": 169.8671875
+      },
+      {
+        "bottom": 139.9140625,
+        "height": 34.3984375,
+        "left": 376,
+        "right": 1064,
+        "text": "Good morning, Maya",
+        "top": 105.515625,
+        "width": 688
+      },
+      {
+        "bottom": 240.8359375,
+        "height": 21.6015625,
+        "left": 429,
+        "right": 869.703125,
+        "text": "Simulated brownout + flood-risk alert",
+        "top": 219.234375,
+        "width": 440.703125
+      },
+      {
+        "bottom": 278.4296875,
+        "height": 28.7109375,
+        "left": 905.890625,
+        "right": 1049,
+        "text": "View neighbor capacity",
+        "top": 249.71875,
+        "width": 143.109375
+      },
+      {
+        "bottom": 576.75,
+        "height": 24,
+        "left": 429,
+        "right": 1047,
+        "text": "Prepared for relay",
+        "top": 552.75,
+        "width": 618
+      },
+      {
+        "bottom": 415.9921875,
+        "height": 28.796875,
+        "left": 39,
+        "right": 633,
+        "text": "Voluntary Good Samaritan capacity",
+        "top": 387.1953125,
+        "width": 594
+      },
+      {
+        "bottom": 611.8046875,
+        "height": 20,
+        "left": 39,
+        "right": 390.40625,
+        "text": "Northline Cold Storage",
+        "top": 591.8046875,
+        "width": 351.40625
+      },
+      {
+        "bottom": 706.203125,
+        "height": 20,
+        "left": 39,
+        "right": 342.1796875,
+        "text": "Tagum North Micro-Cold Room",
+        "top": 686.203125,
+        "width": 303.1796875
+      },
+      {
+        "bottom": 800.6015625,
+        "height": 20,
+        "left": 39,
+        "right": 407.734375,
+        "text": "Rider - Logistics Pro",
+        "top": 780.6015625,
+        "width": 368.734375
+      }
+    ],
+    "url": "http://127.0.0.1:3017/",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    },
+    "visibleText": "KapitBiz Relay\n\nMERCHANT HOME\n\nGood morning, Maya\n\nMaya's Frozen Goods\n\nSIMULATED DEMO EVENT\n\nSimulated brownout + flood-risk alert\n\nFeeder outage expected for 6 hours. Low-lying routes may delay deliveries.\n\nDemo feed\nFuel reference\nNeighbor capacity\nRun Safety Check\nView neighbor capacity\nAT RISK\nPHP21,800\nACTIVE REQUEST\nReady\nELIGIBLE HOSTS\n2\nPROTECTED VALUE\nPHP16,500\nPrepared for relay\n\n42 kg selected across 3 inventory groups. 2 hosts can accept this transfer.\n\nStart inventory rescue\n\nSeeded merchant, host, and rider data for this pilot demo.\n\nSIMULATED COMMUNITY CAPACITY\nVoluntary Good Samaritan capacity\n\nPrefilled help request: temporary cold storage for the selected 42 kg frozen-stock relay.\n\nVoluntary seeded responses from demo network members. Availability is simulated and rescue is not guaranteed.\n\nNorthline Cold Storage\n\n120 kg temporary freezer capacity\n\nSimulated availability: Available for the next 12 hours\nVERIFIED DEMO PARTNER\nUse Northline Cold Storage in Relay\nTagum "
+  },
+  {
+    "label": "relay-context-desktop",
+    "offscreen": [],
+    "scroll": {
+      "height": 1459,
+      "overflowX": false,
+      "width": 1440
+    },
+    "tinyButtons": [
+      {
+        "bottom": 81.109375,
+        "height": 27.59375,
+        "left": 24,
+        "right": 295,
+        "text": "Power interruption",
+        "top": 53.515625,
+        "width": 271
+      },
+      {
+        "bottom": 47.5,
+        "height": 32,
+        "left": 468,
+        "right": 637.8671875,
+        "text": "KapitBiz Relay",
+        "top": 15.5,
+        "width": 169.8671875
+      },
+      {
+        "bottom": 376.1171875,
+        "height": 27.203125,
+        "left": 601,
+        "right": 843.078125,
+        "text": "Northline Cold Storage",
+        "top": 348.9140625,
+        "width": 242.078125
+      },
+      {
+        "bottom": 580.6328125,
+        "height": 23.203125,
+        "left": 539,
+        "right": 693.1796875,
+        "text": "42 kg reserved",
+        "top": 557.4296875,
+        "width": 154.1796875
+      },
+      {
+        "bottom": 1000.65625,
+        "height": 23.203125,
+        "left": 539,
+        "right": 690.21875,
+        "text": "Choose transport",
+        "top": 977.453125,
+        "width": 151.21875
+      },
+      {
+        "bottom": 1257.09375,
+        "height": 22.3984375,
+        "left": 539,
+        "right": 696.2265625,
+        "text": "Total cost summary",
+        "top": 1234.6953125,
+        "width": 157.2265625
+      }
+    ],
+    "url": "http://127.0.0.1:3017/",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    },
+    "visibleText": "ACTIVE DISRUPTION\n\nPower interruption\n\nSimulated localized six-hour interruption at 11:10 PM.\n\nMerchant\nMaya's Frozen Goods\nSelected value\n₱16,500\nReady to rescue\n42 kg\nIncident\nTriage\nCapacity\nReserve\nHandoff\nComplete\nKapitBiz Relay\nSTARTED FROM SAFETY CHECK\nSimulated brownout + flood-risk alert\nRelay chosen over simulated generator estimate: PHP714\n\nSTORAGE RESERVATION\n\nConfirm reservation\n\nHold verified cold storage and dispatch the selected transfer service.\n\nSTORAGE DESTINATION\n\nNorthline Cold Storage\n\nPanabo City | 28 km away\n\nCAPACITY\n42 kg\nDURATION\n12 hours\nSTORAGE FEE\n₱300.00\n\nINVENTORY FOR TRANSFER\n\n42 kg reserved\n3 groups\nIce cream\n5 kg | 11 tubs\n₱4,400.00\nFrozen chicken\n25 kg | 25 kg\n₱7,000.00\nProcessed meat\n12 kg | 12 kg\n₱5,100.00\nCustody route secured\n\nMaya's Frozen Goods to Northline Cold Storage. Pickup deadline: 12:40 AM.\n\nTRANSPORT\n\nChoose transport\n\nSelect an eligible service to dispatch the rescue transfer.\n\nChoose transport\nStorage reservation (12 hours)\n₱300.00\nTr"
+  },
+  {
+    "label": "recovery-packet-mobile",
+    "offscreen": [],
+    "scroll": {
+      "height": 1361,
+      "overflowX": false,
+      "width": 390
+    },
+    "tinyButtons": [
+      {
+        "bottom": 319.0625,
+        "height": 26.3984375,
+        "left": 16,
+        "right": 374,
+        "text": "Audit timeline",
+        "top": 292.6640625,
+        "width": 358
+      },
+      {
+        "bottom": 128.796875,
+        "height": 28.796875,
+        "left": 39,
+        "right": 351,
+        "text": "Recovery packet preview",
+        "top": 100,
+        "width": 312
+      }
+    ],
+    "url": "http://127.0.0.1:3017/",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    },
+    "visibleText": "KapitBiz Relay\nSTARTED FROM SAFETY CHECK\nSimulated brownout + flood-risk alert\nRelay chosen over simulated generator estimate: PHP714\n₱16,500 inventory protected\n\nRelay operation successfully completed\n\nSTORAGE FACILITY\nNorthline Cold Storage\nPAYLOAD\n42 kg\n\nSecured for 12 hours (Pickup by 12:10 PM)\n\n₱450 RESCUE COST\nRE-4892-X\n\nSIMULATED CUSTODY TIMELINE\n\nAUDIT TIMELINE\nTransfer confirmed\n\nInventory handed to facility lead\n\n12:10 AM\nArrival at facility\n\nRider - Logistics Pro reached Panabo City\n\n12:08 AM\nRescue initiated\n\nSource: Maya's Frozen Goods, Tagum City\n\n11:10 PM\nChain of custody verified\nHandoff record RE-4892-X\nShare recovery record\nRecovery packet preview\nView handoff record\nHome\nRequests\nNetwork\nActivity\nSEEDED RECOVERY RECORD\nRecovery packet preview\n\nDemo summary compiled from the seeded Hazard Assist and completed Relay record.\n\nBUSINESS BASELINE\nMaya's Frozen Goods · PHP21,800 at-risk inventory baseline\nHAZARD CONTEXT\nSimulated brownout + flood-risk route\nCONTINUITY DECIS"
+  },
+  {
+    "label": "activity-desktop",
+    "offscreen": [],
+    "scroll": {
+      "height": 1182,
+      "overflowX": false,
+      "width": 1440
+    },
+    "tinyButtons": [
+      {
+        "bottom": 47.5,
+        "height": 32,
+        "left": 376,
+        "right": 545.8671875,
+        "text": "KapitBiz Relay",
+        "top": 15.5,
+        "width": 169.8671875
+      },
+      {
+        "bottom": 139.9140625,
+        "height": 34.3984375,
+        "left": 376,
+        "right": 1064,
+        "text": "Business activity",
+        "top": 105.515625,
+        "width": 688
+      }
+    ],
+    "url": "http://127.0.0.1:3017/",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    },
+    "visibleText": "KapitBiz Relay\n\nOPERATIONAL LOG\n\nBusiness activity\n\nMerchant, rider, and custody events from this seeded rescue.\n\nContinuity profile reviewed\n11:10 PM\n\nSeeded merchant readiness record for Maya's Frozen Goods.\n\nSimulated alert received\n11:09 PM\n\nSeeded feeder outage and flood-risk route context recorded. Demo data only.\n\nSafety Check answered\n11:09 PM\n\nSimulated Safety Check status recorded: stock at risk.\n\nFuel comparison generated\n11:09 PM\n\nSimulated PHP714 generator estimate compared with the PHP450 seeded Relay estimate.\n\nGood Samaritan capacity opened\n11:09 PM\n\nVoluntary seeded partner capacity was shown; no live notification was sent.\n\nRelay started from Safety Check\n11:09 PM\n\nRelay chosen over the simulated PHP714 generator estimate.\n\nRescue initiated\n11:10 PM\n\nPHP21,800 at-risk inventory identified at Maya's Frozen Goods.\n\nNorthline reserved\n11:15 PM\n\n42 kg reserved at Northline Cold Storage for PHP300.\n\nRider dispatched\n11:15 PM\n\nRider - Logistics Pro assigned for PHP150; PHP4"
+  },
+  {
+    "label": "tablet-requests-completed",
+    "offscreen": [],
+    "scroll": {
+      "height": 1024,
+      "overflowX": false,
+      "width": 768
+    },
+    "tinyButtons": [
+      {
+        "bottom": 47.5,
+        "height": 32,
+        "left": 40,
+        "right": 209.8671875,
+        "text": "KapitBiz Relay",
+        "top": 15.5,
+        "width": 169.8671875
+      },
+      {
+        "bottom": 139.9140625,
+        "height": 34.3984375,
+        "left": 40,
+        "right": 728,
+        "text": "Rescue requests",
+        "top": 105.515625,
+        "width": 688
+      }
+    ],
+    "url": "http://127.0.0.1:3017/",
+    "viewport": {
+      "height": 1024,
+      "width": 768
+    },
+    "visibleText": "KapitBiz Relay\n\nMERCHANT OPERATIONS\n\nRescue requests\n\nTrack the seeded rescue queue for Maya's Frozen Goods.\n\nRequest status\nActive\nPending\nCompleted\n\nNo active rescue requests.\n\nHome\nRequests\nNetwork\nActivity"
+  },
+  {
+    "label": "qr-state",
+    "fallback": false,
+    "qrImg": true
+  },
+  {
+    "label": "after-reset",
+    "offscreen": [],
+    "scroll": {
+      "height": 1024,
+      "overflowX": false,
+      "width": 768
+    },
+    "tinyButtons": [],
+    "url": "http://127.0.0.1:3017/",
+    "viewport": {
+      "height": 1024,
+      "width": 768
+    },
+    "visibleText": "KAPITBIZ RELAY DEMO\n\nProtect what is at risk\n\nStart a guided rescue for your at-risk stock when an interruption threatens your business.\n\nSkip\nNext"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "label": "home-tablet-after-fix",
+  "url": "http://127.0.0.1:3017/",
+  "viewport": {
+    "width": 768,
+    "height": 1024
+  },
+  "neighborCapacityAction": {
+    "text": "View neighbor capacity",
+    "width": 143.109375,
+    "height": 44,
+    "minHeight": "44px",
+    "minWidth": "44px",
+    "display": "flex"
+  },
+  "scroll": {
+    "overflowX": false
+  },
+  "offscreenCount": 0
+}

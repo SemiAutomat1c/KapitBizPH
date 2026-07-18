@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -100,6 +102,12 @@ describe("KapitBiz Hazard Assist UI", () => {
     await user.click(await screen.findByRole("button", { name: "View neighbor capacity" }));
     expect(screen.getByRole("dialog", { name: "Good Samaritan capacity" })).toBeInTheDocument();
     expect(screen.getByText("Prefilled help request: temporary cold storage for the selected 42 kg frozen-stock relay.")).toBeInTheDocument();
+  });
+
+  it("keeps the Home neighbor-capacity action at least 44px high", () => {
+    const css = readFileSync(resolve(process.cwd(), "components/kapitbiz/KapitBizRelay.module.css"), "utf8");
+
+    expect(css).toMatch(/\.hazardNeighborAction\s*\{[^}]*min-height:\s*44px/);
   });
 
   it("keeps Good Samaritan dialog actions at least 44px high", async () => {

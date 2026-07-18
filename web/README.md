@@ -34,14 +34,18 @@ Mapbox is presentation-only. Host availability, affected-area status, route shap
 ## Judge path
 
 ```text
-Onboarding -> Merchant setup -> Home -> Start rescue -> Triage -> Network match
--> Reservation -> Rider preview -> QR handoff -> Host confirmation
--> Completion -> Requests/Activity record
+Onboarding -> Merchant Home -> Run Safety Check -> Stock at risk
+-> generator PHP714 vs Relay PHP450 -> Ask nearby hosts
+-> Use Northline Cold Storage in Relay -> Reservation -> Rider dispatch
+-> QR handoff -> Host confirmation -> PHP protected record
+-> Recovery packet preview -> Activity audit trail
 ```
 
-Use the seeded merchant path and select Northline Cold Storage plus Rider - Logistics Pro. The Host preview confirms the QR-backed receipt; return to Merchant and open `View Custody Record` to show the completed transaction.
+Hazard Assist uses a simulated brownout and flood-risk event, a seeded PHP68/L fuel reference, and voluntary seeded partner responses. It does not connect to a utility, government hazard feed, official SRP source, KYC provider, payment gateway, notification service, insurer, lender, or AI model. Calamity Mode, KYC labels, and the recovery packet are explicitly marked previews.
 
-This is a frontend-only, seeded, offline-capable, resumable demo. It has no authentication, backend, payment processing, live utility feed, live capacity, or live routing. Versioned browser `localStorage` restores onboarding progress, merchant tab, rescue step, reservation, and custody record after refresh. **Reset demo** is the only full restart: confirm it from Menu to clear both saved stores and start a newly timed incident.
+Use the seeded merchant path and choose Northline Cold Storage when the Good Samaritan capacity panel appears. The Host preview confirms the QR-backed receipt; return to Merchant and open `View Custody Record` or `Recovery packet preview` to show the completed transaction evidence.
+
+This is a frontend-only, seeded, offline-capable, resumable demo. It has no authentication, backend, payment processing, live utility feed, live capacity, or live routing. Versioned browser `localStorage` restores onboarding progress, merchant tab, Hazard Assist progress, rescue step, reservation, and custody record after refresh. **Reset demo** is the only full restart: confirm it from Menu to clear the demo-session, Relay, and Hazard Assist stores and start a newly timed incident.
 
 ## Verify
 
@@ -57,6 +61,6 @@ For the full browser QA pass, serve the built app at `http://localhost:3017`:
 npm run start -- --port 3017
 ```
 
-Committed screenshots and measurements are in `docs/qa/kapitbiz-complete-demo/`. The QA run is reproducible with the commands above and `git diff --check` from the repository root.
+Committed screenshots and measurements are in `docs/qa/kapitbiz-complete-demo/` and `docs/qa/kapitbiz-hazard-assist/`. The QA run is reproducible with the commands above and `git diff --check` from the repository root.
 
 The app is built with Next.js 16, React 19, TypeScript, Vitest, Testing Library, Lucide, Mapbox GL JS, QRCode, and localStorage persistence.
