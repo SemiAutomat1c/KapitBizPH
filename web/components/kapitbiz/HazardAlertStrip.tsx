@@ -26,7 +26,7 @@ export default function HazardAlertStrip({
         <button className={styles.hazardAlertAction} type="button" onClick={onRunSafetyCheck}>
           Run Safety Check <ArrowRight aria-hidden="true" />
         </button>
-        <button className={styles.hazardNeighborAction} type="button" onClick={onOpenGoodSamaritan}>View neighbor capacity</button>
+        <button className={styles.hazardNeighborAction} type="button" onClick={onOpenGoodSamaritan}>Good Samaritan capacity</button>
       </div>
     </section>
   );

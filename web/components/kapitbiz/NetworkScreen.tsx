@@ -28,7 +28,7 @@ function HostDetailsDialog({
   eligible: boolean;
   selectedWeightKg: number;
   onClose: () => void;
-  onStartRequest: () => void;
+  onStartRequest: (hostId: string) => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLElement>(null);
@@ -85,7 +85,7 @@ function HostDetailsDialog({
         )}
         <p className={styles.networkSimulatedNotice}>Simulated seeded partner data. Capacity, availability, and route conditions are not live.</p>
         {eligible ? (
-          <button className={styles.primaryButton} type="button" onClick={onStartRequest}>
+          <button className={styles.primaryButton} type="button" onClick={() => onStartRequest(host.id)}>
             Start rescue request
             <ArrowRight aria-hidden="true" />
           </button>
@@ -101,7 +101,7 @@ export default function NetworkScreen({
   onOpenGoodSamaritan,
 }: {
   state: RelayDemoState;
-  onStartRequest: () => void;
+  onStartRequest: (hostId: string) => void;
   onOpenGoodSamaritan: () => void;
 }) {
   const [partnerType, setPartnerType] = useState<PartnerType>("storage");

@@ -51,7 +51,7 @@ export function demoSessionReducer(
     case "complete-onboarding": return { ...state, onboardingComplete: true, businessSetupComplete: state.role === "merchant", activeTab: "home" };
     case "select-tab": return { ...state, activeTab: action.tab, rescueOpen: false };
     case "open-rescue": return { ...state, rescueOpen: true, role: "merchant" };
-    case "close-rescue": return { ...state, rescueOpen: false, activeTab: "home" };
+    case "close-rescue": return { ...state, rescueOpen: false };
     case "mark-rider-arrived": return state.riderArrivedAt === null ? { ...state, riderArrivedAt: action.at } : state;
     case "reset": return createDemoSession();
   }

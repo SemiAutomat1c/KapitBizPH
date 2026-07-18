@@ -392,7 +392,7 @@ describe("KapitBiz complete demo navigation", () => {
     expect(screen.getByText(/250 kg capacity/)).toBeInTheDocument();
   });
 
-  it("opens the shared rescue transaction from host details", async () => {
+  it("carries the reviewed host into the rescue reservation instead of dropping it", async () => {
     seedCompletedOnboarding({ activeTab: "network" });
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
@@ -400,6 +400,7 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(await screen.findByRole("button", { name: "View Northline Cold Storage details" }));
     await user.click(screen.getByRole("button", { name: "Start rescue request" }));
 
-    expect(screen.getByRole("heading", { name: "Localized power interruption alert" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Confirm reservation" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Northline Cold Storage" })).toBeInTheDocument();
   });
 });

@@ -45,6 +45,7 @@ export interface KapitBizRelayAppProps {
   onOpenMenu: () => void;
   onOpenRecoveryPacket?: () => void;
   hazardContext?: HazardRelayContext | null;
+  activeTab?: MerchantTab;
 }
 
 interface KapitBizRelayWorkspaceProps extends Partial<KapitBizRelayAppProps> {
@@ -60,6 +61,7 @@ function KapitBizRelayWorkspace({
   onOpenMenu,
   onOpenRecoveryPacket,
   hazardContext = null,
+  activeTab = "home",
 }: KapitBizRelayWorkspaceProps) {
   const workspaceRef = useRef<HTMLElement>(null);
   const previousStepRef = useRef(relay.state.step);
@@ -153,7 +155,7 @@ function KapitBizRelayWorkspace({
         )}
       </section>
       {onNavigate && !isFocusedTransaction ? (
-        <BottomNav activeTab="home" onSelect={onNavigate} />
+        <BottomNav activeTab={activeTab} onSelect={onNavigate} />
       ) : showHomeLink && !isFocusedTransaction ? (
         <nav className={styles.bottomNav} aria-label="Primary navigation">
           <Link className={styles.navItem} href="/" aria-current="page">Home</Link>

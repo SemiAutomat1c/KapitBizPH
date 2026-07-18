@@ -38,18 +38,23 @@ describe("KapitBiz Hazard Assist UI", () => {
     expect(trigger).toHaveFocus();
   });
 
-  it("shows the exact generator and Relay comparison for stock at risk", async () => {
+  it("shows the exact generator and Relay comparison inline, without leaving Safety Check", async () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
     await user.click(await screen.findByRole("button", { name: "Run Safety Check" }));
-    await user.click(screen.getByRole("button", { name: "Stock at risk" }));
+    const stockAtRisk = screen.getByRole("button", { name: "Stock at risk" });
+    await user.click(stockAtRisk);
 
-    expect(screen.getByRole("dialog", { name: "Recommended continuity move" })).toBeInTheDocument();
+    // Same dialog throughout — answering just reveals the recommendation
+    // below the question, it doesn't open a second screen.
+    expect(screen.getByRole("dialog", { name: "Safety Check" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Is Maya's Frozen Goods safe to operate right now?" })).toBeInTheDocument();
     expect(screen.getByText("6 hours x 1.75 L/hr x PHP68/L")).toBeInTheDocument();
     expect(screen.getByText("PHP714")).toBeInTheDocument();
     expect(screen.getByText("PHP450")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Recommended: Relay the frozen stock" })).toHaveFocus();
+    expect(screen.getByRole("heading", { name: "Recommended: Relay the frozen stock" })).toBeInTheDocument();
+    expect(stockAtRisk).toHaveFocus();
   });
 
   it("shows the honest Calamity Mode preview and marks the business safe", async () => {
@@ -63,8 +68,8 @@ describe("KapitBiz Hazard Assist UI", () => {
     expect(screen.getByText(/Future live offers would be checked against official price ceilings/)).toBeInTheDocument();
     expect(screen.getByText("Demo data only.")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Mark safe for now" }));
-    expect(screen.queryByRole("dialog", { name: "Recommended continuity move" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Safe for now" }));
+    expect(screen.queryByRole("dialog", { name: "Safety Check" })).not.toBeInTheDocument();
     expect(screen.getByText("Safety Check recorded: safe for now.")).toBeInTheDocument();
   });
 
@@ -99,7 +104,7 @@ describe("KapitBiz Hazard Assist UI", () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
-    await user.click(await screen.findByRole("button", { name: "View neighbor capacity" }));
+    await user.click(await screen.findByRole("button", { name: "Good Samaritan capacity" }));
     expect(screen.getByRole("dialog", { name: "Good Samaritan capacity" })).toBeInTheDocument();
     expect(screen.getByText("Prefilled help request: temporary cold storage for the selected 42 kg frozen-stock relay.")).toBeInTheDocument();
   });
@@ -134,7 +139,7 @@ describe("KapitBiz Hazard Assist UI", () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
-    await user.click(await screen.findByRole("button", { name: "View neighbor capacity" }));
+    await user.click(await screen.findByRole("button", { name: "Good Samaritan capacity" }));
 
     const actions = screen.getAllByRole("button", { name: /Use .* in Relay/ });
     expect(actions).toHaveLength(3);

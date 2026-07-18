@@ -15,13 +15,15 @@ import OnboardingFlow from "./OnboardingFlow";
 import RequestsScreen from "./RequestsScreen";
 import RolePreviewScreen from "./RolePreviewScreen";
 import HazardAssistDialog from "./HazardAssistDialog";
-import SafetyCheckPanel from "./SafetyCheckPanel";
-import ContinuityDecisionPanel from "./ContinuityDecisionPanel";
+import SafetyCheckDecisionPanel from "./SafetyCheckDecisionPanel";
 import GoodSamaritanPanel from "./GoodSamaritanPanel";
 import RecoveryPacketPreview from "./RecoveryPacketPreview";
 import styles from "./KapitBizRelay.module.css";
 
-type HazardAssistSurface = "closed" | "safety-check" | "decision" | "good-samaritan";
+// "decision" used to be its own surface (a second dialog after Safety
+// Check). Merged into "safety-check" — the recommendation now renders
+// inline in SafetyCheckDecisionPanel once the answer is "stock-at-risk".
+type HazardAssistSurface = "closed" | "safety-check" | "good-samaritan";
 
 export default function KapitBizDemoApp() {
   const { session, hydrated, dispatch, resetSession } = useKapitBizDemoSession();
@@ -76,6 +78,7 @@ export default function KapitBizDemoApp() {
           onOpenMenu={() => dispatch({ type: "select-tab", tab: "menu" })}
           onOpenRecoveryPacket={openRecoveryPacket}
           hazardContext={buildHazardRelayContext(hazardAssist.state)}
+          activeTab={session.activeTab}
         />
         {hazardAssist.state.recoveryPacketPreviewOpen && relay.state.receiverConfirmedAt !== null ? (
           <HazardAssistDialog label="Recovery packet preview" focusKey="recovery-packet" onClose={closeRecoveryPacket}>
@@ -111,11 +114,18 @@ export default function KapitBizDemoApp() {
       hazardAssist.dispatch({ type: "ask-good-samaritans", at: Date.now() });
       setHazardSurface("good-samaritan");
     }
-    if (answer === "stock-at-risk") setHazardSurface("decision");
+    if (answer === "stock-at-risk") setHazardSurface("safety-check");
   };
   const openGoodSamaritan = () => {
     hazardAssist.dispatch({ type: "ask-good-samaritans", at: Date.now() });
     setHazardSurface("good-samaritan");
+  };
+  const startRelayFromNetwork = (hostId: string) => {
+    relay.dispatch({ type: "start-rescue" });
+    relay.dispatch({ type: "go-to", step: "capacity" });
+    relay.dispatch({ type: "select-host", hostId });
+    relay.dispatch({ type: "go-to", step: "reservation" });
+    dispatch({ type: "open-rescue" });
   };
   const startRelayFromHazardAssist = (partnerId?: string) => {
     if (partnerId) {
@@ -172,7 +182,7 @@ export default function KapitBizDemoApp() {
       ) : (
         <NetworkScreen
           state={relay.state}
-          onStartRequest={() => dispatch({ type: "open-rescue" })}
+          onStartRequest={startRelayFromNetwork}
           onOpenGoodSamaritan={openGoodSamaritan}
         />
       )}
@@ -187,25 +197,19 @@ export default function KapitBizDemoApp() {
         </HazardAssistDialog>
       ) : hazardSurface !== "closed" ? (
         <HazardAssistDialog
-          label={hazardSurface === "safety-check" ? "Safety Check" : hazardSurface === "decision" ? "Recommended continuity move" : "Good Samaritan capacity"}
+          label={hazardSurface === "safety-check" ? "Safety Check" : "Good Samaritan capacity"}
           focusKey={hazardSurface}
           onClose={() => setHazardSurface("closed")}
         >
           {hazardSurface === "safety-check" ? (
-            <SafetyCheckPanel
-              answer={hazardAssist.state.safetyCheckAnswer}
-              onAnswer={answerSafetyCheck}
-              onClose={() => setHazardSurface("closed")}
-            />
-          ) : hazardSurface === "decision" ? (
-            <ContinuityDecisionPanel
+            <SafetyCheckDecisionPanel
               state={hazardAssist.state}
+              onAnswer={answerSafetyCheck}
               onStartRelay={startRelayFromHazardAssist}
               onAskNearbyHosts={() => {
                 hazardAssist.dispatch({ type: "ask-good-samaritans", at: Date.now() });
                 setHazardSurface("good-samaritan");
               }}
-              onMarkSafe={() => answerSafetyCheck("safe")}
               onClose={() => setHazardSurface("closed")}
               onSetCalamityPreview={(open) => hazardAssist.dispatch({ type: "set-calamity-mode-preview", open })}
             />

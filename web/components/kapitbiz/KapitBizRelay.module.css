@@ -241,9 +241,10 @@
 
 .hazardDialogHeader { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #bec8ca; background: #f1f4f4; color: #00535b; padding: 8px 12px 8px 18px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
 .hazardDialogBody { display: grid; gap: 16px; padding: 22px; }
-.hazardDialogBody h2, .hazardDialogBody p { margin: 0; }
+.hazardDialogBody h2, .hazardDialogBody h3, .hazardDialogBody p { margin: 0; }
 .hazardDialogBody h2 { color: #181c1d; font-size: 1.45rem; line-height: 1.8rem; }
 .hazardDialogBody h2:focus { outline: 2px solid #006d77; outline-offset: 4px; }
+.hazardDialogBody h3 { color: #181c1d; font-size: 1.15rem; line-height: 1.5rem; }
 .hazardDialogBody > p { color: #3e494a; line-height: 1.45rem; }
 .safetyChoices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .safetyChoices button { min-height: 84px; border: 1px solid #bec8ca; border-radius: 6px; background: #fff; color: #00535b; padding: 10px; font-size: 0.86rem; font-weight: 700; }
