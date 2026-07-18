@@ -1,6 +1,6 @@
 "use client";
 
-import { useKapitBizDemoSession } from "@/lib/kapitbiz-demo";
+import { useKapitBizDemoSession, type DemoRole } from "@/lib/kapitbiz-demo";
 import { useKapitBiz } from "@/lib/kapitbiz";
 import { KapitBizRelayWorkspace } from "./KapitBizRelayApp";
 import HomeScreen from "./HomeScreen";
@@ -26,11 +26,7 @@ export default function KapitBizDemoApp() {
   }
 
   if (session.role !== "merchant") {
-    return (
-      <main className={styles.restoreShell}>
-        <p role="status">Preparing your KapitBiz Relay role...</p>
-      </main>
-    );
+    return <RolePreparationScreen role={session.role} onReturn={() => dispatch({ type: "select-role", role: "merchant" })} />;
   }
 
   if (session.rescueOpen) {
@@ -67,6 +63,31 @@ export default function KapitBizDemoApp() {
         <SeededPlaceholder tab={session.activeTab} />
       )}
     </MerchantShell>
+  );
+}
+
+function RolePreparationScreen({
+  role,
+  onReturn,
+}: {
+  role: Exclude<DemoRole, "merchant">;
+  onReturn: () => void;
+}) {
+  const roleLabel = role === "host" ? "Host" : "Rider";
+
+  return (
+    <main className={styles.onboardingShell} aria-labelledby="role-preparation-heading">
+      <section className={styles.onboardingContent}>
+        <p className={styles.onboardingEyebrow}>Demo role</p>
+        <h1 id="role-preparation-heading">{roleLabel} preparation</h1>
+        <p className={styles.onboardingCopy} role="status">
+          {roleLabel} role selected for this demo.
+        </p>
+        <button className={styles.primaryButton} type="button" onClick={onReturn}>
+          Return to Merchant
+        </button>
+      </section>
+    </main>
   );
 }
 

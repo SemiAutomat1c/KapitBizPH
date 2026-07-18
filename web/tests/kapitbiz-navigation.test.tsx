@@ -135,6 +135,20 @@ describe("KapitBiz complete demo navigation", () => {
     expect(screen.getByRole("dialog", { name: "Reset KapitBiz demo" })).toBeInTheDocument();
   });
 
+  it.each([
+    ["Preview Storage Host", "Host preparation"],
+    ["Preview Rider", "Rider preparation"],
+  ] as const)("returns from the %s preparation screen to Menu", async (controlName, heading) => {
+    seedCompletedOnboarding({ activeTab: "menu" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: controlName }));
+    expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Return to Merchant" }));
+    expect(screen.getByRole("heading", { name: "Business menu" })).toBeInTheDocument();
+  });
+
   it("offers a resume action for an active rescue without changing it first", async () => {
     seedCompletedOnboarding();
     seedRescueAtCapacity();
