@@ -69,6 +69,35 @@ describe("KapitBiz role previews", () => {
     expect(screen.getByText("Transfer confirmed")).toBeInTheDocument();
   });
 
+  it("shows the selected Tagum North and refrigerated van reservation in both role previews", async () => {
+    seedCompletedOnboarding({ role: "rider" });
+    const handoff = seedRescueAtHandoff({ hostId: "tagum-north", transportId: "van" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    expect(handoff).toMatchObject({
+      step: "handoff",
+      selectedHostId: "tagum-north",
+      selectedTransportId: "van",
+    });
+    expect(await screen.findByText("Tagum North Cold Chain")).toBeInTheDocument();
+    expect(screen.getByText("PHP450 fee")).toBeInTheDocument();
+    expect(screen.getByText("Refrigerated van")).toBeInTheDocument();
+    expect(screen.getByText("30 min to pickup")).toBeInTheDocument();
+    expect(screen.queryByText("Northline Cold Storage")).not.toBeInTheDocument();
+    expect(screen.queryByText("PHP150 fee")).not.toBeInTheDocument();
+    expect(screen.queryByText("KB-4922")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Return to Merchant" }));
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+    await user.click(screen.getByRole("button", { name: "Preview Storage Host" }));
+    expect(await screen.findByText("Tagum North Cold Chain")).toBeInTheDocument();
+    expect(screen.getByText("30 min to pickup")).toBeInTheDocument();
+    expect(screen.getByText("8 hours")).toBeInTheDocument();
+    expect(screen.getByText("PHP250")).toBeInTheDocument();
+    expect(screen.queryByText("Northline Cold Storage")).not.toBeInTheDocument();
+  });
+
   it("keeps the relay unchanged when Host confirmation is attempted before QR handoff", async () => {
     seedCompletedOnboarding({ activeTab: "menu" });
     seedRescueAtCapacity();

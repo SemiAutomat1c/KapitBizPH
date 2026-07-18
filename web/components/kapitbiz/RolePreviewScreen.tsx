@@ -8,8 +8,8 @@ import styles from "./KapitBizRelay.module.css";
 
 type PreviewRole = Exclude<DemoRole, "merchant">;
 
-function riderEta(state: RelayDemoState): string {
-  return `${state.transportOptions.find((option) => option.id === "rider")?.arrivalMinutes ?? 15} min`;
+function formatEta(arrivalMinutes: number | undefined): string {
+  return arrivalMinutes === undefined ? "Unavailable" : `${arrivalMinutes} min`;
 }
 
 export default function RolePreviewScreen({
@@ -30,8 +30,14 @@ export default function RolePreviewScreen({
   onReturn: () => void;
 }) {
   const [status, setStatus] = useState<string | null>(null);
-  const host = state.hosts.find((candidate) => candidate.id === "northline");
+  const allowPreselectionFallback = state.reservationConfirmedAt === null;
+  const host = state.hosts.find((candidate) => candidate.id === state.selectedHostId)
+    ?? (allowPreselectionFallback ? state.hosts.find((candidate) => candidate.id === "northline") : undefined);
+  const transport = state.transportOptions.find((candidate) => candidate.id === state.selectedTransportId)
+    ?? (allowPreselectionFallback ? state.transportOptions.find((candidate) => candidate.id === "rider") : undefined);
   const isRider = role === "rider";
+  const transportLabel = transport?.id === "rider" ? "Rider" : "Transport";
+  const transportDisplay = transport?.id === "rider" ? "KB-4922" : transport?.name ?? "Not assigned";
 
   const markArrived = () => {
     onMarkRiderArrived();
@@ -56,13 +62,13 @@ export default function RolePreviewScreen({
           <>
             <section className={styles.rolePreviewRoute} aria-label="Rider route">
               <div><MapPin aria-hidden="true" /><span>Pickup</span><strong>Maya&apos;s Frozen Goods</strong></div>
-              <div><Warehouse aria-hidden="true" /><span>Destination</span><strong>{host?.name ?? "Northline Cold Storage"}</strong></div>
+              <div><Warehouse aria-hidden="true" /><span>Destination</span><strong>{host?.name ?? "Not assigned"}</strong></div>
             </section>
             <dl className={styles.rolePreviewMetrics}>
               <div><dt>Payload</dt><dd>{selection.selectedWeightKg} kg / PHP{selection.selectedValue.toLocaleString("en-PH")}</dd></div>
-              <div><dt>Delivery fee</dt><dd>PHP150 fee</dd></div>
-              <div><dt>Vehicle</dt><dd>KB-4922</dd></div>
-              <div><dt>Rider ETA</dt><dd>{riderEta(state)} to pickup</dd></div>
+              <div><dt>Delivery fee</dt><dd>{transport ? `PHP${transport.fee.toLocaleString("en-PH")} fee` : "Unavailable"}</dd></div>
+              <div><dt>{transport?.id === "rider" ? "Vehicle" : "Transport"}</dt><dd>{transportDisplay}</dd></div>
+              <div><dt>{transportLabel} ETA</dt><dd>{formatEta(transport?.arrivalMinutes)} to pickup</dd></div>
             </dl>
             <button className={styles.primaryButton} type="button" onClick={markArrived}>
               <PackageCheck aria-hidden="true" /> Mark arrived
@@ -71,13 +77,13 @@ export default function RolePreviewScreen({
         ) : (
           <>
             <section className={styles.rolePreviewRoute} aria-label="Storage reservation">
-              <div><Warehouse aria-hidden="true" /><span>Reserved storage</span><strong>{host?.name ?? "Northline Cold Storage"}</strong></div>
-              <div><Clock3 aria-hidden="true" /><span>Rider ETA</span><strong>{riderEta(state)} to pickup</strong></div>
+              <div><Warehouse aria-hidden="true" /><span>Reserved storage</span><strong>{host?.name ?? "Not assigned"}</strong></div>
+              <div><Clock3 aria-hidden="true" /><span>{transportLabel} ETA</span><strong>{formatEta(transport?.arrivalMinutes)} to pickup</strong></div>
             </section>
             <dl className={styles.rolePreviewMetrics}>
               <div><dt>Reserved payload</dt><dd>{selection.selectedWeightKg} kg</dd></div>
-              <div><dt>Storage window</dt><dd>{host?.windowHours ?? 12} hours</dd></div>
-              <div><dt>Storage fee</dt><dd>PHP{host?.fee ?? 300}</dd></div>
+              <div><dt>Storage window</dt><dd>{host ? `${host.windowHours} hours` : "Unavailable"}</dd></div>
+              <div><dt>Storage fee</dt><dd>{host ? `PHP${host.fee.toLocaleString("en-PH")}` : "Unavailable"}</dd></div>
               <div><dt>Handoff record</dt><dd>{state.handoffId ?? "RE-4892-X"}</dd></div>
             </dl>
             <button className={styles.primaryButton} type="button" onClick={confirmReceived}>

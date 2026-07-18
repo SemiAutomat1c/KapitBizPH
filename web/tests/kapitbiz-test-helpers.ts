@@ -22,11 +22,17 @@ export function seedRescueAtCapacity(): RelayDemoState {
   return capacity;
 }
 
-export function seedRescueAtHandoff(): RelayDemoState {
+export function seedRescueAtHandoff({
+  hostId = "northline",
+  transportId = "rider",
+}: {
+  hostId?: string;
+  transportId?: string;
+} = {}): RelayDemoState {
   let state = seedRescueAtCapacity();
-  state = relayReducer(state, { type: "select-host", hostId: "northline" });
+  state = relayReducer(state, { type: "select-host", hostId });
   state = relayReducer(state, { type: "go-to", step: "reservation" });
-  state = relayReducer(state, { type: "select-transport", transportId: "rider" });
+  state = relayReducer(state, { type: "select-transport", transportId });
   state = relayReducer(state, { type: "confirm-reservation", at: 1_000_100 });
   localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(state));
   return state;
