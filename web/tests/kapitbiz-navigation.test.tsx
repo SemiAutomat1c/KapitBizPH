@@ -2,7 +2,11 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
-import { seedCompletedOnboarding, seedRescueAtCapacity } from "./kapitbiz-test-helpers";
+import {
+  createCompleteStateForTest,
+  seedCompletedOnboarding,
+  seedRescueAtCapacity,
+} from "./kapitbiz-test-helpers";
 
 beforeEach(() => {
   cleanup();
@@ -139,5 +143,25 @@ describe("KapitBiz complete demo navigation", () => {
 
     await user.click(await screen.findByRole("button", { name: "Resume rescue" }));
     expect(screen.getByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
+  });
+
+  it("closes a completed rescue to Home and reopens its custody record", async () => {
+    seedCompletedOnboarding({ rescueOpen: true });
+    createCompleteStateForTest();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    expect(await screen.findByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Close rescue" }));
+
+    expect(screen.getByRole("heading", { name: "Good morning, Maya" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "View Custody Record" })).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("kapitbiz-relay-v2") ?? "{}")).toMatchObject({
+      step: "complete",
+      receiverConfirmedAt: expect.any(Number),
+    });
+
+    await user.click(screen.getByRole("button", { name: "View Custody Record" }));
+    expect(screen.getByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
   });
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { useKapitBiz, type RelayStep } from "@/lib/kapitbiz";
 import { AppHeader, IncidentRail, ProgressHeader } from "./AppChrome";
 import ActiveDisruptionScreen from "./ActiveDisruptionScreen";
@@ -38,9 +39,11 @@ type RelayController = ReturnType<typeof useKapitBiz>;
 export function KapitBizRelayWorkspace({
   relay,
   showHomeLink = false,
+  onClose,
 }: {
   relay: RelayController;
   showHomeLink?: boolean;
+  onClose?: () => void;
 }) {
   const workspaceRef = useRef<HTMLElement>(null);
   const previousStepRef = useRef(relay.state.step);
@@ -74,7 +77,7 @@ export function KapitBizRelayWorkspace({
         aria-label={`${stepLabels[relay.state.step]} rescue step`}
         tabIndex={-1}
       >
-        <AppHeader step={relay.state.step} onBack={goBack} />
+        <AppHeader step={relay.state.step} onBack={goBack} onClose={onClose} />
         <ProgressHeader step={relay.state.step} />
         {relay.state.step === "incident" ? (
           <ActiveDisruptionScreen state={relay.state} onStart={() => relay.dispatch({ type: "start-rescue" })} />
@@ -122,7 +125,7 @@ export function KapitBizRelayWorkspace({
       </section>
       {showHomeLink && !isFocusedTransaction ? (
         <nav className={styles.bottomNav} aria-label="Primary navigation">
-          <a className={styles.navItem} href="/" aria-current="page">Home</a>
+          <Link className={styles.navItem} href="/" aria-current="page">Home</Link>
         </nav>
       ) : null}
     </main>

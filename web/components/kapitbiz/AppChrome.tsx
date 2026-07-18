@@ -1,5 +1,5 @@
 import type { RelayDemoState, RelaySelection, RelayStep } from "@/lib/kapitbiz";
-import { Bell, ChevronLeft, History, House, ListTodo, Menu, Network, type LucideIcon } from "lucide-react";
+import { Bell, ChevronLeft, History, House, ListTodo, Menu, Network, X, type LucideIcon } from "lucide-react";
 import type { MerchantTab } from "@/lib/kapitbiz-demo";
 import styles from "./KapitBizRelay.module.css";
 
@@ -25,16 +25,33 @@ function formatIncidentStart(scenarioStartedAt: number): string {
   }).format(new Date(scenarioStartedAt));
 }
 
-export function AppHeader({ step, onBack }: { step: RelayStep; onBack: () => void }) {
+export function AppHeader({
+  step,
+  onBack,
+  onClose,
+}: {
+  step: RelayStep;
+  onBack: () => void;
+  onClose?: () => void;
+}) {
   const canGoBack = step !== "incident";
 
   return (
     <header className={styles.appHeader}>
       <h1>KapitBiz Relay</h1>
-      {canGoBack ? (
-        <button className={styles.iconButton} type="button" onClick={onBack} aria-label="Go back" title="Go back">
-          <ChevronLeft aria-hidden="true" />
-        </button>
+      {canGoBack || onClose ? (
+        <div className={styles.headerActions}>
+          {canGoBack ? (
+            <button className={styles.iconButton} type="button" onClick={onBack} aria-label="Go back" title="Go back">
+              <ChevronLeft aria-hidden="true" />
+            </button>
+          ) : null}
+          {onClose ? (
+            <button className={styles.iconButton} type="button" onClick={onClose} aria-label="Close rescue" title="Close rescue">
+              <X aria-hidden="true" />
+            </button>
+          ) : null}
+        </div>
       ) : null}
     </header>
   );

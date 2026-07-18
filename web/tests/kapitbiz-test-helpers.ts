@@ -33,5 +33,7 @@ export function seedRescueAtHandoff(): RelayDemoState {
 }
 
 export function createCompleteStateForTest(): RelayDemoState {
-  return relayReducer(seedRescueAtHandoff(), { type: "confirm-receiver", at: 4_300_100 });
+  const complete = relayReducer(seedRescueAtHandoff(), { type: "confirm-receiver", at: 4_300_100 });
+  localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(complete));
+  return complete;
 }

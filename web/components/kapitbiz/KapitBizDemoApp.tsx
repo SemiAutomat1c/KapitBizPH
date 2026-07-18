@@ -34,7 +34,7 @@ export default function KapitBizDemoApp() {
   }
 
   if (session.rescueOpen) {
-    return <KapitBizRelayWorkspace relay={relay} />;
+    return <KapitBizRelayWorkspace relay={relay} onClose={() => dispatch({ type: "close-rescue" })} />;
   }
 
   const resetDemo = () => {
