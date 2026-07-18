@@ -44,7 +44,7 @@ describe("KapitBiz Hazard Assist domain", () => {
     expect(buildHazardRelayContext(state)).toEqual({
       sourceLabel: "Started from Safety Check",
       eventLabel: "Simulated brownout + flood-risk alert",
-      decisionNote: "Relay chosen over generator estimate: PHP714",
+      decisionNote: "Relay chosen over simulated generator estimate: PHP714",
     });
   });
 

@@ -72,3 +72,32 @@ GREEN: 4 test files passed, 61 tests passed; scoped ESLint and `git diff --check
 ### Commit
 
 - `fix: harden Hazard Assist audit context`
+
+## Re-Review Fix: Stale Task 1 Expectation
+
+### Failure Reproduction
+
+```sh
+cd web && npm test -- tests/kapitbiz-hazard-assist.test.ts
+```
+
+RED: 1 of 6 tests failed because the stale expectation used `Relay chosen over generator estimate: PHP714`; implementation correctly returns `Relay chosen over simulated generator estimate: PHP714`.
+
+### GREEN Verification
+
+```sh
+cd web && npm test -- tests/kapitbiz-hazard-assist.test.ts tests/kapitbiz-activity.test.ts tests/kapitbiz-hazard-assist-ui.test.tsx tests/kapitbiz-navigation.test.tsx tests/kapitbiz-flow.test.tsx
+cd web && npm run lint -- lib/kapitbiz-hazard-assist.ts tests/kapitbiz-hazard-assist.test.ts tests/kapitbiz-activity.test.ts tests/kapitbiz-hazard-assist-ui.test.tsx
+git diff --check
+```
+
+GREEN: 5 test files passed; 67 tests passed. Scoped ESLint and `git diff --check` exited 0.
+
+### Changed Files
+
+- `web/tests/kapitbiz-hazard-assist.test.ts`: updated the stale expected Relay context label.
+- `.superpowers/sdd/task-4-report.md`: appended this re-review fix evidence.
+
+### Commit
+
+- `fix: update Hazard Assist context test`
