@@ -237,7 +237,6 @@
   letter-spacing: 0;
 }
 
-.headerTitle { display: flex; align-items: center; gap: 10px; }
 .appHeader h1 { color: #00535b; font-size: 1.5rem; line-height: 2rem; font-weight: 700; }
 .triageIntro h2 { font-size: 2rem; line-height: 2.5rem; }
 .placeholder h2 { font-size: 1.4rem; }
@@ -261,8 +260,7 @@
   text-transform: uppercase;
 }
 
-.iconButton,
-.staticIcon {
+.iconButton {
   display: inline-grid;
   width: 44px;
   min-width: 44px;
@@ -273,8 +271,6 @@
   background: transparent;
   color: #00535b;
 }
-
-.staticIcon { cursor: default; }
 
 .progressHeader {
   display: none;
@@ -790,6 +786,8 @@
   align-content: center;
   justify-items: center;
   gap: 4px;
+  border: 0;
+  background: #fff;
   color: #37575a;
   font-size: 0.75rem;
   font-weight: 600;
@@ -798,7 +796,185 @@
 
 .bottomNav svg { width: 24px; height: 24px; stroke-width: 2.25; }
 .navItem[aria-current="page"] { color: #006d77; }
-.navItemUnavailable { cursor: default; opacity: 0.72; }
+
+.merchantShell {
+  min-height: 100dvh;
+  background: #f7fafa;
+  color: #181c1d;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+.merchantWorkspace {
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 0 16px 32px;
+}
+
+.merchantHeader {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #bec8ca;
+}
+
+.merchantHeader h1 {
+  margin: 0;
+  color: #00535b;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+}
+
+.headerActions { display: flex; gap: 2px; }
+
+.homeScreen,
+.menuScreen,
+.seededPlaceholder {
+  width: 100%;
+  padding-top: 20px;
+}
+
+.homeIntro { border-bottom: 1px solid #bec8ca; padding-bottom: 18px; }
+.homeIntro h2,
+.menuIntro h2,
+.seededPlaceholder h2 { margin: 0; color: #181c1d; font-size: 1.7rem; line-height: 2.15rem; font-weight: 700; }
+.homeIntro > p:last-child { margin: 5px 0 0; color: #526163; font-size: 0.95rem; }
+
+.homeAlert {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+  border: 1px solid #ba1a1a;
+  border-radius: 8px;
+  background: #ffdad6;
+  color: #181c1d;
+  padding: 16px;
+}
+
+.homeAlert > svg { width: 24px; height: 24px; color: #93000a; }
+.homeAlert h3 { margin: 0; font-size: 1rem; line-height: 1.35rem; }
+.homeAlert p:last-child { margin: 5px 0 0; color: #3e494a; font-size: 0.88rem; line-height: 1.3rem; }
+
+.homeMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 16px;
+  border: 1px solid #bec8ca;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.homeMetrics div { display: grid; gap: 5px; min-height: 84px; align-content: center; padding: 12px; }
+.homeMetrics div:nth-child(odd) { border-right: 1px solid #bec8ca; }
+.homeMetrics div:nth-child(-n + 2) { border-bottom: 1px solid #bec8ca; }
+.homeMetrics span { color: #526163; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+.homeMetrics strong { color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 1rem; line-height: 1.25rem; }
+.homeMetrics div:first-child strong { color: #93000a; }
+
+.homeSummary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+  border: 1px solid #bec8ca;
+  border-radius: 8px;
+  background: #fff;
+  padding: 16px;
+}
+
+.homeSummary > svg { width: 24px; height: 24px; color: #006d77; }
+.homeSummary h3 { margin: 0; color: #00535b; font-size: 1rem; }
+.homeSummary p { margin: 5px 0 0; color: #3e494a; font-size: 0.88rem; line-height: 1.35rem; }
+
+.secondaryAction {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  border: 1px solid #006d77;
+  border-radius: 6px;
+  background: #fff;
+  color: #00535b;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.secondaryAction svg { width: 20px; height: 20px; }
+.homeFootnote { display: flex; align-items: center; gap: 6px; margin: 16px 0 0; color: #526163; font-size: 0.75rem; line-height: 1.15rem; }
+.homeFootnote svg { width: 16px; height: 16px; color: #006d77; }
+
+.seededPlaceholder {
+  min-height: 300px;
+  border-bottom: 1px solid #bec8ca;
+}
+
+.seededPlaceholder > p:last-child { max-width: 480px; margin: 10px 0 0; color: #3e494a; line-height: 1.5rem; }
+
+.menuIntro { border-bottom: 1px solid #bec8ca; padding-bottom: 18px; }
+.menuActions { display: grid; margin-top: 12px; }
+.menuActions > button {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+  min-height: 76px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid #bec8ca;
+  background: transparent;
+  color: #181c1d;
+  padding: 12px 4px;
+  text-align: left;
+}
+
+.menuActions > button:hover { background: #f1f4f4; }
+.menuActions > button > svg { width: 24px; height: 24px; color: #006d77; }
+.menuActions span { display: grid; gap: 4px; }
+.menuActions strong { color: #181c1d; font-size: 0.95rem; }
+.menuActions small { color: #526163; font-size: 0.78rem; line-height: 1.1rem; }
+.menuActions .menuDangerAction > svg,
+.menuActions .menuDangerAction strong { color: #93000a; }
+
+.dialogBackdrop {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: grid;
+  align-items: end;
+  background: rgba(24, 28, 29, 0.42);
+  padding: 16px;
+}
+
+.menuDialog {
+  width: 100%;
+  max-width: 520px;
+  margin-inline: auto;
+  border: 1px solid #bec8ca;
+  border-radius: 8px;
+  background: #fff;
+  color: #181c1d;
+  padding: 16px;
+}
+
+.dialogHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #bec8ca; padding-bottom: 10px; }
+.dialogHeader h2 { margin: 0; color: #181c1d; font-size: 1.15rem; line-height: 1.5rem; }
+.menuDialog > p { margin: 16px 0 0; color: #3e494a; line-height: 1.45rem; }
+.dialogActions { display: flex; justify-content: end; gap: 10px; margin-top: 20px; }
+.dangerButton { min-height: 40px; border: 0; border-radius: 4px; background: #93000a; color: #fff; padding: 8px 12px; font-size: 0.8rem; font-weight: 700; }
+
+@media (min-width: 900px) {
+  .merchantShell .bottomNav { display: grid; width: 320px; margin-inline: auto; }
+  .merchantShell { padding-bottom: 96px; }
+}
 
 .handoffScreen,
 .completeScreen { width: 100%; max-width: 680px; margin-inline: auto; padding-top: 16px; }

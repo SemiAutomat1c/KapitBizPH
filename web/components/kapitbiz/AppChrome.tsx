@@ -1,6 +1,6 @@
 import type { RelayDemoState, RelaySelection, RelayStep } from "@/lib/kapitbiz";
 import { Bell, ChevronLeft, History, House, ListTodo, Menu, Network, type LucideIcon } from "lucide-react";
-import Link from "next/link";
+import type { MerchantTab } from "@/lib/kapitbiz-demo";
 import styles from "./KapitBizRelay.module.css";
 
 const steps: { id: RelayStep; label: string }[] = [
@@ -30,29 +30,36 @@ export function AppHeader({ step, onBack }: { step: RelayStep; onBack: () => voi
 
   return (
     <header className={styles.appHeader}>
-      <div className={styles.headerTitle}>
-        <span
-          className={styles.staticIcon}
-          aria-label="Menu unavailable in this demo"
-          title="Menu unavailable in this demo"
-        >
-          <Menu aria-hidden="true" />
-        </span>
-        <h1>KapitBiz Relay</h1>
-      </div>
+      <h1>KapitBiz Relay</h1>
       {canGoBack ? (
         <button className={styles.iconButton} type="button" onClick={onBack} aria-label="Go back" title="Go back">
           <ChevronLeft aria-hidden="true" />
         </button>
-      ) : (
-        <span
-          className={styles.staticIcon}
-          aria-label="Notifications unavailable in this demo"
-          title="Notifications unavailable in this demo"
-        >
+      ) : null}
+    </header>
+  );
+}
+
+export function MerchantHeader({
+  title,
+  onMenu,
+  onNotifications,
+}: {
+  title: string;
+  onMenu: () => void;
+  onNotifications: () => void;
+}) {
+  return (
+    <header className={styles.merchantHeader}>
+      <h1>{title}</h1>
+      <div className={styles.headerActions}>
+        <button className={styles.iconButton} type="button" onClick={onNotifications} aria-label="Notifications" title="Notifications">
           <Bell aria-hidden="true" />
-        </span>
-      )}
+        </button>
+        <button className={styles.iconButton} type="button" onClick={onMenu} aria-label="Open menu" title="Open menu">
+          <Menu aria-hidden="true" />
+        </button>
+      </div>
     </header>
   );
 }
@@ -102,29 +109,33 @@ export function ProgressHeader({ step }: { step: RelayStep }) {
   );
 }
 
-export function BottomNav() {
-  const unavailableItems: { label: string; icon: LucideIcon }[] = [
-    { label: "Requests", icon: ListTodo },
-    { label: "Network", icon: Network },
-    { label: "Activity", icon: History },
-  ];
+const navItems: { id: Exclude<MerchantTab, "menu">; label: string; icon: LucideIcon }[] = [
+  { id: "home", label: "Home", icon: House },
+  { id: "requests", label: "Requests", icon: ListTodo },
+  { id: "network", label: "Network", icon: Network },
+  { id: "activity", label: "Activity", icon: History },
+];
 
+export function BottomNav({
+  activeTab,
+  onSelect,
+}: {
+  activeTab: MerchantTab;
+  onSelect: (tab: Exclude<MerchantTab, "menu">) => void;
+}) {
   return (
     <nav className={styles.bottomNav} aria-label="Primary navigation">
-      <Link className={styles.navItem} href="/" aria-current="page">
-        <House aria-hidden="true" />
-        <span>Home</span>
-      </Link>
-      {unavailableItems.map(({ label, icon: Icon }) => (
-        <span
-          key={label}
-          className={`${styles.navItem} ${styles.navItemUnavailable}`}
-          aria-label={`${label} unavailable in this demo`}
-          title={`${label} unavailable in this demo`}
+      {navItems.map(({ id, label, icon: Icon }) => (
+        <button
+          key={id}
+          type="button"
+          className={styles.navItem}
+          aria-current={activeTab === id ? "page" : undefined}
+          onClick={() => onSelect(id)}
         >
           <Icon aria-hidden="true" />
           <span>{label}</span>
-        </span>
+        </button>
       ))}
     </nav>
   );

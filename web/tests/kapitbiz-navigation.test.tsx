@@ -1,8 +1,8 @@
-import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
-import { seedCompletedOnboarding } from "./kapitbiz-test-helpers";
+import { seedCompletedOnboarding, seedRescueAtCapacity } from "./kapitbiz-test-helpers";
 
 beforeEach(() => {
   cleanup();
@@ -45,15 +45,15 @@ describe("KapitBiz complete demo navigation", () => {
 
     const merchantGreeting = screen.getByRole("heading", { name: "Good morning, Maya" });
     expect(merchantGreeting).toBeInTheDocument();
-    expect(within(merchantGreeting.closest("header")!).getByText("Maya's Frozen Goods")).toBeInTheDocument();
+    expect(screen.getByText("Maya's Frozen Goods")).toBeInTheDocument();
   });
 
-  it("opens the existing merchant rescue experience after completed onboarding", async () => {
+  it("opens Maya's merchant home after completed onboarding", async () => {
     seedCompletedOnboarding();
     render(<KapitBizDemoApp />);
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: "Localized power interruption alert" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Good morning, Maya" })).toBeInTheDocument();
     });
   });
 
@@ -70,5 +70,74 @@ describe("KapitBiz complete demo navigation", () => {
     }));
     render(<KapitBizDemoApp />);
     await waitFor(() => expect(screen.getByRole("heading", { name: "Choose your demo role" })).toBeInTheDocument());
+  });
+
+  it("makes every primary navigation item a working control", async () => {
+    seedCompletedOnboarding();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    for (const [buttonName, heading] of [
+      ["Home", "Good morning, Maya"],
+      ["Requests", "Rescue requests"],
+      ["Network", "Relay network"],
+      ["Activity", "Business activity"],
+    ] as const) {
+      await user.click(await screen.findByRole("button", { name: buttonName }));
+      expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
+    }
+  });
+
+  it("opens Menu and resumes the active rescue from Home", async () => {
+    seedCompletedOnboarding();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Open menu" }));
+    expect(screen.getByRole("heading", { name: "Business menu" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Home" }));
+    await user.click(screen.getByRole("button", { name: "Start inventory rescue" }));
+    expect(screen.getByRole("heading", { name: "Localized power interruption alert" })).toBeInTheDocument();
+  });
+
+  it("opens Activity from notifications", async () => {
+    seedCompletedOnboarding();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Notifications" }));
+    expect(screen.getByRole("heading", { name: "Business activity" })).toBeInTheDocument();
+  });
+
+  it("shows Menu details and asks for reset confirmation", async () => {
+    seedCompletedOnboarding();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Open menu" }));
+    await user.click(screen.getByRole("button", { name: "Business profile" }));
+    expect(screen.getByRole("dialog", { name: "Business profile" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Close Business profile" }));
+
+    await user.click(screen.getByRole("button", { name: "Demo and offline status" }));
+    expect(screen.getByRole("dialog", { name: "Demo and offline status" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Close Demo and offline status" }));
+
+    await user.click(screen.getByRole("button", { name: "About this pilot" }));
+    expect(screen.getByRole("dialog", { name: "About this pilot" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Close About this pilot" }));
+
+    await user.click(screen.getByRole("button", { name: "Reset demo" }));
+    expect(screen.getByRole("dialog", { name: "Reset KapitBiz demo" })).toBeInTheDocument();
+  });
+
+  it("offers a resume action for an active rescue without changing it first", async () => {
+    seedCompletedOnboarding();
+    seedRescueAtCapacity();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Resume rescue" }));
+    expect(screen.getByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
   });
 });

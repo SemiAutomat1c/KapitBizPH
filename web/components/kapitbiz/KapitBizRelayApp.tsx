@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useKapitBiz, type RelayStep } from "@/lib/kapitbiz";
-import { AppHeader, BottomNav, IncidentRail, ProgressHeader } from "./AppChrome";
+import { AppHeader, IncidentRail, ProgressHeader } from "./AppChrome";
 import ActiveDisruptionScreen from "./ActiveDisruptionScreen";
 import CapacityMatchScreen from "./CapacityMatchScreen";
 import InventoryTriageScreen from "./InventoryTriageScreen";
@@ -33,8 +33,15 @@ function previousStep(step: RelayStep): RelayStep {
   return stepOrder[Math.max(0, stepOrder.indexOf(step) - 1)];
 }
 
-export default function KapitBizRelayApp() {
-  const relay = useKapitBiz();
+type RelayController = ReturnType<typeof useKapitBiz>;
+
+export function KapitBizRelayWorkspace({
+  relay,
+  showHomeLink = false,
+}: {
+  relay: RelayController;
+  showHomeLink?: boolean;
+}) {
   const workspaceRef = useRef<HTMLElement>(null);
   const previousStepRef = useRef(relay.state.step);
   const isFocusedTransaction = relay.state.step === "reservation" || relay.state.step === "handoff";
@@ -113,7 +120,16 @@ export default function KapitBizRelayApp() {
           </section>
         )}
       </section>
-      {!isFocusedTransaction ? <BottomNav /> : null}
+      {showHomeLink && !isFocusedTransaction ? (
+        <nav className={styles.bottomNav} aria-label="Primary navigation">
+          <a className={styles.navItem} href="/" aria-current="page">Home</a>
+        </nav>
+      ) : null}
     </main>
   );
+}
+
+export default function KapitBizRelayApp() {
+  const relay = useKapitBiz();
+  return <KapitBizRelayWorkspace relay={relay} showHomeLink />;
 }

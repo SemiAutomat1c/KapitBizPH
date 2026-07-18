@@ -1,14 +1,19 @@
 "use client";
 
 import { useKapitBizDemoSession } from "@/lib/kapitbiz-demo";
-import KapitBizRelayApp from "./KapitBizRelayApp";
+import { useKapitBiz } from "@/lib/kapitbiz";
+import { KapitBizRelayWorkspace } from "./KapitBizRelayApp";
+import HomeScreen from "./HomeScreen";
+import MenuScreen from "./MenuScreen";
+import MerchantShell from "./MerchantShell";
 import OnboardingFlow from "./OnboardingFlow";
 import styles from "./KapitBizRelay.module.css";
 
 export default function KapitBizDemoApp() {
-  const { session, hydrated, dispatch } = useKapitBizDemoSession();
+  const { session, hydrated, dispatch, resetSession } = useKapitBizDemoSession();
+  const relay = useKapitBiz();
 
-  if (!hydrated) {
+  if (!hydrated || !relay.hydrated) {
     return (
       <main className={styles.restoreShell}>
         <p role="status">Restoring KapitBiz Relay...</p>
@@ -28,16 +33,64 @@ export default function KapitBizDemoApp() {
     );
   }
 
+  if (session.rescueOpen) {
+    return <KapitBizRelayWorkspace relay={relay} />;
+  }
+
+  const resetDemo = () => {
+    relay.resetDemo();
+    resetSession();
+  };
+  const selectTab = (tab: "home" | "requests" | "network" | "activity") => {
+    dispatch({ type: "select-tab", tab });
+  };
+
   return (
-    <>
-      <header className={styles.merchantWelcome}>
-        <div>
-          <p>Merchant home</p>
-          <h1>Good morning, Maya</h1>
-        </div>
-        <strong>Maya&apos;s Frozen Goods</strong>
-      </header>
-      <KapitBizRelayApp />
-    </>
+    <MerchantShell
+      activeTab={session.activeTab}
+      onSelectTab={selectTab}
+      onOpenMenu={() => dispatch({ type: "select-tab", tab: "menu" })}
+    >
+      {session.activeTab === "home" ? (
+        <HomeScreen
+          state={relay.state}
+          selection={relay.selection}
+          eligibleHostCount={relay.eligibleHosts.length}
+          onOpenRescue={() => dispatch({ type: "open-rescue" })}
+        />
+      ) : session.activeTab === "menu" ? (
+        <MenuScreen
+          onPreviewRole={(role) => dispatch({ type: "select-role", role })}
+          onResetDemo={resetDemo}
+        />
+      ) : (
+        <SeededPlaceholder tab={session.activeTab} />
+      )}
+    </MerchantShell>
+  );
+}
+
+function SeededPlaceholder({ tab }: { tab: "requests" | "network" | "activity" }) {
+  const content = {
+    requests: {
+      heading: "Rescue requests",
+      copy: "No additional requests are seeded for Maya's business. The active interruption is ready from Home.",
+    },
+    network: {
+      heading: "Relay network",
+      copy: "Two eligible storage hosts are seeded for the selected 42 kg rescue. Detailed host operations arrive in the next demo task.",
+    },
+    activity: {
+      heading: "Business activity",
+      copy: "Your seeded rescue and custody activity will appear here as the demo advances.",
+    },
+  }[tab];
+
+  return (
+    <section className={styles.seededPlaceholder} aria-labelledby={`${tab}-heading`}>
+      <p className={styles.eyebrow}>Seeded demo data</p>
+      <h2 id={`${tab}-heading`}>{content.heading}</h2>
+      <p>{content.copy}</p>
+    </section>
   );
 }
