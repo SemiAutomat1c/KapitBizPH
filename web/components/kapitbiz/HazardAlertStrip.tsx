@@ -4,7 +4,13 @@ import { ArrowRight, TriangleAlert } from "lucide-react";
 import { SEEDED_HAZARD_EVENT } from "@/lib/kapitbiz-hazard-assist";
 import styles from "./KapitBizRelay.module.css";
 
-export default function HazardAlertStrip({ onRunSafetyCheck }: { onRunSafetyCheck: () => void }) {
+export default function HazardAlertStrip({
+  onRunSafetyCheck,
+  onOpenGoodSamaritan,
+}: {
+  onRunSafetyCheck: () => void;
+  onOpenGoodSamaritan: () => void;
+}) {
   return (
     <section className={styles.hazardAlertStrip} aria-labelledby="hazard-alert-heading">
       <TriangleAlert aria-hidden="true" />
@@ -16,9 +22,12 @@ export default function HazardAlertStrip({ onRunSafetyCheck }: { onRunSafetyChec
           <li>Demo feed</li><li>Fuel reference</li><li>Neighbor capacity</li>
         </ul>
       </div>
-      <button className={styles.hazardAlertAction} type="button" onClick={onRunSafetyCheck}>
-        Run Safety Check <ArrowRight aria-hidden="true" />
-      </button>
+      <div className={styles.hazardAlertActions}>
+        <button className={styles.hazardAlertAction} type="button" onClick={onRunSafetyCheck}>
+          Run Safety Check <ArrowRight aria-hidden="true" />
+        </button>
+        <button className={styles.hazardNeighborAction} type="button" onClick={onOpenGoodSamaritan}>View neighbor capacity</button>
+      </div>
     </section>
   );
 }

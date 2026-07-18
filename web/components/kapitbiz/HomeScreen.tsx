@@ -17,6 +17,7 @@ export default function HomeScreen({
   onOpenRescue,
   hazardAssistState,
   onRunSafetyCheck,
+  onOpenGoodSamaritan,
 }: {
   state: RelayDemoState;
   selection: RelaySelection;
@@ -24,6 +25,7 @@ export default function HomeScreen({
   onOpenRescue: () => void;
   hazardAssistState: KapitBizHazardAssistState;
   onRunSafetyCheck: () => void;
+  onOpenGoodSamaritan: () => void;
 }) {
   const atRiskValue = state.inventory.reduce((total, item) => total + item.totalValue, 0);
   const rescueStarted = state.step !== "incident";
@@ -36,7 +38,7 @@ export default function HomeScreen({
         <p>Maya&apos;s Frozen Goods</p>
       </div>
 
-      <HazardAlertStrip onRunSafetyCheck={onRunSafetyCheck} />
+      <HazardAlertStrip onRunSafetyCheck={onRunSafetyCheck} onOpenGoodSamaritan={onOpenGoodSamaritan} />
       {hazardAssistState.safetyCheckAnswer === "safe" ? (
         <p className={styles.safetyCheckRecorded}>Safety Check recorded: safe for now.</p>
       ) : null}

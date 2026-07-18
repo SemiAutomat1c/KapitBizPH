@@ -17,6 +17,7 @@ import RolePreviewScreen from "./RolePreviewScreen";
 import HazardAssistDialog from "./HazardAssistDialog";
 import SafetyCheckPanel from "./SafetyCheckPanel";
 import ContinuityDecisionPanel from "./ContinuityDecisionPanel";
+import GoodSamaritanPanel from "./GoodSamaritanPanel";
 import styles from "./KapitBizRelay.module.css";
 
 type HazardAssistSurface = "closed" | "safety-check" | "decision" | "good-samaritan";
@@ -89,9 +90,23 @@ export default function KapitBizDemoApp() {
     }
     if (answer === "stock-at-risk") setHazardSurface("decision");
   };
-  const startRelayFromHazardAssist = () => {
+  const openGoodSamaritan = () => {
+    hazardAssist.dispatch({ type: "ask-good-samaritans", at: Date.now() });
+    setHazardSurface("good-samaritan");
+  };
+  const startRelayFromHazardAssist = (partnerId?: string) => {
+    if (partnerId) {
+      hazardAssist.dispatch({ type: "select-good-samaritan", partnerId });
+    }
     hazardAssist.dispatch({ type: "start-relay" });
     relay.dispatch({ type: "start-rescue" });
+
+    if (partnerId === "northline" || partnerId === "tagum-north") {
+      relay.dispatch({ type: "go-to", step: "capacity" });
+      relay.dispatch({ type: "select-host", hostId: partnerId });
+      relay.dispatch({ type: "go-to", step: "reservation" });
+    }
+
     setHazardSurface("closed");
     dispatch({ type: "open-rescue" });
   };
@@ -110,6 +125,7 @@ export default function KapitBizDemoApp() {
           onOpenRescue={() => dispatch({ type: "open-rescue" })}
           hazardAssistState={hazardAssist.state}
           onRunSafetyCheck={openSafetyCheck}
+          onOpenGoodSamaritan={openGoodSamaritan}
         />
       ) : session.activeTab === "requests" ? (
         <RequestsScreen
@@ -128,11 +144,15 @@ export default function KapitBizDemoApp() {
           onResetDemo={resetDemo}
         />
       ) : (
-        <NetworkScreen state={relay.state} onStartRequest={() => dispatch({ type: "open-rescue" })} />
+        <NetworkScreen
+          state={relay.state}
+          onStartRequest={() => dispatch({ type: "open-rescue" })}
+          onOpenGoodSamaritan={openGoodSamaritan}
+        />
       )}
       {hazardSurface !== "closed" ? (
         <HazardAssistDialog
-          label={hazardSurface === "safety-check" ? "Safety Check" : "Recommended continuity move"}
+          label={hazardSurface === "safety-check" ? "Safety Check" : hazardSurface === "decision" ? "Recommended continuity move" : "Good Samaritan capacity"}
           focusKey={hazardSurface}
           onClose={() => setHazardSurface("closed")}
         >
@@ -142,7 +162,7 @@ export default function KapitBizDemoApp() {
               onAnswer={answerSafetyCheck}
               onClose={() => setHazardSurface("closed")}
             />
-          ) : (
+          ) : hazardSurface === "decision" ? (
             <ContinuityDecisionPanel
               state={hazardAssist.state}
               onStartRelay={startRelayFromHazardAssist}
@@ -153,6 +173,12 @@ export default function KapitBizDemoApp() {
               onMarkSafe={() => answerSafetyCheck("safe")}
               onClose={() => setHazardSurface("closed")}
               onSetCalamityPreview={(open) => hazardAssist.dispatch({ type: "set-calamity-mode-preview", open })}
+            />
+          ) : (
+            <GoodSamaritanPanel
+              selectedPartnerId={hazardAssist.state.selectedGoodSamaritanPartnerId}
+              onUsePartner={startRelayFromHazardAssist}
+              onClose={() => setHazardSurface("closed")}
             />
           )}
         </HazardAssistDialog>

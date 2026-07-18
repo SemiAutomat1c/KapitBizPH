@@ -65,4 +65,40 @@ describe("KapitBiz Hazard Assist UI", () => {
     expect(screen.queryByRole("dialog", { name: "Recommended continuity move" })).not.toBeInTheDocument();
     expect(screen.getByText("Safety Check recorded: safe for now.")).toBeInTheDocument();
   });
+
+  it("opens voluntary Good Samaritan capacity and enters the existing reservation", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Run Safety Check" }));
+    await user.click(screen.getByRole("button", { name: "Need help" }));
+
+    expect(screen.getByRole("dialog", { name: "Good Samaritan capacity" })).toBeInTheDocument();
+    expect(screen.getByText("120 kg temporary freezer capacity")).toBeInTheDocument();
+    expect(screen.getByText("60 kg temporary freezer capacity")).toBeInTheDocument();
+    expect(screen.getByText("Refrigerated pickup window")).toBeInTheDocument();
+    expect(screen.getAllByText(/Verified demo partner|KYC preview/)).toHaveLength(3);
+    expect(screen.getByText(/Voluntary seeded responses/)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Use Northline Cold Storage in Relay" }));
+    expect(screen.getByRole("heading", { name: "Confirm reservation" })).toBeInTheDocument();
+  });
+
+  it("opens Good Samaritan capacity from Network", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Network" }));
+    await user.click(screen.getByRole("button", { name: "Good Samaritan capacity" }));
+    expect(screen.getByRole("dialog", { name: "Good Samaritan capacity" })).toBeInTheDocument();
+  });
+
+  it("opens Good Samaritan capacity directly from Home", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "View neighbor capacity" }));
+    expect(screen.getByRole("dialog", { name: "Good Samaritan capacity" })).toBeInTheDocument();
+    expect(screen.getByText("Prefilled help request: temporary cold storage for the selected 42 kg frozen-stock relay.")).toBeInTheDocument();
+  });
 });

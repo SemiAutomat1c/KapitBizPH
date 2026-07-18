@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowRight, Map, MapPinned, Snowflake, Truck, X } from "lucide-react";
+import { ArrowRight, HeartHandshake, Map, MapPinned, Snowflake, Truck, X } from "lucide-react";
 import { deriveSelection, eligibleHosts, type CapacityHost, type RelayDemoState } from "@/lib/kapitbiz";
 import CapacityMap from "./CapacityMap";
 import styles from "./KapitBizRelay.module.css";
@@ -98,9 +98,11 @@ function HostDetailsDialog({
 export default function NetworkScreen({
   state,
   onStartRequest,
+  onOpenGoodSamaritan,
 }: {
   state: RelayDemoState;
   onStartRequest: () => void;
+  onOpenGoodSamaritan: () => void;
 }) {
   const [partnerType, setPartnerType] = useState<PartnerType>("storage");
   const [view, setView] = useState<NetworkView>("list");
@@ -133,6 +135,12 @@ export default function NetworkScreen({
         <h2 id="network-heading">Relay network</h2>
         <p>Simulated storage hosts and transport options for the active {selectedWeightKg} kg rescue.</p>
       </header>
+
+      <button className={styles.networkAssistAction} type="button" onClick={onOpenGoodSamaritan} aria-label="Good Samaritan capacity">
+        <HeartHandshake aria-hidden="true" />
+        <span><strong>Good Samaritan capacity</strong><small>View voluntary seeded responses to the simulated alert.</small></span>
+        <ArrowRight aria-hidden="true" />
+      </button>
 
       <div className={styles.networkControls}>
         <div className={styles.segmentedControl} role="group" aria-label="Partner type">
@@ -183,7 +191,7 @@ export default function NetworkScreen({
                 <div className={styles.networkRowCopy}>
                   <div className={styles.networkRowTitle}>
                     <h3>{host.name}</h3>
-                    <span>{eligible ? "Eligible" : ineligibleLabel(host, selectedWeightKg)}</span>
+                    <span>{eligible ? "Eligible" : ineligibleLabel(host, selectedWeightKg)} | KYC preview</span>
                   </div>
                   <p>{host.locality} | {host.capacityKg} kg free | {host.transferMinutes} min | {formatCurrency(host.fee)}</p>
                   {!eligible ? <small>{host.reason}</small> : null}

@@ -219,9 +219,11 @@
 .hazardAlertCopy h3, .hazardAlertCopy p { margin: 0; }
 .hazardAlertCopy h3 { color: #181c1d; font-size: 1rem; line-height: 1.35rem; }
 .hazardAlertCopy > p:not(.eyebrow) { margin-top: 4px; color: #3e494a; font-size: 0.88rem; line-height: 1.3rem; }
+.hazardAlertActions { display: grid; gap: 4px; justify-items: end; }
 .hazardAlertAction { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; gap: 7px; border: 1px solid #a52e2e; border-radius: 6px; background: #a52e2e; color: #fff; padding: 8px 12px; font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
 .hazardAlertAction:hover { background: #8b2516; }
 .hazardAlertAction svg { width: 17px; height: 17px; }
+.hazardNeighborAction { border: 0; background: transparent; color: #00535b; padding: 5px 0; font-size: 0.78rem; font-weight: 700; }
 .hazardChips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
 .hazardChips li { border-radius: 4px; background: #ffe9e4; color: #8b2516; padding: 3px 6px; font-size: 0.68rem; font-weight: 700; }
 .safetyCheckRecorded { margin: -6px 0 0; color: #087a35; font-size: 0.82rem; font-weight: 700; }
@@ -258,11 +260,26 @@
 .calamityPreview { display: grid; gap: 7px; border-left: 4px solid #c66c00; background: #fff7e8; color: #523200; padding: 14px; }
 .calamityPreview p, .calamityPreview small { margin: 0; font-size: 0.82rem; line-height: 1.35rem; }
 .calamityPreview small { color: #6e4a13; font-weight: 700; }
+.goodSamaritanRequest { color: #18484d !important; font-weight: 700; }
+.goodSamaritanDisclosure { border-left: 3px solid #c66c00; background: #fff7e8; color: #523200 !important; padding: 10px 12px; font-size: 0.82rem; }
+.responderList { display: grid; margin: 0; border-top: 1px solid #bec8ca; padding: 0; list-style: none; }
+.responderRow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; border-bottom: 1px solid #bec8ca; padding: 14px 0; }
+.responderRow[data-selected="true"] { background: #effcf4; }
+.responderRow h3, .responderRow p { margin: 0; }
+.responderRow h3 { font-size: 0.95rem; line-height: 1.25rem; }
+.responderRow p { margin-top: 3px; color: #18484d; font-size: 0.84rem; font-weight: 700; line-height: 1.25rem; }
+.responderRow small { display: block; margin-top: 4px; color: #526163; font-size: 0.72rem; line-height: 1.15rem; }
+.responderTrust { display: grid; justify-items: end; gap: 5px; text-align: right; }
+.responderTrust span { color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
 
 @media (max-width: 620px) {
   .hazardAlertStrip { grid-template-columns: auto minmax(0, 1fr); }
-  .hazardAlertAction { grid-column: 1 / -1; width: 100%; }
+  .hazardAlertActions { grid-column: 1 / -1; justify-items: stretch; }
+  .hazardAlertAction { width: 100%; }
+  .hazardNeighborAction { justify-self: center; }
   .safetyChoices, .continuityOptions { grid-template-columns: 1fr; }
+  .responderRow { grid-template-columns: 1fr; }
+  .responderTrust { justify-items: start; text-align: left; }
 }
 
 .rolePreviewShell {
@@ -972,6 +989,11 @@
 .emptyState { margin: 0; border-bottom: 1px solid #bec8ca; color: #526163; padding: 4px 0 16px; font-size: 0.9rem; }
 
 .networkScreen { display: grid; gap: 18px; width: 100%; padding-top: 20px; }
+.networkAssistAction { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: 10px; border: 1px solid #8bbdc1; border-radius: 6px; background: #e8f3f3; color: #00535b; padding: 12px; text-align: left; }
+.networkAssistAction > svg { width: 22px; height: 22px; }
+.networkAssistAction > span { display: grid; gap: 3px; min-width: 0; }
+.networkAssistAction strong { font-size: 0.9rem; }
+.networkAssistAction small { color: #3e494a; font-size: 0.75rem; line-height: 1.15rem; }
 .networkControls { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .networkControls .segmentedControl { flex: 1; min-width: 0; }
 .networkList { display: grid; margin: 0; border-top: 1px solid #bec8ca; padding: 0; list-style: none; }
@@ -1002,6 +1024,8 @@
   .networkRow { grid-template-columns: 38px minmax(0, 1fr); gap: 10px; }
   .networkRowIcon { width: 38px; height: 38px; }
   .networkRow .inlineAction { grid-column: 2; justify-self: start; padding-left: 0; }
+  .networkAssistAction { grid-template-columns: 32px minmax(0, 1fr); }
+  .networkAssistAction > svg:last-child { grid-column: 2; justify-self: start; }
 }
 
 .activityFeed { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
