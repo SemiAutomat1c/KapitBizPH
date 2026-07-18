@@ -82,7 +82,7 @@ export default function CapacityMatchScreen({
                 <h3>{recommendedHost.name}</h3>
                 <p><span>{recommendedHost.locality}</span> | <span>{recommendedHost.distanceKm} km away</span></p>
               </div>
-              <span className={styles.verifiedBadge}>Network-verified</span>
+              <span className={styles.verifiedBadge}>Verified demo partner</span>
             </div>
             <dl className={styles.hostMetrics}>
               <div><dt>Available space</dt><dd>{recommendedHost.capacityKg} kg</dd></div>

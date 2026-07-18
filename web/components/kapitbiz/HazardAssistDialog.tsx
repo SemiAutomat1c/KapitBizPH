@@ -35,16 +35,23 @@ export default function HazardAssistDialog({ label, focusKey, onClose, children 
     }
     if (event.key !== "Tab") return;
 
-    const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+    const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(
       'button:not([disabled]), input:not([disabled]), [href], select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    );
+    ) ?? []);
     if (!focusable || focusable.length === 0) return;
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
+    const activeElement = document.activeElement;
+    if (!dialogRef.current?.contains(activeElement)) {
+      event.preventDefault();
+      (event.shiftKey ? last : first).focus();
+    } else if (event.shiftKey && activeElement !== first && !focusable.includes(activeElement as HTMLElement)) {
+      event.preventDefault();
+      first.focus();
+    } else if (event.shiftKey && activeElement === first) {
       event.preventDefault();
       last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
+    } else if (!event.shiftKey && activeElement === last) {
       event.preventDefault();
       first.focus();
     }

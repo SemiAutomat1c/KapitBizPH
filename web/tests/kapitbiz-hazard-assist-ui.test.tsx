@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
@@ -108,6 +108,26 @@ describe("KapitBiz Hazard Assist UI", () => {
     const css = readFileSync(resolve(process.cwd(), "components/kapitbiz/KapitBizRelay.module.css"), "utf8");
 
     expect(css).toMatch(/\.hazardNeighborAction\s*\{[^}]*min-height:\s*44px/);
+  });
+
+  it("keeps focus inside Hazard Assist when Shift+Tab starts on the dialog heading", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Run Safety Check" }));
+    const dialog = screen.getByRole("dialog", { name: "Safety Check" });
+    expect(screen.getByRole("heading", { name: "Is Maya's Frozen Goods safe to operate right now?" })).toHaveFocus();
+
+    fireEvent.keyDown(dialog, { key: "Tab", shiftKey: true });
+    expect(screen.getByRole("button", { name: "Close Safety Check" })).toHaveFocus();
+  });
+
+  it("keeps Hazard Assist routed Relay trust copy explicitly demo-scoped", () => {
+    const capacityScreen = readFileSync(resolve(process.cwd(), "components/kapitbiz/CapacityMatchScreen.tsx"), "utf8");
+    const reservationScreen = readFileSync(resolve(process.cwd(), "components/kapitbiz/ReservationScreen.tsx"), "utf8");
+
+    expect(capacityScreen).not.toContain("Network-verified");
+    expect(reservationScreen).not.toContain("verified cold storage");
   });
 
   it("keeps Good Samaritan dialog actions at least 44px high", async () => {

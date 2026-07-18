@@ -180,7 +180,7 @@ export default function ReservationScreen({
       <header className={styles.reservationIntro}>
         <p className={styles.eyebrow}>Storage reservation</p>
         <h2 id="reservation-heading">Confirm reservation</h2>
-        <p>Hold verified cold storage and dispatch the selected transfer service.</p>
+        <p>Hold seeded demo capacity and dispatch the selected transfer service.</p>
       </header>
 
       <section className={styles.destinationCard} aria-labelledby="destination-heading">
