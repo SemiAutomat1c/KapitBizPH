@@ -101,3 +101,18 @@ GREEN: 5 test files passed; 67 tests passed. Scoped ESLint and `git diff --check
 ### Commit
 
 - `fix: update Hazard Assist context test`
+
+## Re-Review Fix: Optional Requests Source Prop
+
+### RED/GREEN Evidence
+
+The new navigation regression initially caused `npx tsc --noEmit` to fail because `startedFromHazardAssist` was required. After the fix, the requested verification passed: 4 test files and 43 tests, scoped ESLint, `git diff --check`, and TypeScript compilation.
+
+### Files Changed
+
+- `web/components/kapitbiz/RequestsScreen.tsx`: made `startedFromHazardAssist` optional and defaulted it to `false`.
+- `web/tests/kapitbiz-navigation.test.tsx`: added coverage for rendering Requests without the prop and omitting the source label.
+
+### Commit
+
+- `53f16fc fix: default Hazard Assist request source`
