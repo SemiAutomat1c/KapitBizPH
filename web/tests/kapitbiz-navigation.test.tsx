@@ -159,6 +159,36 @@ describe("KapitBiz complete demo navigation", () => {
     expect(screen.getByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
   });
 
+  it("filters requests and resumes the active rescue", async () => {
+    seedCompletedOnboarding();
+    seedRescueAtCapacity();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Requests" }));
+    await user.click(screen.getByRole("radio", { name: "Pending" }));
+    expect(screen.getByText("Host confirmation requested")).toBeInTheDocument();
+    await user.click(screen.getByRole("radio", { name: "Completed" }));
+    expect(screen.getByText("No completed rescue requests yet")).toBeInTheDocument();
+    await user.click(screen.getByRole("radio", { name: "Active" }));
+    await user.click(screen.getByRole("button", { name: "Resume rescue RE-4892-X" }));
+
+    expect(screen.getByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
+  });
+
+  it("opens the completed custody record from Activity", async () => {
+    seedCompletedOnboarding();
+    createCompleteStateForTest();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Notifications" }));
+    expect(screen.getByText("Transfer confirmed")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "View custody record" }));
+
+    expect(screen.getByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
+  });
+
   it("closes a completed rescue to Home and reopens its custody record", async () => {
     seedCompletedOnboarding({ rescueOpen: true });
     createCompleteStateForTest();

@@ -832,7 +832,9 @@
 
 .homeScreen,
 .menuScreen,
-.seededPlaceholder {
+.seededPlaceholder,
+.requestsScreen,
+.activityScreen {
   width: 100%;
   padding-top: 20px;
 }
@@ -840,8 +842,52 @@
 .homeIntro { border-bottom: 1px solid #bec8ca; padding-bottom: 18px; }
 .homeIntro h2,
 .menuIntro h2,
-.seededPlaceholder h2 { margin: 0; color: #181c1d; font-size: 1.7rem; line-height: 2.15rem; font-weight: 700; }
+.seededPlaceholder h2,
+.screenIntro h2 { margin: 0; color: #181c1d; font-size: 1.7rem; line-height: 2.15rem; font-weight: 700; }
 .homeIntro > p:last-child { margin: 5px 0 0; color: #526163; font-size: 0.95rem; }
+.screenIntro { border-bottom: 1px solid #bec8ca; padding-bottom: 18px; }
+.screenIntro > p:last-child { margin: 5px 0 0; color: #526163; font-size: 0.95rem; line-height: 1.4rem; }
+
+.requestsScreen,
+.activityScreen { display: grid; gap: 18px; }
+.segmentedControl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; border: 1px solid #bec8ca; border-radius: 6px; overflow: hidden; padding: 0; }
+.segmentedControl label { position: relative; display: grid; min-height: 42px; place-items: center; border-right: 1px solid #bec8ca; background: #fff; color: #526163; cursor: pointer; font-size: 0.82rem; font-weight: 700; }
+.segmentedControl label:last-child { border-right: 0; }
+.segmentedControl label[data-selected="true"] { background: #e8f3f3; color: #00535b; }
+.segmentedControl input { position: absolute; opacity: 0; }
+.segmentedControl label:has(input:focus-visible) { outline: 2px solid #006d77; outline-offset: -2px; }
+
+.requestList { display: grid; gap: 10px; }
+.requestRow { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 12px; border-bottom: 1px solid #bec8ca; padding: 0 0 16px; }
+.requestList .requestRow + .requestRow { padding-top: 6px; }
+.requestIcon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 6px; background: #e8f3f3; color: #006d77; }
+.requestIcon svg { width: 21px; height: 21px; }
+.requestCopy { min-width: 0; }
+.requestTitleRow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.requestTitleRow h3 { margin: 0; font-size: 1rem; line-height: 1.3rem; }
+.requestCopy p { margin: 4px 0 0; color: #3e494a; font-size: 0.87rem; line-height: 1.25rem; }
+.requestCopy small { display: block; margin-top: 4px; color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.7rem; line-height: 1.1rem; }
+.currentBadge,
+.pendingBadge,
+.completeBadge { flex: none; border-radius: 4px; padding: 4px 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+.currentBadge { background: #e8f3f3; color: #00535b; }
+.pendingBadge { background: #fef3c7; color: #92400e; }
+.completeBadge { background: #effcf4; color: #087a35; }
+.inlineAction { display: inline-flex; min-height: 38px; align-items: center; gap: 4px; border: 0; border-radius: 4px; background: transparent; color: #00535b; padding: 6px 0 6px 8px; font-size: 0.8rem; font-weight: 700; }
+.inlineAction:hover { color: #006d77; }
+.inlineAction svg { width: 17px; height: 17px; }
+.emptyState { margin: 0; border-bottom: 1px solid #bec8ca; color: #526163; padding: 4px 0 16px; font-size: 0.9rem; }
+
+.activityFeed { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.activityItem { position: relative; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 0 0 18px; }
+.activityItem:not(:last-child)::before { position: absolute; top: 32px; bottom: 0; left: 15px; width: 1px; background: #bec8ca; content: ""; }
+.activityMarker { position: relative; z-index: 1; display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid #b9d9c5; border-radius: 50%; background: #effcf4; color: #087a35; }
+.activityItem[data-current="true"] .activityMarker { border-color: #006d77; background: #e8f3f3; color: #00535b; }
+.activityMarker svg { width: 16px; height: 16px; }
+.activityTitleRow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.activityTitleRow strong { font-size: 0.95rem; line-height: 1.25rem; }
+.activityTitleRow time { flex: none; color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.7rem; }
+.activityItem p { margin: 4px 0 0; color: #526163; font-size: 0.82rem; line-height: 1.25rem; }
 
 .homeAlert {
   display: grid;

@@ -3,10 +3,12 @@
 import { useKapitBizDemoSession, type DemoRole } from "@/lib/kapitbiz-demo";
 import { useKapitBiz } from "@/lib/kapitbiz";
 import { KapitBizRelayWorkspace } from "./KapitBizRelayApp";
+import ActivityScreen from "./ActivityScreen";
 import HomeScreen from "./HomeScreen";
 import MenuScreen from "./MenuScreen";
 import MerchantShell from "./MerchantShell";
 import OnboardingFlow from "./OnboardingFlow";
+import RequestsScreen from "./RequestsScreen";
 import styles from "./KapitBizRelay.module.css";
 
 export default function KapitBizDemoApp() {
@@ -54,13 +56,24 @@ export default function KapitBizDemoApp() {
           eligibleHostCount={relay.eligibleHosts.length}
           onOpenRescue={() => dispatch({ type: "open-rescue" })}
         />
+      ) : session.activeTab === "requests" ? (
+        <RequestsScreen
+          state={relay.state}
+          onOpenRescue={() => dispatch({ type: "open-rescue" })}
+        />
+      ) : session.activeTab === "activity" ? (
+        <ActivityScreen
+          state={relay.state}
+          session={session}
+          onOpenRecord={() => dispatch({ type: "open-rescue" })}
+        />
       ) : session.activeTab === "menu" ? (
         <MenuScreen
           onPreviewRole={(role) => dispatch({ type: "select-role", role })}
           onResetDemo={resetDemo}
         />
       ) : (
-        <SeededPlaceholder tab={session.activeTab} />
+        <NetworkPlaceholder />
       )}
     </MerchantShell>
   );
@@ -91,27 +104,12 @@ function RolePreparationScreen({
   );
 }
 
-function SeededPlaceholder({ tab }: { tab: "requests" | "network" | "activity" }) {
-  const content = {
-    requests: {
-      heading: "Rescue requests",
-      copy: "No additional requests are seeded for Maya's business. The active interruption is ready from Home.",
-    },
-    network: {
-      heading: "Relay network",
-      copy: "Two eligible storage hosts are seeded for the selected 42 kg rescue. Detailed host operations arrive in the next demo task.",
-    },
-    activity: {
-      heading: "Business activity",
-      copy: "Your seeded rescue and custody activity will appear here as the demo advances.",
-    },
-  }[tab];
-
+function NetworkPlaceholder() {
   return (
-    <section className={styles.seededPlaceholder} aria-labelledby={`${tab}-heading`}>
+    <section className={styles.seededPlaceholder} aria-labelledby="network-heading">
       <p className={styles.eyebrow}>Seeded demo data</p>
-      <h2 id={`${tab}-heading`}>{content.heading}</h2>
-      <p>{content.copy}</p>
+      <h2 id="network-heading">Relay network</h2>
+      <p>Two eligible storage hosts are seeded for the selected 42 kg rescue. Detailed host operations arrive in the next demo task.</p>
     </section>
   );
 }
