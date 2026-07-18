@@ -57,6 +57,8 @@ describe("KapitBiz activity feed", () => {
       "Arrival at facility",
       "Transfer confirmed",
     ]);
+    expect(feed.find((item) => item.id === "safety-check-answered")?.detail)
+      .toContain("Simulated");
   });
 
   it("keeps a stale Good Samaritan timestamp in its Hazard Assist audit slot", () => {

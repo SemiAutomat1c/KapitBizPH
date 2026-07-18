@@ -182,7 +182,7 @@ export function buildHazardActivityItems(
   if (state.safetyCheckAnswer !== "unknown") items.push({
     id: "safety-check-answered",
     label: "Safety Check answered",
-    detail: `Operational status recorded: ${state.safetyCheckAnswer.replaceAll("-", " ")}.`,
+    detail: `Simulated Safety Check status recorded: ${state.safetyCheckAnswer.replaceAll("-", " ")}.`,
     at: scenarioStartedAt - 40_000,
   });
   if (state.safetyCheckAnswer === "stock-at-risk") items.push({

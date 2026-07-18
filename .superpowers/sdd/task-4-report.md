@@ -116,3 +116,19 @@ The new navigation regression initially caused `npx tsc --noEmit` to fail becaus
 ### Commit
 
 - `53f16fc fix: default Hazard Assist request source`
+
+## Re-Review Fix: Simulated Safety Check Activity Detail
+
+### RED/GREEN Evidence
+
+The new activity regression initially failed because the Safety Check detail was `Operational status recorded: stock at risk.` and did not disclose that the status was simulated. After qualifying the detail, the requested covering suite passed: 4 test files and 43 tests; scoped ESLint and `git diff --check` also exited 0.
+
+### Files Changed
+
+- `web/lib/kapitbiz-hazard-assist.ts`: qualified the Safety Check activity detail as simulated.
+- `web/tests/kapitbiz-activity.test.ts`: asserted the Safety Check detail contains `Simulated`.
+- `.superpowers/sdd/task-4-report.md`: appended this review-fix evidence.
+
+### Commit
+
+- `fix: disclose simulated Safety Check activity`
