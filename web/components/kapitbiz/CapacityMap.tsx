@@ -10,7 +10,7 @@ export interface CapacityMapProps {
   hosts: CapacityHost[];
   eligibleHostIds?: string[];
   selectedHostId: string | null;
-  onSelectHost: (hostId: string) => void;
+  onSelectHost: (hostId: string, trigger?: HTMLButtonElement) => void;
   presentation?: "capacity" | "directory";
 }
 
@@ -52,7 +52,7 @@ function OfflineSchematic({
                   className={styles.secondaryButton}
                   type="button"
                   aria-pressed={selectedHostId === host.id}
-                  onClick={() => onSelectHost(host.id)}
+                  onClick={(event) => onSelectHost(host.id, event.currentTarget)}
                 >
                   {isDirectory ? `View ${host.name} details` : `Select ${host.name}`}
                 </button>
@@ -157,7 +157,7 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
               className={styles.secondaryButton}
               type="button"
               aria-pressed={selectedHostId === host.id}
-              onClick={() => onSelectHost(host.id)}
+              onClick={(event) => onSelectHost(host.id, event.currentTarget)}
             >
               {presentation === "directory" ? `View ${host.name} details` : `Select ${host.name}`}
             </button>

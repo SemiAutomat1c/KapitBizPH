@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
 import {
   createCompleteStateForTest,
@@ -18,6 +18,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   localStorage.clear();
+  vi.unstubAllEnvs();
 });
 
 describe("KapitBiz complete demo navigation", () => {
@@ -241,26 +242,67 @@ describe("KapitBiz complete demo navigation", () => {
   });
 
   it("uses the offline network schematic without a Mapbox token", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MAPBOX_TOKEN", "");
     seedCompletedOnboarding({ activeTab: "network" });
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
     await user.click(await screen.findByRole("button", { name: "Map" }));
     expect(screen.getByRole("region", { name: "Offline route schematic" })).toBeInTheDocument();
+    vi.unstubAllEnvs();
   });
 
-  it("focuses the close control and restores the host trigger after Escape", async () => {
+  it("restores focus to the offline map host trigger after close and Escape", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MAPBOX_TOKEN", "");
+    seedCompletedOnboarding({ activeTab: "network" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Map" }));
+    const trigger = screen.getByRole("button", { name: "View Northline Cold Storage details" });
+    await user.click(trigger);
+    expect(screen.getByRole("button", { name: "Close Northline Cold Storage" })).toHaveFocus();
+
+    await user.click(screen.getByRole("button", { name: "Close Northline Cold Storage" }));
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Northline Cold Storage" })).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await user.click(trigger);
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Northline Cold Storage" })).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
+  });
+
+  it("traps forward and reverse Tab navigation in an eligible host dialog", async () => {
     seedCompletedOnboarding({ activeTab: "network" });
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
     const trigger = await screen.findByRole("button", { name: "View Northline Cold Storage details" });
     await user.click(trigger);
-    expect(screen.getByRole("button", { name: "Close Northline Cold Storage" })).toHaveFocus();
+    const closeButton = screen.getByRole("button", { name: "Close Northline Cold Storage" });
+    const startRequest = screen.getByRole("button", { name: "Start rescue request" });
+    expect(closeButton).toHaveFocus();
 
-    await user.keyboard("{Escape}");
-    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Northline Cold Storage" })).not.toBeInTheDocument());
-    expect(trigger).toHaveFocus();
+    await user.tab({ shift: true });
+    expect(startRequest).toHaveFocus();
+    await user.tab();
+    expect(closeButton).toHaveFocus();
+  });
+
+  it("traps forward and reverse Tab navigation in an ineligible host dialog", async () => {
+    seedCompletedOnboarding({ activeTab: "network" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "View South Market Freezer details" }));
+    const closeButton = screen.getByRole("button", { name: "Close South Market Freezer" });
+    expect(closeButton).toHaveFocus();
+
+    await user.tab();
+    expect(closeButton).toHaveFocus();
+    await user.tab({ shift: true });
+    expect(closeButton).toHaveFocus();
   });
 
   it("shows both seeded transport options", async () => {

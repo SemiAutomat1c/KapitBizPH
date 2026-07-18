@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { ArrowRight, Map, MapPinned, Snowflake, Truck, X } from "lucide-react";
 import { deriveSelection, eligibleHosts, type CapacityHost, type RelayDemoState } from "@/lib/kapitbiz";
 import CapacityMap from "./CapacityMap";
@@ -31,19 +31,40 @@ function HostDetailsDialog({
   onStartRequest: () => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     closeRef.current?.focus();
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onClose();
+      return;
+    }
+
+    if (event.key !== "Tab") return;
+
+    const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), [href], select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
+    if (!focusable || focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   return (
     <div className={styles.dialogBackdrop}>
-      <section className={styles.menuDialog} role="dialog" aria-modal="true" aria-labelledby="network-host-dialog-heading">
+      <section ref={dialogRef} className={styles.menuDialog} role="dialog" aria-modal="true" aria-labelledby="network-host-dialog-heading" onKeyDown={handleKeyDown}>
         <div className={styles.dialogHeader}>
           <h2 id="network-host-dialog-heading">{host.name}</h2>
           <button ref={closeRef} className={styles.iconButton} type="button" onClick={onClose} aria-label={`Close ${host.name}`} title={`Close ${host.name}`}>
@@ -89,13 +110,16 @@ export default function NetworkScreen({
   const selectedWeightKg = useMemo(() => deriveSelection(state).selectedWeightKg, [state]);
 
   const openHostDetails = (host: CapacityHost, trigger?: HTMLButtonElement) => {
-    triggerRef.current = trigger ?? null;
+    if (trigger) triggerRef.current = trigger;
     setDetailHost(host);
   };
   const closeHostDetails = () => {
     const trigger = triggerRef.current;
-    trigger?.focus();
     setDetailHost(null);
+    window.requestAnimationFrame(() => {
+      trigger?.focus();
+      if (triggerRef.current === trigger) triggerRef.current = null;
+    });
   };
   const selectPartnerType = (nextType: PartnerType) => {
     setPartnerType(nextType);
@@ -141,9 +165,9 @@ export default function NetworkScreen({
           hosts={state.hosts}
           eligibleHostIds={[...eligiblePartnerIds]}
           selectedHostId={detailHost?.id ?? null}
-          onSelectHost={(hostId) => {
+          onSelectHost={(hostId, trigger) => {
             const host = state.hosts.find((candidate) => candidate.id === hostId);
-            if (host) openHostDetails(host);
+            if (host) openHostDetails(host, trigger);
           }}
           presentation="directory"
         />
