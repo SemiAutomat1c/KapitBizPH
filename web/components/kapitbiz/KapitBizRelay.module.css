@@ -262,6 +262,11 @@
 .calamityPreview small { color: #6e4a13; font-weight: 700; }
 .goodSamaritanRequest { color: #18484d !important; font-weight: 700; }
 .goodSamaritanDisclosure { border-left: 3px solid #c66c00; background: #fff7e8; color: #523200 !important; padding: 10px 12px; font-size: 0.82rem; }
+.recoveryPacketList { display: grid; margin: 0; border-top: 1px solid #bec8ca; }
+.recoveryPacketList div { display: grid; grid-template-columns: minmax(130px, .7fr) minmax(0, 1.5fr); gap: 14px; border-bottom: 1px solid #bec8ca; padding: 12px 0; }
+.recoveryPacketList dt { color: #526163; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+.recoveryPacketList dd { margin: 0; color: #18484d; font-size: 0.88rem; line-height: 1.35rem; overflow-wrap: anywhere; }
+.recoveryPacketDisclosure { border-left: 3px solid #c66c00; background: #fff7e8; color: #523200; padding: 12px; font-size: 0.84rem; font-weight: 700; line-height: 1.35rem; }
 .responderList { display: grid; margin: 0; border-top: 1px solid #bec8ca; padding: 0; list-style: none; }
 .responderRow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; border-bottom: 1px solid #bec8ca; padding: 14px 0; }
 .responderRow[data-selected="true"] { background: #effcf4; }
@@ -280,6 +285,7 @@
   .hazardAlertAction { width: 100%; }
   .hazardNeighborAction { justify-self: center; }
   .safetyChoices, .continuityOptions { grid-template-columns: 1fr; }
+  .recoveryPacketList div { grid-template-columns: 1fr; gap: 5px; }
   .responderRow { grid-template-columns: 1fr; }
   .responderTrust { justify-items: start; text-align: left; }
 }

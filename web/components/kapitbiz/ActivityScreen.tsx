@@ -19,11 +19,13 @@ export default function ActivityScreen({
   session,
   hazardState,
   onOpenRecord,
+  onOpenRecoveryPacket,
 }: {
   state: RelayDemoState;
   session: KapitBizDemoSession;
   hazardState: KapitBizHazardAssistState;
   onOpenRecord: () => void;
+  onOpenRecoveryPacket: () => void;
 }) {
   const feed = buildActivityFeed(state, session, hazardState);
   const seededAt = state.scenarioStartedAt - 24 * 60 * 60 * 1_000;
@@ -56,10 +58,16 @@ export default function ActivityScreen({
       </ol>
 
       {state.receiverConfirmedAt !== null ? (
-        <button className={styles.secondaryAction} type="button" onClick={onOpenRecord}>
-          <FileCheck2 aria-hidden="true" />
-          View custody record
-        </button>
+        <div className={styles.completeActions}>
+          <button className={styles.secondaryAction} type="button" onClick={onOpenRecord}>
+            <FileCheck2 aria-hidden="true" />
+            View custody record
+          </button>
+          <button className={styles.secondaryAction} type="button" onClick={onOpenRecoveryPacket}>
+            <FileCheck2 aria-hidden="true" />
+            Recovery packet preview
+          </button>
+        </div>
       ) : null}
     </section>
   );

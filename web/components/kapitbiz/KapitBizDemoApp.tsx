@@ -18,6 +18,7 @@ import HazardAssistDialog from "./HazardAssistDialog";
 import SafetyCheckPanel from "./SafetyCheckPanel";
 import ContinuityDecisionPanel from "./ContinuityDecisionPanel";
 import GoodSamaritanPanel from "./GoodSamaritanPanel";
+import RecoveryPacketPreview from "./RecoveryPacketPreview";
 import styles from "./KapitBizRelay.module.css";
 
 type HazardAssistSurface = "closed" | "safety-check" | "decision" | "good-samaritan";
@@ -40,6 +41,13 @@ export default function KapitBizDemoApp() {
     return <OnboardingFlow session={session} dispatch={dispatch} />;
   }
 
+  const openRecoveryPacket = () => {
+    hazardAssist.dispatch({ type: "set-recovery-packet-preview", open: true });
+  };
+  const closeRecoveryPacket = () => {
+    hazardAssist.dispatch({ type: "set-recovery-packet-preview", open: false });
+  };
+
   if (session.role !== "merchant") {
     return (
       <RolePreviewScreen
@@ -60,17 +68,31 @@ export default function KapitBizDemoApp() {
 
   if (session.rescueOpen) {
     return (
-      <KapitBizRelayApp
-        relay={relay}
-        onClose={() => dispatch({ type: "close-rescue" })}
-        onNavigate={(tab) => dispatch({ type: "select-tab", tab })}
-        onOpenMenu={() => dispatch({ type: "select-tab", tab: "menu" })}
-        hazardContext={buildHazardRelayContext(hazardAssist.state)}
-      />
+      <>
+        <KapitBizRelayApp
+          relay={relay}
+          onClose={() => dispatch({ type: "close-rescue" })}
+          onNavigate={(tab) => dispatch({ type: "select-tab", tab })}
+          onOpenMenu={() => dispatch({ type: "select-tab", tab: "menu" })}
+          onOpenRecoveryPacket={openRecoveryPacket}
+          hazardContext={buildHazardRelayContext(hazardAssist.state)}
+        />
+        {hazardAssist.state.recoveryPacketPreviewOpen && relay.state.receiverConfirmedAt !== null ? (
+          <HazardAssistDialog label="Recovery packet preview" focusKey="recovery-packet" onClose={closeRecoveryPacket}>
+            <RecoveryPacketPreview
+              state={relay.state}
+              selection={relay.selection}
+              hazardState={hazardAssist.state}
+              onClose={closeRecoveryPacket}
+            />
+          </HazardAssistDialog>
+        ) : null}
+      </>
     );
   }
 
   const resetDemo = () => {
+    setHazardSurface("closed");
     resetSession();
     relay.resetRescue();
     hazardAssist.resetHazardAssist();
@@ -140,6 +162,7 @@ export default function KapitBizDemoApp() {
           session={session}
           hazardState={hazardAssist.state}
           onOpenRecord={() => dispatch({ type: "open-rescue" })}
+          onOpenRecoveryPacket={openRecoveryPacket}
         />
       ) : session.activeTab === "menu" ? (
         <MenuScreen
@@ -153,7 +176,16 @@ export default function KapitBizDemoApp() {
           onOpenGoodSamaritan={openGoodSamaritan}
         />
       )}
-      {hazardSurface !== "closed" ? (
+      {hazardAssist.state.recoveryPacketPreviewOpen && relay.state.receiverConfirmedAt !== null ? (
+        <HazardAssistDialog label="Recovery packet preview" focusKey="recovery-packet" onClose={closeRecoveryPacket}>
+          <RecoveryPacketPreview
+            state={relay.state}
+            selection={relay.selection}
+            hazardState={hazardAssist.state}
+            onClose={closeRecoveryPacket}
+          />
+        </HazardAssistDialog>
+      ) : hazardSurface !== "closed" ? (
         <HazardAssistDialog
           label={hazardSurface === "safety-check" ? "Safety Check" : hazardSurface === "decision" ? "Recommended continuity move" : "Good Samaritan capacity"}
           focusKey={hazardSurface}

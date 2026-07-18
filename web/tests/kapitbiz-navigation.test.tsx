@@ -251,6 +251,9 @@ describe("KapitBiz complete demo navigation", () => {
     render(<KapitBizDemoApp />);
 
     expect(await screen.findByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Recovery packet preview" }));
+    expect(screen.getByRole("dialog", { name: "Recovery packet preview" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Close preview" }));
     await user.click(screen.getByRole("button", { name: "Close rescue" }));
 
     expect(screen.getByRole("heading", { name: "Good morning, Maya" })).toBeInTheDocument();

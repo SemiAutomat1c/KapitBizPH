@@ -2,7 +2,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
-import { seedCompletedOnboarding, seedRescueAtCapacity } from "./kapitbiz-test-helpers";
+import { createCompleteStateForTest, seedCompletedOnboarding, seedRescueAtCapacity } from "./kapitbiz-test-helpers";
 
 beforeEach(() => {
   cleanup();
@@ -160,5 +160,61 @@ describe("KapitBiz Hazard Assist UI", () => {
     expect(screen.getByText("Fuel comparison generated")).toBeInTheDocument();
     expect(screen.getByText("Good Samaritan capacity opened")).toBeInTheDocument();
     expect(screen.getByText("Relay started from Safety Check")).toBeInTheDocument();
+  });
+
+  it("opens an honest recovery packet preview after confirmed handoff", async () => {
+    createCompleteStateForTest();
+    localStorage.setItem("kapitbiz-hazard-assist-v1", JSON.stringify({
+      version: 1,
+      alertAcknowledged: true,
+      safetyCheckAnswer: "stock-at-risk",
+      generatorEstimatePhp: 714,
+      relayEstimatePhp: 450,
+      calamityModePreviewOpen: false,
+      goodSamaritanAskedAt: 900_000,
+      selectedGoodSamaritanPartnerId: "northline",
+      relayStartedFromHazardAssist: true,
+      recoveryPacketPreviewOpen: false,
+    }));
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Activity" }));
+    await user.click(screen.getByRole("button", { name: "Recovery packet preview" }));
+
+    expect(screen.getByRole("dialog", { name: "Recovery packet preview" })).toBeInTheDocument();
+    expect(screen.getByText("Maya's Frozen Goods")).toBeInTheDocument();
+    expect(screen.getByText("PHP21,800 at-risk inventory baseline")).toBeInTheDocument();
+    expect(screen.getByText("Relay chosen over PHP714 generator estimate")).toBeInTheDocument();
+    expect(screen.getByText(/QR custody record RE-4892-X/)).toBeInTheDocument();
+    expect(screen.getByText(/not an accepted government form or guaranteed claim document/i)).toBeInTheDocument();
+  });
+
+  it("Reset demo clears demo-session, Relay, and Hazard Assist progress", async () => {
+    localStorage.setItem("kapitbiz-hazard-assist-v1", JSON.stringify({
+      version: 1,
+      alertAcknowledged: true,
+      safetyCheckAnswer: "stock-at-risk",
+      generatorEstimatePhp: 714,
+      relayEstimatePhp: 450,
+      calamityModePreviewOpen: true,
+      goodSamaritanAskedAt: 900_000,
+      selectedGoodSamaritanPartnerId: "northline",
+      relayStartedFromHazardAssist: true,
+      recoveryPacketPreviewOpen: true,
+    }));
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Open menu" }));
+    await user.click(screen.getByRole("button", { name: "Reset demo" }));
+    await user.click(screen.getByRole("button", { name: "Confirm reset demo" }));
+
+    expect(await screen.findByRole("heading", { name: "Protect what is at risk" })).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("kapitbiz-hazard-assist-v1") ?? "null")).toMatchObject({
+      safetyCheckAnswer: "unknown",
+      relayStartedFromHazardAssist: false,
+      recoveryPacketPreviewOpen: false,
+    });
   });
 });
