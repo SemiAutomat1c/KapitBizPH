@@ -31,7 +31,7 @@ export default function RequestsScreen({
         <p>Track the seeded rescue queue for Maya&apos;s Frozen Goods.</p>
       </header>
 
-      <fieldset className={styles.segmentedControl} aria-label="Request status">
+      <fieldset className={styles.requestFilters} aria-label="Request status">
         <legend className={styles.visuallyHidden}>Request status</legend>
         {filters.map((option) => (
           <label key={option.id} data-selected={filter === option.id}>

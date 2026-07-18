@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -174,6 +176,20 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(screen.getByRole("button", { name: "Resume rescue RE-4892-X" }));
 
     expect(screen.getByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
+  });
+
+  it("keeps Capacity two-column and scopes the Requests three-column control", async () => {
+    const css = readFileSync(resolve(process.cwd(), "components/kapitbiz/KapitBizRelay.module.css"), "utf8");
+
+    expect(css).toMatch(/\.segmentedControl\s*\{[^}]*grid-template-columns:\s*repeat\(2,/);
+    expect(css).toMatch(/\.requestFilters\s*\{[^}]*grid-template-columns:\s*repeat\(3,/);
+
+    seedCompletedOnboarding();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Requests" }));
+    expect(screen.getByRole("group", { name: "Request status" }).className).toContain("requestFilters");
   });
 
   it("opens the completed custody record from Activity", async () => {

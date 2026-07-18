@@ -850,12 +850,12 @@
 
 .requestsScreen,
 .activityScreen { display: grid; gap: 18px; }
-.segmentedControl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; border: 1px solid #bec8ca; border-radius: 6px; overflow: hidden; padding: 0; }
-.segmentedControl label { position: relative; display: grid; min-height: 42px; place-items: center; border-right: 1px solid #bec8ca; background: #fff; color: #526163; cursor: pointer; font-size: 0.82rem; font-weight: 700; }
-.segmentedControl label:last-child { border-right: 0; }
-.segmentedControl label[data-selected="true"] { background: #e8f3f3; color: #00535b; }
-.segmentedControl input { position: absolute; opacity: 0; }
-.segmentedControl label:has(input:focus-visible) { outline: 2px solid #006d77; outline-offset: -2px; }
+.requestFilters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; border: 1px solid #bec8ca; border-radius: 6px; overflow: hidden; padding: 0; }
+.requestFilters label { position: relative; display: grid; min-height: 42px; place-items: center; border-right: 1px solid #bec8ca; background: #fff; color: #526163; cursor: pointer; font-size: 0.82rem; font-weight: 700; }
+.requestFilters label:last-child { border-right: 0; }
+.requestFilters label[data-selected="true"] { background: #e8f3f3; color: #00535b; }
+.requestFilters input { position: absolute; opacity: 0; }
+.requestFilters label:has(input:focus-visible) { outline: 2px solid #006d77; outline-offset: -2px; }
 
 .requestList { display: grid; gap: 10px; }
 .requestRow { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 12px; border-bottom: 1px solid #bec8ca; padding: 0 0 16px; }
