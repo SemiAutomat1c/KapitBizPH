@@ -31,6 +31,20 @@ Use a least-privilege public token restricted to the deployed origin. Do not com
 
 Mapbox is presentation-only. Host availability, affected-area status, route shape, distance, and travel time remain seeded demo data. The app does not call Directions, Geocoding, Traffic, or Optimization APIs.
 
+## Deploy to Vercel
+
+Import `https://github.com/SemiAutomat1c/KapitBizPH.git` and set:
+
+```text
+Root Directory: web
+Framework Preset: Next.js
+Install Command: npm ci
+Build Command: npm run build
+Output Directory: Next.js default
+```
+
+Set `NEXT_PUBLIC_MAPBOX_TOKEN` only if you want the optional Mapbox presentation. The PWA install flow should be tested on the deployed HTTPS URL, not only on local network URLs.
+
 ## Judge path
 
 ```text

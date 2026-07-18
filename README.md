@@ -1,46 +1,54 @@
-# Hackathon Tagum
+# KapitBiz Relay
 
-Working folder for Ryan's hackathon notes, ideas, references, assets, and build files for the week of 2026-07-06 to 2026-07-12.
+KapitBiz Relay is a mobile-first hackathon demo for rescuing at-risk MSME inventory during a localized disruption. The submitted app lives in [`web`](web).
 
-## Inbox
+This is a frontend-only, seeded business-continuity transaction demo. It does not claim live utility feeds, government hazard feeds, payments, live routing, live capacity, insurance approval, or government-form acceptance.
 
-Drop raw information here first:
+## Deploy to Vercel
 
-- problem statements
-- event rules and judging criteria
-- team notes
-- idea sketches
-- screenshots, PDFs, links, and assets
-- implementation notes
+Import this repository in Vercel:
 
-## Current Known Context
+```text
+https://github.com/SemiAutomat1c/KapitBizPH.git
+```
 
-- Hackathon is happening this week.
-- Event name: Hackathon Challenge 2026.
-- Event dates: July 18-19, 2026.
-- Venues: AVR-4, City Hall of Tagum, Apokon; and GMall of Tagum, Magugpo East, Tagum City, Davao del Norte.
-- Registration deadline from the call for participants: July 13, 2026 at 3:00 PM.
-- Focus: circular economy and business resilience for Davao del Norte MSME Development Week.
-- Exact judging rubric, team, and assigned focus area are not documented yet.
-- Obsy has related Tagum context from OJT prep and previous Tagum-focused projects.
+Use these project settings:
 
-## Prep Docs
+```text
+Root Directory: web
+Framework Preset: Next.js
+Install Command: npm ci
+Build Command: npm run build
+Output Directory: Next.js default
+```
 
-- [Event and Partner Brief](research/2026-07-07-event-and-partner-brief.md)
-- [Technology Options](research/2026-07-07-tech-options.md)
-- [Idea Bank and Win Strategy](planning/2026-07-07-idea-bank-and-strategy.md)
-- [One-Page PRD Template](planning/prd-template.md)
+Optional environment variable:
 
-## Possible Related References
+```text
+NEXT_PUBLIC_MAPBOX_TOKEN=your_public_scoped_mapbox_token
+```
 
-- `LuntiAI`: Tagum agriculture AI project.
-- `tagum-tricycle-fare-predictor`: Tagum route/fare prediction project.
-- `tagum-tricycle-fare-backend`: Flask backend for tricycle fare prediction.
-- OJT Prep: Bridge Digital Transformations Inc. in Tagum.
+Mapbox is presentation-only. The app works without the token and falls back to the bundled offline route schematic.
 
-## Next Capture Targets
+## PWA Install
 
-- Judging criteria.
-- Team members and roles.
-- Required tech stack or constraints.
-- Top 3 project ideas.
+The app includes a web manifest, icons, service worker, Android install prompt, and iPhone Add to Home Screen guide. Real mobile install testing should use the Vercel HTTPS URL; laptop `localhost` is only for local development.
+
+## Local Development
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+## Verify
+
+```bash
+cd web
+npm test
+npm run lint
+npm run build
+```
