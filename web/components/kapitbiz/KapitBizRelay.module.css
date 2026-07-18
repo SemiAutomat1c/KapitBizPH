@@ -878,6 +878,39 @@
 .inlineAction svg { width: 17px; height: 17px; }
 .emptyState { margin: 0; border-bottom: 1px solid #bec8ca; color: #526163; padding: 4px 0 16px; font-size: 0.9rem; }
 
+.networkScreen { display: grid; gap: 18px; width: 100%; padding-top: 20px; }
+.networkControls { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.networkControls .segmentedControl { flex: 1; min-width: 0; }
+.networkList { display: grid; margin: 0; border-top: 1px solid #bec8ca; padding: 0; list-style: none; }
+.networkRow { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 12px; border-bottom: 1px solid #bec8ca; padding: 14px 0; }
+.networkRowIcon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 6px; background: #e8f3f3; color: #006d77; }
+.networkRowIcon svg { width: 21px; height: 21px; }
+.networkRowCopy { min-width: 0; }
+.networkRowTitle { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.networkRowTitle h3 { margin: 0; color: #181c1d; font-size: 1rem; line-height: 1.3rem; }
+.networkRowTitle span { flex: none; border-radius: 4px; background: #e8f3f3; color: #00535b; padding: 3px 5px; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; }
+.networkRow[data-eligible="false"] .networkRowTitle span { background: #ffdad6; color: #93000a; }
+.networkRowCopy p { margin: 4px 0 0; color: #3e494a; font-size: 0.82rem; line-height: 1.25rem; }
+.networkRowCopy small { display: block; margin-top: 4px; color: #93000a; font-size: 0.72rem; line-height: 1.12rem; }
+.networkDialogLocation { margin: 16px 0 0; color: #526163; font-size: 0.85rem; line-height: 1.3rem; }
+.networkDialogMetrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 16px 0; border: 1px solid #bec8ca; border-radius: 6px; overflow: hidden; }
+.networkDialogMetrics div { display: grid; gap: 4px; min-height: 70px; align-content: center; background: #f7fafa; padding: 10px; }
+.networkDialogMetrics div:nth-child(odd) { border-right: 1px solid #bec8ca; }
+.networkDialogMetrics div:nth-child(-n + 2) { border-bottom: 1px solid #bec8ca; }
+.networkDialogMetrics dt { color: #526163; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
+.networkDialogMetrics dd { margin: 0; color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.92rem; font-weight: 700; }
+.networkEligibility { margin: 0; color: #00535b; font-size: 0.82rem; line-height: 1.35rem; }
+.networkEligibility[data-eligible="false"] { color: #93000a; }
+.networkSimulatedNotice { margin: 14px 0 0; color: #526163; font-size: 0.72rem; line-height: 1.2rem; }
+.networkSimulatedNotice + .primaryButton { margin-top: 16px; font-size: 0.9rem; }
+
+@media (max-width: 460px) {
+  .networkControls { align-items: stretch; flex-direction: column; }
+  .networkRow { grid-template-columns: 38px minmax(0, 1fr); gap: 10px; }
+  .networkRowIcon { width: 38px; height: 38px; }
+  .networkRow .inlineAction { grid-column: 2; justify-self: start; padding-left: 0; }
+}
+
 .activityFeed { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
 .activityItem { position: relative; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 0 0 18px; }
 .activityItem:not(:last-child)::before { position: absolute; top: 32px; bottom: 0; left: 15px; width: 1px; background: #bec8ca; content: ""; }

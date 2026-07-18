@@ -224,4 +224,65 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(screen.getByRole("button", { name: "View Custody Record" }));
     expect(screen.getByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
   });
+
+  it("shows every seeded partner and opens host details", async () => {
+    seedCompletedOnboarding({ activeTab: "network" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    expect(await screen.findByRole("heading", { name: "Relay network" })).toBeInTheDocument();
+    expect(screen.getByText("Northline Cold Storage")).toBeInTheDocument();
+    expect(screen.getByText("Tagum North Cold Chain")).toBeInTheDocument();
+    expect(screen.getByText("South Market Freezer")).toBeInTheDocument();
+    expect(screen.getByText("Davao Regional Hub")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "View Northline Cold Storage details" }));
+    expect(screen.getByRole("dialog", { name: "Northline Cold Storage" })).toBeInTheDocument();
+  });
+
+  it("uses the offline network schematic without a Mapbox token", async () => {
+    seedCompletedOnboarding({ activeTab: "network" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Map" }));
+    expect(screen.getByRole("region", { name: "Offline route schematic" })).toBeInTheDocument();
+  });
+
+  it("focuses the close control and restores the host trigger after Escape", async () => {
+    seedCompletedOnboarding({ activeTab: "network" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    const trigger = await screen.findByRole("button", { name: "View Northline Cold Storage details" });
+    await user.click(trigger);
+    expect(screen.getByRole("button", { name: "Close Northline Cold Storage" })).toHaveFocus();
+
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Northline Cold Storage" })).not.toBeInTheDocument());
+    expect(trigger).toHaveFocus();
+  });
+
+  it("shows both seeded transport options", async () => {
+    seedCompletedOnboarding({ activeTab: "network" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Transport" }));
+    expect(screen.getByText("Rider - Logistics Pro")).toBeInTheDocument();
+    expect(screen.getByText("Refrigerated van")).toBeInTheDocument();
+    expect(screen.getByText(/15 min arrival/)).toBeInTheDocument();
+    expect(screen.getByText(/250 kg capacity/)).toBeInTheDocument();
+  });
+
+  it("opens the shared rescue transaction from host details", async () => {
+    seedCompletedOnboarding({ activeTab: "network" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "View Northline Cold Storage details" }));
+    await user.click(screen.getByRole("button", { name: "Start rescue request" }));
+
+    expect(screen.getByRole("heading", { name: "Localized power interruption alert" })).toBeInTheDocument();
+  });
 });

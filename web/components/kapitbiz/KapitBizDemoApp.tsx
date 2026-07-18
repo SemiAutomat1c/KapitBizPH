@@ -7,6 +7,7 @@ import ActivityScreen from "./ActivityScreen";
 import HomeScreen from "./HomeScreen";
 import MenuScreen from "./MenuScreen";
 import MerchantShell from "./MerchantShell";
+import NetworkScreen from "./NetworkScreen";
 import OnboardingFlow from "./OnboardingFlow";
 import RequestsScreen from "./RequestsScreen";
 import styles from "./KapitBizRelay.module.css";
@@ -73,7 +74,7 @@ export default function KapitBizDemoApp() {
           onResetDemo={resetDemo}
         />
       ) : (
-        <NetworkPlaceholder />
+        <NetworkScreen state={relay.state} onStartRequest={() => dispatch({ type: "open-rescue" })} />
       )}
     </MerchantShell>
   );
@@ -101,15 +102,5 @@ function RolePreparationScreen({
         </button>
       </section>
     </main>
-  );
-}
-
-function NetworkPlaceholder() {
-  return (
-    <section className={styles.seededPlaceholder} aria-labelledby="network-heading">
-      <p className={styles.eyebrow}>Seeded demo data</p>
-      <h2 id="network-heading">Relay network</h2>
-      <p>Two eligible storage hosts are seeded for the selected 42 kg rescue. Detailed host operations arrive in the next demo task.</p>
-    </section>
   );
 }

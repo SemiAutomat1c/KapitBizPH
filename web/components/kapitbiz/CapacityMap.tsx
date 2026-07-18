@@ -11,6 +11,7 @@ export interface CapacityMapProps {
   eligibleHostIds?: string[];
   selectedHostId: string | null;
   onSelectHost: (hostId: string) => void;
+  presentation?: "capacity" | "directory";
 }
 
 const originLabel = "Maya's Frozen Goods, Tagum City";
@@ -20,8 +21,10 @@ function OfflineSchematic({
   eligibleHostIds,
   selectedHostId,
   onSelectHost,
+  presentation = "capacity",
 }: Omit<CapacityMapProps, "origin">) {
   const eligibleIds = new Set(eligibleHostIds);
+  const isDirectory = presentation === "directory";
 
   return (
     <section className={styles.offlineSchematic} aria-label="Offline route schematic">
@@ -44,14 +47,14 @@ function OfflineSchematic({
                 <strong>{host.name}</strong>
                 <span>{host.locality} | {host.distanceKm} km | {host.transferMinutes} min</span>
               </div>
-              {eligible ? (
+              {isDirectory || eligible ? (
                 <button
                   className={styles.secondaryButton}
                   type="button"
                   aria-pressed={selectedHostId === host.id}
                   onClick={() => onSelectHost(host.id)}
                 >
-                  Select {host.name}
+                  {isDirectory ? `View ${host.name} details` : `Select ${host.name}`}
                 </button>
               ) : (
                 <span className={styles.ineligibleNote}>{host.reason}</span>
@@ -64,7 +67,7 @@ function OfflineSchematic({
   );
 }
 
-export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selectedHostId, onSelectHost }: CapacityMapProps) {
+export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selectedHostId, onSelectHost, presentation = "capacity" }: CapacityMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<{ remove: () => void } | null>(null);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -136,7 +139,7 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
   }, [eligibleHostIds, hosts, origin, selectedHost, showFallback, token]);
 
   if (showFallback) {
-    return <OfflineSchematic hosts={hosts} eligibleHostIds={eligibleHostIds} selectedHostId={selectedHostId} onSelectHost={onSelectHost} />;
+    return <OfflineSchematic hosts={hosts} eligibleHostIds={eligibleHostIds} selectedHostId={selectedHostId} onSelectHost={onSelectHost} presentation={presentation} />;
   }
 
   return (
@@ -144,7 +147,7 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
       <div ref={containerRef} className={styles.mapCanvas} />
       <p className={styles.mapNotice}>Seeded demo markers and relay route. No live routing or traffic data.</p>
       <div className={styles.mapHostControls} role="group" aria-label="Selectable capacity hosts on map">
-        {hosts.filter((host) => eligibleIds.has(host.id)).map((host) => (
+        {(presentation === "directory" ? hosts : hosts.filter((host) => eligibleIds.has(host.id))).map((host) => (
           <div key={host.id}>
             <span>
               <strong>{host.name}</strong>
@@ -156,7 +159,7 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
               aria-pressed={selectedHostId === host.id}
               onClick={() => onSelectHost(host.id)}
             >
-              Select {host.name}
+              {presentation === "directory" ? `View ${host.name} details` : `Select ${host.name}`}
             </button>
           </div>
         ))}
