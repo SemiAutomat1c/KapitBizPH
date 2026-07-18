@@ -5,6 +5,194 @@
   padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
+.onboardingShell {
+  display: grid;
+  min-height: 100dvh;
+  align-items: center;
+  background: #f7fafa;
+  color: #181c1d;
+  padding: 24px 16px;
+}
+
+.onboardingContent {
+  width: 100%;
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+.onboardingProgress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.onboardingProgress span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #bec8ca;
+}
+
+.onboardingProgress span[data-active="true"] { background: #006d77; }
+.onboardingProgress span[data-complete="true"] { background: #00535b; }
+
+.onboardingVisualPanels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.onboardingVisualPanel,
+.onboardingVisual {
+  display: grid;
+  min-height: 96px;
+  margin-bottom: 24px;
+  place-items: center;
+  border: 1px solid #bec8ca;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #006d77;
+}
+
+.onboardingVisualPanel { margin-bottom: 0; }
+.onboardingVisualPanel[data-active="true"] { border-color: #006d77; background: #f1f4f4; color: #00535b; }
+.onboardingVisualPanel svg,
+.onboardingVisual svg { width: 36px; height: 36px; stroke-width: 2; }
+.onboardingVisual svg { width: 48px; height: 48px; }
+
+.onboardingEyebrow {
+  margin: 0 0 8px;
+  color: #00535b;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.onboardingContent h1 {
+  margin: 0;
+  color: #181c1d;
+  font-size: 2rem;
+  line-height: 2.4rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.onboardingCopy {
+  margin: 12px 0 28px;
+  color: #181c1d;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.onboardingActions {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.onboardingBack,
+.onboardingSkip {
+  min-height: 48px;
+  border: 1px solid #bec8ca;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #00535b;
+  padding: 8px 14px;
+  font-weight: 700;
+}
+
+.onboardingBack:disabled { color: #bec8ca; cursor: not-allowed; }
+.onboardingSkip { border-color: #006d77; }
+
+.roleChoices {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 24px;
+}
+
+.roleButton {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 14px;
+  width: 100%;
+  min-height: 88px;
+  align-items: center;
+  border: 1px solid #bec8ca;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #181c1d;
+  padding: 14px;
+  text-align: left;
+}
+
+.roleButton:hover { border-color: #006d77; background: #f1f4f4; }
+.roleButton > svg { width: 32px; height: 32px; color: #006d77; }
+.roleButton span { display: grid; gap: 4px; }
+.roleButton strong { font-size: 1rem; }
+.roleButton small { color: #181c1d; font-size: 0.85rem; line-height: 1.2rem; }
+
+.businessForm {
+  display: grid;
+  gap: 16px;
+}
+
+.businessForm label {
+  display: grid;
+  gap: 7px;
+  color: #181c1d;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.businessForm input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #bec8ca;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #181c1d;
+  padding: 10px 12px;
+}
+
+.businessForm input:focus { border-color: #006d77; outline: 2px solid #006d77; outline-offset: 1px; }
+.businessForm .onboardingActions { grid-template-columns: auto minmax(0, 1fr); margin-top: 8px; }
+
+.merchantWelcome {
+  display: flex;
+  min-height: 84px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #bec8ca;
+  background: #ffffff;
+  color: #181c1d;
+  padding: 16px;
+}
+
+.merchantHome {
+  min-height: 100dvh;
+  background: #f7fafa;
+  color: #181c1d;
+}
+
+.merchantWelcome p { margin: 0 0 3px; color: #00535b; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+.merchantWelcome h1 { margin: 0; font-size: 1.35rem; line-height: 1.7rem; }
+.merchantWelcome strong { color: #006d77; font-size: 0.85rem; text-align: right; }
+
+@media (max-width: 420px) {
+  .onboardingActions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .onboardingActions .primaryButton { grid-column: 1 / -1; }
+  .businessForm .onboardingActions { grid-template-columns: minmax(0, 1fr); }
+  .businessForm .onboardingActions .primaryButton { grid-column: auto; }
+  .merchantWelcome { align-items: flex-start; flex-direction: column; }
+  .merchantWelcome strong { text-align: left; }
+}
+
 .restoreShell {
   display: grid;
   min-height: 100dvh;

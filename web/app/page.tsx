@@ -1,5 +1,5 @@
-import KapitBizRelayApp from "@/components/kapitbiz/KapitBizRelayApp";
+import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
 
 export default function Page() {
-  return <KapitBizRelayApp />;
+  return <KapitBizDemoApp />;
 }
