@@ -36,7 +36,7 @@ export interface HazardAssistResponder {
 export interface HazardRelayContext {
   sourceLabel: "Started from Safety Check";
   eventLabel: "Simulated brownout + flood-risk alert";
-  decisionNote: "Relay chosen over generator estimate: PHP714";
+  decisionNote: "Relay chosen over simulated generator estimate: PHP714";
 }
 
 export interface HazardActivityItem {
@@ -163,7 +163,7 @@ export function buildHazardRelayContext(
     ? {
         sourceLabel: "Started from Safety Check",
         eventLabel: "Simulated brownout + flood-risk alert",
-        decisionNote: "Relay chosen over generator estimate: PHP714",
+        decisionNote: "Relay chosen over simulated generator estimate: PHP714",
       }
     : null;
 }
@@ -188,19 +188,19 @@ export function buildHazardActivityItems(
   if (state.safetyCheckAnswer === "stock-at-risk") items.push({
     id: "fuel-comparison-generated",
     label: "Fuel comparison generated",
-    detail: "PHP714 generator estimate compared with the PHP450 seeded Relay estimate.",
+    detail: "Simulated PHP714 generator estimate compared with the PHP450 seeded Relay estimate.",
     at: scenarioStartedAt - 30_000,
   });
   if (state.goodSamaritanAskedAt !== null) items.push({
     id: "good-samaritan-opened",
     label: "Good Samaritan capacity opened",
     detail: "Voluntary seeded partner capacity was shown; no live notification was sent.",
-    at: Math.min(state.goodSamaritanAskedAt, scenarioStartedAt - 20_000),
+    at: scenarioStartedAt - 20_000,
   });
   if (state.relayStartedFromHazardAssist) items.push({
     id: "relay-started-from-safety-check",
     label: "Relay started from Safety Check",
-    detail: "Relay chosen over the PHP714 generator estimate.",
+    detail: "Relay chosen over the simulated PHP714 generator estimate.",
     at: scenarioStartedAt - 10_000,
   });
   return items;

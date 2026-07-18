@@ -58,4 +58,31 @@ describe("KapitBiz activity feed", () => {
       "Transfer confirmed",
     ]);
   });
+
+  it("keeps a stale Good Samaritan timestamp in its Hazard Assist audit slot", () => {
+    const complete = createCompleteStateForTest();
+    const session = createDemoSession();
+    let hazard = createHazardAssistState();
+    hazard = hazardAssistReducer(hazard, { type: "acknowledge-alert" });
+    hazard = hazardAssistReducer(hazard, { type: "answer-safety-check", answer: "stock-at-risk" });
+    hazard = hazardAssistReducer(hazard, {
+      type: "ask-good-samaritans",
+      at: complete.scenarioStartedAt - 50_001,
+    });
+    hazard = hazardAssistReducer(hazard, { type: "start-relay" });
+
+    const feed = buildActivityFeed(complete, session, hazard);
+
+    expect(feed.slice(0, 5).map((item) => item.label)).toEqual([
+      "Simulated alert received",
+      "Safety Check answered",
+      "Fuel comparison generated",
+      "Good Samaritan capacity opened",
+      "Relay started from Safety Check",
+    ]);
+    expect(feed.find((item) => item.id === "good-samaritan-opened")?.at)
+      .toBe(complete.scenarioStartedAt - 20_000);
+    expect(feed.find((item) => item.id === "relay-started-from-safety-check")?.detail)
+      .toContain("simulated PHP714 generator estimate");
+  });
 });

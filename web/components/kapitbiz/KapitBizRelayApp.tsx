@@ -43,7 +43,7 @@ export interface KapitBizRelayAppProps {
   onClose: () => void;
   onNavigate: (tab: Exclude<MerchantTab, "menu">) => void;
   onOpenMenu: () => void;
-  hazardContext: HazardRelayContext | null;
+  hazardContext?: HazardRelayContext | null;
 }
 
 interface KapitBizRelayWorkspaceProps extends Partial<KapitBizRelayAppProps> {
@@ -57,7 +57,7 @@ function KapitBizRelayWorkspace({
   onClose,
   onNavigate,
   onOpenMenu,
-  hazardContext,
+  hazardContext = null,
 }: KapitBizRelayWorkspaceProps) {
   const workspaceRef = useRef<HTMLElement>(null);
   const previousStepRef = useRef(relay.state.step);

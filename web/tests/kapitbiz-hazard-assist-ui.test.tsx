@@ -134,7 +134,7 @@ describe("KapitBiz Hazard Assist UI", () => {
 
     expect(await screen.findByText("Started from Safety Check")).toBeInTheDocument();
     expect(screen.getByText("Simulated brownout + flood-risk alert")).toBeInTheDocument();
-    expect(screen.getByText("Relay chosen over generator estimate: PHP714")).toBeInTheDocument();
+    expect(screen.getByText("Relay chosen over simulated generator estimate: PHP714")).toBeInTheDocument();
   });
 
   it("shows Hazard Assist source in Requests and the unified Activity timeline", async () => {
