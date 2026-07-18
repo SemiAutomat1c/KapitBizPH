@@ -95,6 +95,19 @@ describe("KapitBiz complete demo navigation", () => {
     }
   });
 
+  it("moves tab-change focus to the active screen heading instead of the merchant workspace", async () => {
+    seedCompletedOnboarding();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await user.click(await screen.findByRole("button", { name: "Requests" }));
+
+    const heading = screen.getByRole("heading", { name: "Rescue requests" });
+    const workspace = heading.closest("section")?.parentElement;
+    expect(heading).toHaveFocus();
+    expect(workspace).not.toHaveFocus();
+  });
+
   it("opens Menu and resumes the active rescue from Home", async () => {
     seedCompletedOnboarding();
     const user = userEvent.setup();

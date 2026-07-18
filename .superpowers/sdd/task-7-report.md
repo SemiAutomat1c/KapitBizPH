@@ -84,3 +84,45 @@ git diff --check
 - The one existing lint warning in `web/components/IntakeForm.tsx:116` is outside the KapitBiz QA scope.
 - Native Web Share did not resolve to a browser-visible result in the in-app browser; the manual exact-record fallback and automated fallback coverage remain available.
 - Direct local Stitch reference-page navigation is blocked by the in-app browser URL policy; the QA comparison is documented as visual-system and hierarchy alignment rather than pixel-overlay evidence.
+
+## Task 7 Visual Evidence QA Fix
+
+### Scope
+
+- Merchant tab changes now move programmatic focus to the active screen's `h2` rather than the full `.merchantWorkspace` region, so the global focus-visible rule produces a compact heading outline instead of a surface-sized frame.
+- The QR handoff identifier now has a nonshrinking flex box and `white-space: nowrap`; its sibling title may wrap first.
+- Added regression coverage for real tab-change focus and for the rendered handoff ID plus its parsed module-rule declaration. The no-wrap test is not a regex-only source assertion.
+
+### RED/GREEN Commands
+
+```bash
+cd web
+npm test -- --run tests/kapitbiz-navigation.test.tsx tests/kapitbiz-flow.test.tsx
+npx eslint components/kapitbiz/MerchantShell.tsx components/kapitbiz/HandoffScreen.tsx tests/kapitbiz-navigation.test.tsx tests/kapitbiz-flow.test.tsx
+npx tsc --noEmit
+git diff --check
+```
+
+- RED: the new merchant test showed focus on `section[aria-label="Rescue requests"]`; the no-wrap regression failed before the CSS declaration was added.
+- GREEN: focused navigation and flow suites passed `49/49`; focused ESLint, TypeScript, and diff check exited 0.
+
+### In-App Browser Evidence (2026-07-18)
+
+- `1440 x 900`, `docs/qa/kapitbiz-complete-demo/desktop-home.png`: after visible Requests -> Home navigation, `document.activeElement` was the `H2` `Good morning, Maya` with `tabindex="-1"`; the merchant workspace was not focused. Document dimensions were `1440 / 1440`, so horizontal overflow was false. The compact heading focus outline is visible in the recaptured image.
+- `390 x 844`, `docs/qa/kapitbiz-complete-demo/mobile-qr-handoff.png`: the visible QR handoff rendered `RE-4892-X` with computed `white-space: nowrap`, one line box, no element overflow, and fully within the viewport. Document dimensions were `390 / 390`, so horizontal overflow was false.
+- Browser server command: `cd web && npm run dev -- --port 3017`. The two replacement captures were produced only with the in-app Browser at `http://localhost:3017`.
+
+### Final Gates
+
+```bash
+cd web
+npm test
+npm run lint
+npm run build
+cd ..
+git diff --check
+```
+
+- `npm test`: 7 files passed, 76 tests passed.
+- `npm run lint`: exit 0; 0 errors and the pre-existing `web/components/IntakeForm.tsx:116` `@next/next/no-img-element` warning.
+- `npm run build`: exit 0; production compilation, TypeScript, and static-page generation completed.

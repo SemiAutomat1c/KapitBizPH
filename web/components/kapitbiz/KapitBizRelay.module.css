@@ -1090,9 +1090,10 @@
 .completeScreen { width: 100%; max-width: 680px; margin-inline: auto; padding-top: 16px; }
 .handoffScreen { padding-bottom: 164px; }
 .handoffIntro { display: flex; align-items: end; justify-content: space-between; gap: 12px; border-bottom: 1px solid #bec8ca; padding-bottom: 18px; }
+.handoffIntro > div { min-width: 0; }
 .handoffIntro h2, .completeHero h2, .timelineSection h3 { margin: 0; font-weight: 700; }
 .handoffIntro h2 { font-size: 2rem; line-height: 2.5rem; }
-.handoffId { color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 1rem; font-weight: 700; }
+.handoffId { flex: 0 0 auto; color: #526163; font-family: var(--font-mono), ui-monospace, monospace; font-size: 1rem; font-weight: 700; white-space: nowrap; }
 .handoffParties { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 10px; padding: 20px 0; }
 .handoffParties div { display: grid; gap: 5px; min-width: 0; }
 .handoffParties div:last-child { text-align: right; }

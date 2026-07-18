@@ -1,8 +1,12 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import postcss, { type Rule } from "postcss";
 import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import KapitBizRelayApp from "@/components/kapitbiz/KapitBizRelayApp";
-import { createSeedState, relayReducer } from "@/lib/kapitbiz";
+import { createSeedState, deriveSelection, relayReducer } from "@/lib/kapitbiz";
+import HandoffScreen from "@/components/kapitbiz/HandoffScreen";
 
 const mapboxTestDouble = vi.hoisted(() => {
   class Map {
@@ -72,6 +76,27 @@ describe("KapitBiz Relay flow", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("₱21,800")).toBeInTheDocument();
     expect(screen.queryByText("KiloKita")).not.toBeInTheDocument();
+  });
+
+  it("keeps the complete handoff identifier on one visible line", () => {
+    const state = createHandoffState();
+    render(<HandoffScreen state={state} selection={deriveSelection(state)} dispatch={vi.fn()} />);
+
+    const heading = screen.getByRole("heading", { name: "Inventory handoff" });
+    const handoffId = within(heading.closest("header") as HTMLElement).getByText("RE-4892-X");
+    expect(handoffId.className).toContain("handoffId");
+    expect(handoffId).toHaveTextContent("RE-4892-X");
+
+    const stylesheet = postcss.parse(
+      readFileSync(resolve(process.cwd(), "components/kapitbiz/KapitBizRelay.module.css"), "utf8"),
+    );
+    const handoffIdRule = stylesheet.nodes?.find(
+      (node): node is Rule => node.type === "rule" && node.selector === ".handoffId",
+    );
+
+    expect(handoffIdRule?.nodes.some(
+      (node) => node.type === "decl" && node.prop === "white-space" && node.value === "nowrap",
+    )).toBe(true);
   });
 
   it("never flashes a fresh incident while restoring reservation progress", async () => {

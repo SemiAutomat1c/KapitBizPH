@@ -30,12 +30,15 @@ export default function MerchantShell({
   useEffect(() => {
     if (previousTabRef.current === activeTab) return;
     previousTabRef.current = activeTab;
-    screenRef.current?.focus({ preventScroll: true });
+    const heading = screenRef.current?.querySelector<HTMLElement>("h2");
+    if (!heading) return;
+    heading.tabIndex = -1;
+    heading.focus({ preventScroll: true });
   }, [activeTab]);
 
   return (
     <main className={styles.merchantShell}>
-      <section ref={screenRef} className={styles.merchantWorkspace} aria-label={tabLabels[activeTab]} tabIndex={-1}>
+      <section ref={screenRef} className={styles.merchantWorkspace} aria-label={tabLabels[activeTab]}>
         <MerchantHeader
           title="KapitBiz Relay"
           onMenu={onOpenMenu}
