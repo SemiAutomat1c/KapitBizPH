@@ -43,7 +43,7 @@ export interface KapitBizRelayAppProps {
   onClose: () => void;
   onNavigate: (tab: Exclude<MerchantTab, "menu">) => void;
   onOpenMenu: () => void;
-  onOpenRecoveryPacket: () => void;
+  onOpenRecoveryPacket?: () => void;
   hazardContext?: HazardRelayContext | null;
 }
 
@@ -142,7 +142,7 @@ function KapitBizRelayWorkspace({
           <RescueCompleteScreen
             state={relay.state}
             selection={relay.selection}
-            onOpenRecoveryPacket={onOpenRecoveryPacket ?? (() => {})}
+            onOpenRecoveryPacket={onOpenRecoveryPacket}
           />
         ) : (
           <section className={styles.placeholder} aria-labelledby="next-step-heading">
@@ -169,5 +169,5 @@ export function KapitBizRelayApp(props: KapitBizRelayAppProps) {
 
 export default function StandaloneKapitBizRelayApp() {
   const relay = useKapitBiz();
-  return <KapitBizRelayWorkspace relay={relay} hazardContext={null} showHomeLink onOpenRecoveryPacket={() => {}} />;
+  return <KapitBizRelayWorkspace relay={relay} hazardContext={null} showHomeLink />;
 }

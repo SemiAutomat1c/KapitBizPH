@@ -191,6 +191,7 @@ describe("KapitBiz Hazard Assist UI", () => {
   });
 
   it("Reset demo clears demo-session, Relay, and Hazard Assist progress", async () => {
+    createCompleteStateForTest();
     localStorage.setItem("kapitbiz-hazard-assist-v1", JSON.stringify({
       version: 1,
       alertAcknowledged: true,
@@ -215,6 +216,11 @@ describe("KapitBiz Hazard Assist UI", () => {
       safetyCheckAnswer: "unknown",
       relayStartedFromHazardAssist: false,
       recoveryPacketPreviewOpen: false,
+    });
+    expect(JSON.parse(localStorage.getItem("kapitbiz-relay-v2") ?? "null")).toMatchObject({
+      step: "incident",
+      receiverConfirmedAt: null,
+      handoffId: null,
     });
   });
 });

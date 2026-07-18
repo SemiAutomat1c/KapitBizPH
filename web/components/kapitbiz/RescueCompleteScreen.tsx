@@ -27,7 +27,7 @@ export default function RescueCompleteScreen({
 }: {
   state: RelayDemoState;
   selection: RelaySelection;
-  onOpenRecoveryPacket: () => void;
+  onOpenRecoveryPacket?: () => void;
 }) {
   const [shareStatus, setShareStatus] = useState<string | null>(null);
   const host = state.hosts.find((candidate) => candidate.id === state.selectedHostId);
@@ -92,7 +92,7 @@ export default function RescueCompleteScreen({
 
       <div className={styles.completeActions}>
         <button className={styles.primaryButton} type="button" onClick={shareRecord}><Share2 aria-hidden="true" /> Share recovery record</button>
-        <button className={styles.secondaryAction} type="button" onClick={onOpenRecoveryPacket}><Clipboard aria-hidden="true" /> Recovery packet preview</button>
+        {onOpenRecoveryPacket ? <button className={styles.secondaryAction} type="button" onClick={onOpenRecoveryPacket}><Clipboard aria-hidden="true" /> Recovery packet preview</button> : null}
         <button className={styles.secondaryAction} type="button" onClick={() => setShareStatus(SHARE_TEXT)}><Clipboard aria-hidden="true" /> View handoff record</button>
         {shareStatus ? <p className={styles.shareStatus} role="status" aria-live="polite">{shareStatus}</p> : null}
       </div>

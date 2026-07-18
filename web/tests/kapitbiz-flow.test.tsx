@@ -496,6 +496,15 @@ describe("KapitBiz Relay flow", () => {
     expect(screen.getByText(/simulated custody timeline/i)).toBeInTheDocument();
   });
 
+  it("omits recovery packet preview when standalone Relay has no handler", async () => {
+    window.localStorage.setItem("kapitbiz-relay-v2", JSON.stringify(createCompleteState()));
+
+    render(<KapitBizRelayApp />);
+
+    await screen.findByRole("heading", { name: "₱16,500 inventory protected" });
+    expect(screen.queryByRole("button", { name: "Recovery packet preview" })).not.toBeInTheDocument();
+  });
+
   it("copies the exact recovery record when Web Share is unavailable", async () => {
     const user = userEvent.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
