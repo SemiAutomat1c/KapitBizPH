@@ -2,10 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { DemoRole } from "@/lib/kapitbiz-demo";
-import { Building2, CloudOff, Info, RotateCcw, Truck, Warehouse, X } from "lucide-react";
+import { Building2, CloudOff, Download, Info, RotateCcw, Smartphone, Truck, Warehouse, X } from "lucide-react";
 import styles from "./KapitBizRelay.module.css";
 
 type Detail = "profile" | "status" | "about";
+
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
 
 const detailCopy: Record<Detail, { title: string; body: string }> = {
   profile: {
@@ -66,11 +71,34 @@ export default function MenuScreen({
 }) {
   const [detail, setDetail] = useState<Detail | null>(null);
   const [resetOpen, setResetOpen] = useState(false);
+  const [installOpen, setInstallOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installStatus, setInstallStatus] = useState("Android prompt appears in supported Chrome browsers.");
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+      setInstallStatus("Android install prompt ready.");
+    };
+    const handleInstalled = () => {
+      setInstallPrompt(null);
+      setInstallStatus("KapitBiz Relay installed.");
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleInstalled);
+    };
+  }, []);
 
   const closeDialog = () => {
     setDetail(null);
     setResetOpen(false);
+    setInstallOpen(false);
     window.requestAnimationFrame(() => triggerRef.current?.focus());
   };
   const openDetail = (nextDetail: Detail, target: HTMLButtonElement) => {
@@ -80,6 +108,21 @@ export default function MenuScreen({
   const openReset = (target: HTMLButtonElement) => {
     triggerRef.current = target;
     setResetOpen(true);
+  };
+  const openInstall = (target: HTMLButtonElement) => {
+    triggerRef.current = target;
+    setInstallOpen(true);
+  };
+  const installAndroid = async () => {
+    if (!installPrompt) {
+      setInstallStatus("If no prompt appears, use Chrome menu > Add to Home screen.");
+      return;
+    }
+
+    await installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    setInstallPrompt(null);
+    setInstallStatus(choice.outcome === "accepted" ? "Install prompt accepted." : "Install prompt dismissed.");
   };
 
   return (
@@ -100,6 +143,10 @@ export default function MenuScreen({
         <button type="button" aria-label="Preview Rider" onClick={() => onPreviewRole("rider")}>
           <Truck aria-hidden="true" />
           <span><strong>Preview Rider</strong><small>Open the seeded rider role</small></span>
+        </button>
+        <button type="button" aria-label="Install app" onClick={(event) => openInstall(event.currentTarget)}>
+          <Smartphone aria-hidden="true" />
+          <span><strong>Install app</strong><small>Android install and iPhone home-screen guide</small></span>
         </button>
         <button type="button" aria-label="Demo and offline status" onClick={(event) => openDetail("status", event.currentTarget)}>
           <CloudOff aria-hidden="true" />
@@ -126,6 +173,30 @@ export default function MenuScreen({
           <div className={styles.dialogActions}>
             <button className={styles.secondaryButton} type="button" onClick={closeDialog}>Cancel</button>
             <button className={styles.dangerButton} type="button" onClick={onResetDemo}>Confirm reset demo</button>
+          </div>
+        </DetailDialog>
+      ) : null}
+      {installOpen ? (
+        <DetailDialog title="Install KapitBiz Relay" onClose={closeDialog}>
+          <div className={styles.installGrid}>
+            <section className={styles.installCard} aria-labelledby="android-install-heading">
+              <h3 id="android-install-heading">Android</h3>
+              <p>Install from Chrome for a home-screen app with offline demo files.</p>
+              <button className={styles.primaryButton} type="button" onClick={installAndroid}>
+                <Download aria-hidden="true" />
+                Install on Android
+              </button>
+              <p className={styles.installStatus} role="status">{installStatus}</p>
+            </section>
+            <section className={styles.installCard} aria-labelledby="iphone-install-heading">
+              <h3 id="iphone-install-heading">iPhone</h3>
+              <ol className={styles.installSteps}>
+                <li>Open this page in Safari</li>
+                <li>Tap Share</li>
+                <li>Add to Home Screen</li>
+                <li>Tap Add</li>
+              </ol>
+            </section>
           </div>
         </DetailDialog>
       ) : null}

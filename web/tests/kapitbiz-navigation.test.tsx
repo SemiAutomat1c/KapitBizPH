@@ -160,6 +160,40 @@ describe("KapitBiz complete demo navigation", () => {
     expect(screen.getByRole("dialog", { name: "Reset KapitBiz demo" })).toBeInTheDocument();
   });
 
+  it("opens Android install and iPhone add-to-home guidance from Menu", async () => {
+    seedCompletedOnboarding({ activeTab: "menu" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    expect(await screen.findByRole("heading", { name: "Business menu" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Install app" }));
+
+    expect(screen.getByRole("dialog", { name: "Install KapitBiz Relay" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Install on Android" })).toBeInTheDocument();
+    expect(screen.getByText("Tap Share")).toBeInTheDocument();
+    expect(screen.getByText("Add to Home Screen")).toBeInTheDocument();
+  });
+
+  it("uses the Android browser install prompt when it is available", async () => {
+    seedCompletedOnboarding({ activeTab: "menu" });
+    const prompt = vi.fn().mockResolvedValue(undefined);
+    const installEvent = new Event("beforeinstallprompt") as Event & {
+      prompt: () => Promise<void>;
+      userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+    };
+    installEvent.prompt = prompt;
+    installEvent.userChoice = Promise.resolve({ outcome: "accepted" });
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    window.dispatchEvent(installEvent);
+    await user.click(await screen.findByRole("button", { name: "Install app" }));
+    await user.click(screen.getByRole("button", { name: "Install on Android" }));
+
+    expect(prompt).toHaveBeenCalled();
+    await waitFor(() => expect(screen.getByText("Install prompt accepted.")).toBeInTheDocument());
+  });
+
   it.each([
     ["Preview Storage Host", "Storage Host preview"],
     ["Preview Rider", "Rider preview"],

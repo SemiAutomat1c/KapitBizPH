@@ -29,6 +29,48 @@ function loadWorker(overrides: Record<string, unknown> = {}) {
 }
 
 describe("KapitBiz service worker", () => {
+  it("ships an installable standalone manifest with scoped icons", () => {
+    const manifest = JSON.parse(readFileSync(resolve(process.cwd(), "public/manifest.json"), "utf8"));
+
+    expect(manifest).toMatchObject({
+      name: "KapitBiz Relay - Tagum Business Continuity",
+      short_name: "KapitBiz Relay",
+      id: "/",
+      scope: "/",
+      start_url: "/",
+      display: "standalone",
+    });
+    expect(manifest.icons).toEqual(expect.arrayContaining([
+      expect.objectContaining({ src: "/icon-192.png", purpose: "any" }),
+      expect.objectContaining({ src: "/icon-maskable-512.png", purpose: "maskable" }),
+    ]));
+  });
+
+  it("precaches the install shell during installation", async () => {
+    const addAll = vi.fn().mockResolvedValue(undefined);
+    const handlers = loadWorker({
+      caches: {
+        open: vi.fn().mockResolvedValue({ addAll }),
+      },
+    });
+    let installation: Promise<unknown> | undefined;
+
+    handlers.get("install")?.({
+      waitUntil: (promise: Promise<unknown>) => {
+        installation = promise;
+      },
+    });
+    await installation;
+
+    expect(addAll).toHaveBeenCalledWith(expect.arrayContaining([
+      "/",
+      "/manifest.json",
+      "/icon-192.png",
+      "/icon-512.png",
+      "/icon-maskable-512.png",
+    ]));
+  });
+
   it("deletes the superseded v1 shell cache during activation", async () => {
     const deleteCache = vi.fn().mockResolvedValue(true);
     const handlers = loadWorker({

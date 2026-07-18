@@ -1,10 +1,20 @@
 // Navigations prefer the current deployment while previously fetched pages
 // remain available when the venue connection drops. Hashed assets stay
 // cache-first because a new build gives them new URLs.
-const CACHE = "kapitbiz-shell-v2";
+const CACHE = "kapitbiz-shell-v3";
+const PRECACHE_URLS = [
+  "/",
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/icon-maskable-512.png",
+];
 
-self.addEventListener("install", () => {
+self.addEventListener("install", (event) => {
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
+  );
 });
 
 self.addEventListener("activate", (event) => {

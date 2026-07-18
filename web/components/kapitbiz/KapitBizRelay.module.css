@@ -1178,6 +1178,14 @@
 .dialogHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #bec8ca; padding-bottom: 10px; }
 .dialogHeader h2 { margin: 0; color: #181c1d; font-size: 1.15rem; line-height: 1.5rem; }
 .menuDialog > p { margin: 16px 0 0; color: #3e494a; line-height: 1.45rem; }
+.installGrid { display: grid; gap: 12px; margin-top: 16px; }
+.installCard { display: grid; gap: 10px; min-width: 0; border: 1px solid #bec8ca; border-radius: 6px; background: #f7fafa; padding: 14px; }
+.installCard h3, .installCard p { margin: 0; }
+.installCard h3 { color: #00535b; font-size: 1rem; line-height: 1.3rem; }
+.installCard p { color: #3e494a; font-size: 0.85rem; line-height: 1.3rem; }
+.installCard .primaryButton { min-height: 48px; font-size: 0.92rem; }
+.installStatus { border-left: 3px solid #006d77; background: #e8f3f3; padding: 9px 10px; color: #18484d !important; font-weight: 700; }
+.installSteps { display: grid; gap: 8px; margin: 0; padding-left: 20px; color: #3e494a; font-size: 0.88rem; line-height: 1.35rem; }
 .dialogActions { display: flex; justify-content: end; gap: 10px; margin-top: 20px; }
 .dangerButton { min-height: 40px; border: 0; border-radius: 4px; background: #93000a; color: #fff; padding: 8px 12px; font-size: 0.8rem; font-weight: 700; }
 

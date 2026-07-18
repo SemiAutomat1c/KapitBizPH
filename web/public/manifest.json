@@ -1,11 +1,15 @@
 {
-  "name": "KapitBiz Relay — Tagum Business Continuity",
+  "name": "KapitBiz Relay - Tagum Business Continuity",
   "short_name": "KapitBiz Relay",
   "description": "Rescue at-risk MSME stock to nearby vetted capacity during a power outage or flood advisory.",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#f3efe4",
-  "theme_color": "#a33a2a",
+  "background_color": "#f7fafa",
+  "theme_color": "#006d77",
+  "orientation": "portrait",
+  "categories": ["business", "productivity", "utilities"],
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

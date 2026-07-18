@@ -17,10 +17,18 @@ export const metadata: Metadata = {
   title: "KapitBiz Relay",
   description: "Regional operating-capacity rescue for Davao MSMEs",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    title: "KapitBiz Relay",
+    statusBarStyle: "default",
+  },
+  icons: {
+    apple: "/icon-192.png",
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7fafa",
+  themeColor: "#006d77",
   width: "device-width",
   initialScale: 1,
 };
