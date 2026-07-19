@@ -89,11 +89,16 @@ describe("Sagip Center multi-accept", () => {
     const board = await screen.findByRole("dialog", { name: "Dry ice, 1kg" });
     expect(within(board).getByText("0 of 1 kg secured")).toBeInTheDocument();
 
-    const firstAccept = await within(board).findByRole("button", { name: "Accept" }, { timeout: 6_000 });
+    let acceptButtons: HTMLElement[] = [];
+    await waitFor(() => {
+      acceptButtons = within(board).getAllByRole("button", { name: "Accept" });
+      expect(acceptButtons.length).toBeGreaterThanOrEqual(2);
+    }, { timeout: 10_000 });
+    const [firstAccept, secondAccept] = acceptButtons;
+    expect(secondAccept).not.toBe(firstAccept);
     await user.click(firstAccept);
     expect(await within(board).findByText("1 of 1 kg secured")).toBeInTheDocument();
 
-    const remainingAccept = await within(board).findByRole("button", { name: "Accept" }, { timeout: 6_000 });
-    expect(remainingAccept).toBeDisabled();
+    expect(secondAccept).toBeDisabled();
   }, 15_000);
 });
