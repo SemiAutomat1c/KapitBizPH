@@ -70,3 +70,27 @@ describe("Sagip Center offer board", () => {
     expect(prices).toEqual(sorted);
   });
 });
+
+describe("Sagip Center multi-accept", () => {
+  it("accepting an offer updates the fulfilled-meter and disables Accept once demand is met", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+    await user.click(screen.getByRole("button", { name: "Sagip Center" }));
+    await user.click(screen.getByRole("button", { name: "Post a request" }));
+    const postDialog = screen.getByRole("dialog", { name: "Post a request" });
+    await user.type(within(postDialog).getByLabelText("Title"), "Dry ice, 40kg");
+    await user.selectOptions(within(postDialog).getByLabelText("Category"), "dry-ice");
+    await user.clear(within(postDialog).getByLabelText("Quantity"));
+    await user.type(within(postDialog).getByLabelText("Quantity"), "40");
+    await user.type(within(postDialog).getByLabelText("Unit"), "kg");
+    await user.click(within(postDialog).getByRole("button", { name: "Post request" }));
+
+    await user.click(await screen.findByText("Dry ice, 40kg"));
+    const board = await screen.findByRole("dialog", { name: "Dry ice, 40kg" });
+    expect(within(board).getByText("0 of 40 kg secured")).toBeInTheDocument();
+
+    const acceptButtons = await within(board).findAllByRole("button", { name: "Accept" }, { timeout: 6_000 });
+    await user.click(acceptButtons[0]);
+    expect(await within(board).findByText(/of 40 kg secured/)).toHaveTextContent("20 of 40 kg secured");
+  });
+});
