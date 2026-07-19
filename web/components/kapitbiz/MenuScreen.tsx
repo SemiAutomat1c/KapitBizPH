@@ -164,6 +164,7 @@ export default function MenuScreen({
 
       {detail ? (
         <DetailDialog title={detailCopy[detail].title} onClose={closeDialog}>
+          {detail === "profile" ? <span className={styles.kycBadge} data-status="verified">Verified</span> : null}
           <p>{detailCopy[detail].body}</p>
         </DetailDialog>
       ) : null}

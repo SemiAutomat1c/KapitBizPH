@@ -225,3 +225,14 @@ describe("Supplier preview and Calamity Mode price ceiling", () => {
     expect(submit).toBeDisabled();
   });
 });
+
+describe("KYC status", () => {
+  it("shows a Verified badge on the business profile", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+    await user.click(screen.getByRole("button", { name: "Business profile" }));
+    const dialog = screen.getByRole("dialog", { name: "Business profile" });
+    expect(within(dialog).getByText("Verified")).toBeInTheDocument();
+  });
+});
