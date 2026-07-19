@@ -78,19 +78,22 @@ describe("Sagip Center multi-accept", () => {
     await user.click(screen.getByRole("button", { name: "Sagip Center" }));
     await user.click(screen.getByRole("button", { name: "Post a request" }));
     const postDialog = screen.getByRole("dialog", { name: "Post a request" });
-    await user.type(within(postDialog).getByLabelText("Title"), "Dry ice, 40kg");
+    await user.type(within(postDialog).getByLabelText("Title"), "Dry ice, 1kg");
     await user.selectOptions(within(postDialog).getByLabelText("Category"), "dry-ice");
     await user.clear(within(postDialog).getByLabelText("Quantity"));
-    await user.type(within(postDialog).getByLabelText("Quantity"), "40");
+    await user.type(within(postDialog).getByLabelText("Quantity"), "1");
     await user.type(within(postDialog).getByLabelText("Unit"), "kg");
     await user.click(within(postDialog).getByRole("button", { name: "Post request" }));
 
-    await user.click(await screen.findByText("Dry ice, 40kg"));
-    const board = await screen.findByRole("dialog", { name: "Dry ice, 40kg" });
-    expect(within(board).getByText("0 of 40 kg secured")).toBeInTheDocument();
+    await user.click(await screen.findByText("Dry ice, 1kg"));
+    const board = await screen.findByRole("dialog", { name: "Dry ice, 1kg" });
+    expect(within(board).getByText("0 of 1 kg secured")).toBeInTheDocument();
 
-    const acceptButtons = await within(board).findAllByRole("button", { name: "Accept" }, { timeout: 6_000 });
-    await user.click(acceptButtons[0]);
-    expect(await within(board).findByText(/of 40 kg secured/)).toHaveTextContent("20 of 40 kg secured");
-  });
+    const firstAccept = await within(board).findByRole("button", { name: "Accept" }, { timeout: 6_000 });
+    await user.click(firstAccept);
+    expect(await within(board).findByText("1 of 1 kg secured")).toBeInTheDocument();
+
+    const remainingAccept = await within(board).findByRole("button", { name: "Accept" }, { timeout: 6_000 });
+    expect(remainingAccept).toBeDisabled();
+  }, 15_000);
 });

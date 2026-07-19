@@ -52,5 +52,11 @@ Tests  4 passed (4)
 
 ## Concerns
 
-- The supplied Task 7 scenario accepts one partial offer, so it verifies the fulfilled-meter decrement but does not reach the final disabled Accept state. The existing Task 6 board guard (`disabled={remaining <= 0}`) remains unchanged and was not modified for this test-only task.
+- The original committed Task 7 scenario accepted one partial offer and did not reach the final disabled Accept state; the pre-review fix below replaces that path.
 - Pre-existing dirty Task 1, 3, 4, and 5 report files were left untouched and will not be staged.
+
+## Pre-review Fix
+
+- Updated the multi-accept regression to post a `1 kg` dry-ice request, accept the first delayed visible offer, verify `1 of 1 kg secured`, then wait for the second delayed visible offer and verify its remaining Accept button is disabled.
+- No production code changes were needed; the existing offer-board guard correctly blocks acceptance once the request is fulfilled.
+- Verification: `cd web && npx vitest run tests/kapitbiz-sagip-ui.test.tsx` passed all 4 tests; `git diff --check -- web/tests/kapitbiz-sagip-ui.test.tsx` passed.
