@@ -236,3 +236,30 @@ describe("KYC status", () => {
     expect(within(dialog).getByText("Verified")).toBeInTheDocument();
   });
 });
+
+describe("Nearby Tulong (surplus segment)", () => {
+  it("posts surplus, receives Buyer-labeled offers, and sorts highest price first", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+    await user.click(screen.getByRole("button", { name: "Sagip Center" }));
+    await user.click(screen.getByRole("button", { name: "Offering surplus" }));
+    await user.click(screen.getByRole("button", { name: "Post surplus" }));
+    const postDialog = screen.getByRole("dialog", { name: "Post surplus" });
+    await user.type(within(postDialog).getByLabelText("Title"), "50 sacks of flour nearing expiration");
+    await user.selectOptions(within(postDialog).getByLabelText("Category"), "raw-material");
+    await user.clear(within(postDialog).getByLabelText("Quantity"));
+    await user.type(within(postDialog).getByLabelText("Quantity"), "50");
+    await user.type(within(postDialog).getByLabelText("Unit"), "sacks");
+    await user.click(within(postDialog).getByRole("button", { name: "Post surplus" }));
+
+    await user.click(await screen.findByText("50 sacks of flour nearing expiration"));
+    const board = await screen.findByRole("dialog", { name: "50 sacks of flour nearing expiration" });
+    const offers = await within(board).findAllByTestId("sagip-offer-price", {}, { timeout: 6_000 });
+    const buyerNames = within(board).getAllByRole("heading", { level: 3 }).map((node) => node.textContent);
+    expect(buyerNames.every((name) => name?.startsWith("Buyer "))).toBe(true);
+
+    const prices = offers.map((node) => Number(node.textContent?.replace(/\D/g, "")));
+    const sortedDescending = [...prices].sort((a, b) => b - a);
+    expect(prices).toEqual(sortedDescending);
+  });
+});

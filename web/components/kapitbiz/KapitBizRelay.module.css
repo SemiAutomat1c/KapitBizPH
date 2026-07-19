@@ -279,10 +279,10 @@
 .responderTrust span { color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
 .responderAction { display: inline-flex; min-height: 44px; align-items: center; gap: 4px; border: 0; border-radius: 4px; background: transparent; color: #00535b; padding: 6px 0 6px 8px; font-size: 0.8rem; font-weight: 700; }
 .responderAction:hover { color: #006d77; }
-.sagipOfferActions { display: flex; flex-wrap: wrap; justify-content: flex-end; }
-.sagipNegotiateForm { display: grid; gap: 8px; width: min(100%, 220px); }
-.sagipNegotiateForm label { display: grid; gap: 4px; color: #18484d; font-size: 0.78rem; font-weight: 700; text-align: left; }
-.sagipNegotiateForm input { min-width: 0; min-height: 40px; border: 1px solid #8aa1a4; border-radius: 4px; background: #fff; color: #10282b; padding: 7px 8px; font: inherit; }
+.sagipOfferActions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.sagipNegotiateForm { display: grid; gap: 8px; width: min(100%, 220px); margin-top: 10px; border-top: 1px solid #bec8ca; padding-top: 10px; }
+.sagipNegotiateForm label { display: grid; gap: 4px; color: #18484d; font-size: 0.82rem; font-weight: 700; text-align: left; }
+.sagipNegotiateForm input { min-width: 0; min-height: 40px; border: 1px solid #bec8ca; border-radius: 4px; background: #fff; color: #10282b; padding: 8px; font: inherit; }
 
 @media (max-width: 620px) {
   .hazardAlertStrip { grid-template-columns: auto minmax(0, 1fr); }
@@ -1349,3 +1349,11 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+.sagipScreen { display: grid; gap: 16px; padding-top: 20px; }
+.sagipRequestList { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.sagipRequestList li { display: grid; gap: 2px; border-bottom: 1px solid #bec8ca; padding: 10px 0; }
+.sagipRequestList li small { color: #526163; font-size: 0.78rem; }
+.sagipOfferMeter { margin: 0; color: #002d86; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.92rem; font-weight: 700; }
+.sagipPriceCeilingNote { margin: 0; border-left: 3px solid #c66c00; background: #fff7e8; color: #523200; padding: 10px 12px; font-size: 0.82rem; line-height: 1.3rem; }
+.kycBadge { display: inline-block; margin-bottom: 8px; border-radius: 4px; background: #effcf4; color: #087a35; padding: 4px 8px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
