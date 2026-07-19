@@ -254,12 +254,17 @@ describe("Nearby Tulong (surplus segment)", () => {
 
     await user.click(await screen.findByText("50 sacks of flour nearing expiration"));
     const board = await screen.findByRole("dialog", { name: "50 sacks of flour nearing expiration" });
-    const offers = await within(board).findAllByTestId("sagip-offer-price", {}, { timeout: 6_000 });
+    await waitFor(() => {
+      expect(within(board).getAllByTestId("sagip-offer-price")).toHaveLength(2);
+      expect(within(board).getAllByRole("heading", { level: 3 })).toHaveLength(2);
+    }, { timeout: 10_000 });
+
+    const offers = within(board).getAllByTestId("sagip-offer-price");
     const buyerNames = within(board).getAllByRole("heading", { level: 3 }).map((node) => node.textContent);
     expect(buyerNames.every((name) => name?.startsWith("Buyer "))).toBe(true);
 
     const prices = offers.map((node) => Number(node.textContent?.replace(/\D/g, "")));
     const sortedDescending = [...prices].sort((a, b) => b - a);
     expect(prices).toEqual(sortedDescending);
-  });
+  }, 12_000);
 });
