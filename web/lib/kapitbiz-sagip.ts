@@ -255,21 +255,24 @@ function isTimestamp(value: unknown): value is number {
 
 function isSagipRequest(value: unknown): value is SagipRequest {
   if (!isRecord(value)) return false;
+  if (!SAGIP_CATEGORIES.includes(value.category as SagipCategory)) return false;
+  if (!SAGIP_WINDOW_HOURS.includes(value.windowHours as typeof SAGIP_WINDOW_HOURS[number])) return false;
+  const category = value.category as SagipCategory;
+  const windowHours = value.windowHours as typeof SAGIP_WINDOW_HOURS[number];
+
   return isNonEmptyString(value.id)
     && (value.kind === "need" || value.kind === "surplus")
     && isNonEmptyString(value.title)
-    && SAGIP_CATEGORIES.includes(value.category as SagipCategory)
     && isFinitePositiveNumber(value.quantity)
     && isNonEmptyString(value.unit)
     && isTimestamp(value.postedAt)
-    && SAGIP_WINDOW_HOURS.includes(value.windowHours as typeof SAGIP_WINDOW_HOURS[number])
     && isTimestamp(value.closesAt)
-    && value.closesAt === value.postedAt + value.windowHours * HOUR_IN_MILLISECONDS
+    && value.closesAt === value.postedAt + windowHours * HOUR_IN_MILLISECONDS
     && (value.status === "open" || value.status === "closed" || value.status === "fulfilled")
     && typeof value.fulfilledQty === "number" && Number.isFinite(value.fulfilledQty) && value.fulfilledQty >= 0 && value.fulfilledQty <= value.quantity
     && (value.status === "fulfilled" ? value.fulfilledQty === value.quantity : value.fulfilledQty < value.quantity)
     && typeof value.calamityModeActive === "boolean"
-    && (value.calamityModeActive ? value.srpCeilingPhp === SRP_CEILINGS[value.category as SagipCategory] : value.srpCeilingPhp === null);
+    && (value.calamityModeActive ? value.srpCeilingPhp === SRP_CEILINGS[category] : value.srpCeilingPhp === null);
 }
 
 function isBlindOffer(value: unknown): value is BlindOffer {
