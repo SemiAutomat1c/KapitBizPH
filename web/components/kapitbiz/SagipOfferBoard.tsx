@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { X } from "lucide-react";
 import { remainingQuantity, sortOffers, visibleOffers, type BlindOffer, type SagipRequest } from "@/lib/kapitbiz-sagip";
 import styles from "./KapitBizRelay.module.css";
@@ -31,11 +32,22 @@ export default function SagipOfferBoard({
   now,
   onAccept,
   onReject,
+  onNegotiate,
   onClose,
   onPreviewSupplier,
 }: SagipOfferBoardProps) {
+  const [negotiatingOfferId, setNegotiatingOfferId] = useState<string | null>(null);
+  const [counterPrice, setCounterPrice] = useState("");
   const offers = sortOffers(request, visibleOffers(allOffers, request.id, now));
   const remaining = remainingQuantity(request);
+
+  const sendCounter = (offerId: string) => {
+    const pricePhp = Number(counterPrice);
+    if (!Number.isFinite(pricePhp) || pricePhp <= 0) return;
+    onNegotiate(offerId, { kind: "cash", pricePhp });
+    setNegotiatingOfferId(null);
+    setCounterPrice("");
+  };
 
   return (
     <>
@@ -64,12 +76,26 @@ export default function SagipOfferBoard({
                 <div className={styles.responderTrust}>
                   <span>{offer.bidderKycStatus === "verified" ? "Verified Business" : "Provisional - pending review"}</span>
                   {offer.status === "pending" || offer.status === "negotiating" ? (
-                    <div>
+                    <div className={styles.sagipOfferActions}>
                       <button className={styles.responderAction} type="button" disabled={remaining <= 0} onClick={() => onAccept(offer.id)}>
                         Accept
                       </button>
+                      <button className={styles.responderAction} type="button" onClick={() => setNegotiatingOfferId(offer.id)}>
+                        Negotiate
+                      </button>
                       <button className={styles.responderAction} type="button" onClick={() => onReject(offer.id)}>
                         Reject
+                      </button>
+                    </div>
+                  ) : null}
+                  {negotiatingOfferId === offer.id ? (
+                    <div className={styles.sagipNegotiateForm}>
+                      <label>
+                        Counter price (PHP)
+                        <input type="number" min="1" value={counterPrice} onChange={(event) => setCounterPrice(event.target.value)} />
+                      </label>
+                      <button className={styles.secondaryButton} type="button" onClick={() => sendCounter(offer.id)}>
+                        Send counter-offer
                       </button>
                     </div>
                   ) : null}

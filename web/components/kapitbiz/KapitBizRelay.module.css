@@ -279,6 +279,10 @@
 .responderTrust span { color: #00535b; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
 .responderAction { display: inline-flex; min-height: 44px; align-items: center; gap: 4px; border: 0; border-radius: 4px; background: transparent; color: #00535b; padding: 6px 0 6px 8px; font-size: 0.8rem; font-weight: 700; }
 .responderAction:hover { color: #006d77; }
+.sagipOfferActions { display: flex; flex-wrap: wrap; justify-content: flex-end; }
+.sagipNegotiateForm { display: grid; gap: 8px; width: min(100%, 220px); }
+.sagipNegotiateForm label { display: grid; gap: 4px; color: #18484d; font-size: 0.78rem; font-weight: 700; text-align: left; }
+.sagipNegotiateForm input { min-width: 0; min-height: 40px; border: 1px solid #8aa1a4; border-radius: 4px; background: #fff; color: #10282b; padding: 7px 8px; font: inherit; }
 
 @media (max-width: 620px) {
   .hazardAlertStrip { grid-template-columns: auto minmax(0, 1fr); }
@@ -289,6 +293,7 @@
   .recoveryPacketList div { grid-template-columns: 1fr; gap: 5px; }
   .responderRow { grid-template-columns: 1fr; }
   .responderTrust { justify-items: start; text-align: left; }
+  .sagipOfferActions { justify-content: flex-start; }
 }
 
 .rolePreviewShell {
