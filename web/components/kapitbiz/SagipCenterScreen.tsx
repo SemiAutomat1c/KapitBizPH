@@ -6,9 +6,10 @@ import { generateOffersForRequest, postSagipRequest, remainingQuantity, type Kap
 import HazardAssistDialog from "./HazardAssistDialog";
 import SagipOfferBoard from "./SagipOfferBoard";
 import SagipRequestForm from "./SagipRequestForm";
+import SupplierPreviewDialog from "./SupplierPreviewDialog";
 import styles from "./KapitBizRelay.module.css";
 
-type SagipSurface = { kind: "closed" } | { kind: "post-request" } | { kind: "offer-board"; requestId: string };
+type SagipSurface = { kind: "closed" } | { kind: "post-request" } | { kind: "offer-board"; requestId: string } | { kind: "supplier-preview"; requestId: string };
 
 export default function SagipCenterScreen({
   state,
@@ -30,11 +31,11 @@ export default function SagipCenterScreen({
   const emptyLabel = segment === "need"
     ? "No open requests yet. Post one to start collecting blind offers."
     : "No surplus posted yet. Offer idle stock or capacity for other businesses to bid on.";
-  const activeRequest: SagipRequest | undefined = surface.kind === "offer-board"
+  const activeRequest: SagipRequest | undefined = surface.kind === "offer-board" || surface.kind === "supplier-preview"
     ? state.requests.find((request) => request.id === surface.requestId)
     : undefined;
-  const submitRequest = (input: { title: string; category: SagipCategory; quantity: number; unit: string; windowHours: number }) => {
-    const request = postSagipRequest({ ...input, kind: segment, calamityModeActive: false }, now);
+  const submitRequest = (input: { title: string; category: SagipCategory; quantity: number; unit: string; windowHours: number; calamityModeActive: boolean }) => {
+    const request = postSagipRequest({ ...input, kind: segment }, now);
     dispatch({ type: "post-request", request });
     dispatch({ type: "receive-offers", offers: generateOffersForRequest(request, now) });
     setSurface({ kind: "closed" });
@@ -100,8 +101,12 @@ export default function SagipCenterScreen({
             onNegotiate={negotiateOffer}
             onBarter={barterOffer}
             onClose={() => setSurface({ kind: "closed" })}
-            onPreviewSupplier={() => {}}
+            onPreviewSupplier={() => setSurface({ kind: "supplier-preview", requestId: activeRequest.id })}
           />
+        </HazardAssistDialog>
+      ) : surface.kind === "supplier-preview" && activeRequest ? (
+        <HazardAssistDialog label="Preview as supplier" focusKey={`supplier-${activeRequest.id}`} onClose={() => setSurface({ kind: "closed" })}>
+          <SupplierPreviewDialog request={activeRequest} onClose={() => setSurface({ kind: "closed" })} />
         </HazardAssistDialog>
       ) : null}
     </section>

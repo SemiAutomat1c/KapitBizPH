@@ -20,7 +20,7 @@ export default function SagipRequestForm({
   onClose,
 }: {
   kind: SagipRequestKind;
-  onSubmit: (input: { title: string; category: SagipCategory; quantity: number; unit: string; windowHours: number }) => void;
+  onSubmit: (input: { title: string; category: SagipCategory; quantity: number; unit: string; windowHours: number; calamityModeActive: boolean }) => void;
   onClose: () => void;
 }) {
   const [title, setTitle] = useState("");
@@ -28,13 +28,14 @@ export default function SagipRequestForm({
   const [quantity, setQuantity] = useState("10");
   const [unit, setUnit] = useState("");
   const [windowHours, setWindowHours] = useState(24);
+  const [calamityModeActive, setCalamityModeActive] = useState(false);
   const label = kind === "need" ? "Post a request" : "Post surplus";
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const parsedQuantity = Number(quantity);
     if (!title.trim() || !unit.trim() || !Number.isFinite(parsedQuantity) || parsedQuantity <= 0) return;
-    onSubmit({ title: title.trim(), category, quantity: parsedQuantity, unit: unit.trim(), windowHours });
+    onSubmit({ title: title.trim(), category, quantity: parsedQuantity, unit: unit.trim(), windowHours, calamityModeActive });
   };
 
   return (
@@ -73,6 +74,10 @@ export default function SagipRequestForm({
               <option value={48}>48 hours</option>
               <option value={72}>72 hours</option>
             </select>
+          </label>
+          <label>
+            <input type="checkbox" checked={calamityModeActive} onChange={(event) => setCalamityModeActive(event.target.checked)} aria-label="Calamity Mode is active for this request" />
+            Calamity Mode is active for this request
           </label>
           <div className={styles.onboardingActions}>
             <button className={styles.onboardingBack} type="button" onClick={onClose}>Cancel</button>
