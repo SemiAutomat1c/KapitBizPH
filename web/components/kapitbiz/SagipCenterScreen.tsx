@@ -93,6 +93,7 @@ export default function SagipCenterScreen({
             now={now}
             onAccept={acceptOffer}
             onReject={rejectOffer}
+            onNegotiate={() => {}}
             onClose={() => setSurface({ kind: "closed" })}
             onPreviewSupplier={() => {}}
           />

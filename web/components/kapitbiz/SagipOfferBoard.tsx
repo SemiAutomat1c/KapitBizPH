@@ -14,6 +14,17 @@ function offerSummary(offer: BlindOffer): string {
     : `Barter: ${offer.barterDescription} (declared ${formatCurrency(offer.barterDeclaredValuePhp ?? 0)})`;
 }
 
+export interface SagipOfferBoardProps {
+  request: SagipRequest;
+  allOffers: BlindOffer[];
+  now: number;
+  onAccept: (offerId: string) => void;
+  onReject: (offerId: string) => void;
+  onNegotiate: (offerId: string, counter: { kind: "cash"; pricePhp: number }) => void;
+  onClose: () => void;
+  onPreviewSupplier: () => void;
+}
+
 export default function SagipOfferBoard({
   request,
   allOffers,
@@ -22,15 +33,7 @@ export default function SagipOfferBoard({
   onReject,
   onClose,
   onPreviewSupplier,
-}: {
-  request: SagipRequest;
-  allOffers: BlindOffer[];
-  now: number;
-  onAccept: (offerId: string) => void;
-  onReject: (offerId: string) => void;
-  onClose: () => void;
-  onPreviewSupplier: () => void;
-}) {
+}: SagipOfferBoardProps) {
   const offers = sortOffers(request, visibleOffers(allOffers, request.id, now));
   const remaining = remainingQuantity(request);
 
