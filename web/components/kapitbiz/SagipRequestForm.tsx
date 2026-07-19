@@ -41,13 +41,13 @@ export default function SagipRequestForm({
   return (
     <>
       <header className={styles.hazardDialogHeader}>
-        <span>{label}</span>
+        <span aria-label={label}>{kind === "need" ? "Mag-post ng Sagip" : "Mag-post ng Tulong"}</span>
         <button className={styles.iconButton} type="button" onClick={onClose} aria-label={`Close ${label}`} title={`Close ${label}`}>
           <X aria-hidden="true" />
         </button>
       </header>
       <div className={styles.hazardDialogBody}>
-        <h2 data-hazard-initial-focus tabIndex={-1}>{label}</h2>
+        <h2 data-hazard-initial-focus tabIndex={-1} aria-label={label}>{kind === "need" ? "Mag-post ng Sagip" : "Mag-post ng Tulong"}</h2>
         <form className={styles.businessForm} onSubmit={submit}>
           <label>
             Title
@@ -81,7 +81,9 @@ export default function SagipRequestForm({
           </label>
           <div className={styles.onboardingActions}>
             <button className={styles.onboardingBack} type="button" onClick={onClose}>Cancel</button>
-            <button className={styles.primaryButton} type="submit">{kind === "need" ? "Post request" : "Post surplus"}</button>
+            <button className={styles.primaryButton} type="submit" aria-label={kind === "need" ? "Post request" : "Post surplus"}>
+              {kind === "need" ? "Mag-post ng Sagip" : "Mag-post ng Tulong"}
+            </button>
           </div>
         </form>
       </div>

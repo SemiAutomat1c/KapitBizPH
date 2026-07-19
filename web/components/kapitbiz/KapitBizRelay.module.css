@@ -1356,3 +1356,401 @@
 .sagipOfferMeter { margin: 0; color: #002d86; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.92rem; font-weight: 700; }
 .sagipPriceCeilingNote { margin: 0; border-left: 3px solid #c66c00; background: #fff7e8; color: #523200; padding: 10px 12px; font-size: 0.82rem; line-height: 1.3rem; }
 .kycBadge { display: inline-block; margin-bottom: 8px; border-radius: 4px; background: #effcf4; color: #087a35; padding: 4px 8px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+
+/* Split Pane Layout for Sagip Center */
+.sagipLayout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.sagipLeftPane {
+  display: grid;
+  gap: 16px;
+}
+
+.sagipRightPane {
+  background: #ffffff;
+  border: 1px solid #bec8ca;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: grid;
+  gap: 18px;
+}
+
+/* Card List Styling */
+.sagipCardList {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Single Card styling */
+.sagipCard {
+  display: flex;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #bec8ca;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.sagipCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: #0038a8;
+}
+
+.sagipCard[data-selected="true"] {
+  border: 2px solid #ce1126; /* Highlight the selected card with red border */
+}
+
+/* Left Image Container inside Card */
+.sagipCardImageContainer {
+  position: relative;
+  width: 120px;
+  height: 90px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sagipCardImageContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.disasterBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #ffffff;
+  color: #181c1d;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #bec8ca;
+}
+
+/* Content Pane inside Card */
+.sagipCardContent {
+  flex-grow: 1;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.sagipCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.companyLogo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #8fa0a3;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.companyInfo {
+  flex-grow: 1;
+  display: grid;
+  min-width: 0;
+}
+
+.companyInfo h3 {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #181c1d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.companyInfo p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #526163;
+}
+
+.badgeUrgent {
+  background: #ce1126;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.badgeNonUrgent {
+  background: #087a35;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.sagipCardTitle {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #181c1d;
+  line-height: 1.25rem;
+}
+
+.sagipCardQty {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0038a8;
+}
+
+.sagipCardDesc {
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: #526163;
+  line-height: 1.15rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Detail View Layout (Right Column) */
+.sagipDetailHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #bec8ca;
+  padding-bottom: 14px;
+}
+
+.sagipDetailHeaderInfo {
+  flex-grow: 1;
+}
+
+.sagipDetailHeaderInfo h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #181c1d;
+}
+
+.sagipDetailHeaderInfo p {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: #526163;
+}
+
+.offersCountBadge {
+  background: #e8edfb;
+  color: #0038a8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #bec8ca;
+}
+
+.sagipDetailImage {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #bec8ca;
+}
+
+.sagipDetailImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sagipDetailBody h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #181c1d;
+}
+
+.sagipDetailBody .qtyPending {
+  margin: 4px 0 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ce1126;
+}
+
+.sagipDetailBody .descText {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.3rem;
+  color: #526163;
+}
+
+.sagipDetailSectionHeader {
+  margin: 16px 0 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #181c1d;
+  letter-spacing: 0.5px;
+}
+
+.sagipDetailMap {
+  width: 100%;
+  height: 110px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #bec8ca;
+}
+
+.sagipDetailMap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Offer form styling */
+.offerForm {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid #bec8ca;
+  padding-top: 16px;
+}
+
+.offerForm label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #181c1d;
+}
+
+.offerForm textarea {
+  width: 100%;
+  min-height: 70px;
+  border: 1px solid #bec8ca;
+  border-radius: 6px;
+  padding: 8px;
+  font-family: inherit;
+  font-size: 0.86rem;
+  resize: vertical;
+}
+
+.offerFormInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.offerForm input[type="text"],
+.offerForm input[type="number"] {
+  height: 38px;
+  border: 1px solid #bec8ca;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: 0.86rem;
+}
+
+.offerOptionsGroup {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.offerOptionLabel {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.84rem !important;
+  color: #181c1d;
+}
+
+.offerOptionLabel input {
+  width: 16px;
+  height: 16px;
+}
+
+.processingFee {
+  font-size: 0.72rem;
+  color: #526163;
+  margin-left: auto;
+}
+
+.offerSuccessAlert {
+  background: #effcf4;
+  color: #087a35;
+  border: 1px solid #c2f0d5;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Responsiveness media query overrides */
+@media (max-width: 900px) {
+  .sagipLayout {
+    grid-template-columns: 1fr;
+  }
+  .sagipRightPane {
+    display: none; /* In mobile/tablet, details open as a popup modal via surface state */
+  }
+}
+
+/* Header Brand Logo Integration */
+.headerLogoContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  margin: 0;
+  padding: 0;
+}
+
+.headerLogo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+
+.headerSubtitle {
+  background: #ce1126;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}

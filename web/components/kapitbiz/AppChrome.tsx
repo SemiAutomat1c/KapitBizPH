@@ -42,7 +42,9 @@ export function AppHeader({
 
   return (
     <header className={styles.appHeader}>
-      <h1>KapitBiz Relay</h1>
+      <h1 aria-label="KapitBiz Relay" className={styles.headerLogoContainer}>
+        <img src="/illustrations/kapitlogo.png" alt="KapitBizPH Logo" className={styles.headerLogo} />
+      </h1>
       {canGoBack || onClose || onMenu || onNotifications ? (
         <div className={styles.headerActions}>
           {canGoBack ? (
@@ -82,7 +84,13 @@ export function MerchantHeader({
 }) {
   return (
     <header className={styles.merchantHeader}>
-      <h1>{title}</h1>
+      {title === "KapitBiz Relay" ? (
+        <h1 aria-label="KapitBiz Relay" className={styles.headerLogoContainer}>
+          <img src="/illustrations/kapitlogo.png" alt="KapitBizPH Logo" className={styles.headerLogo} />
+        </h1>
+      ) : (
+        <h1>{title}</h1>
+      )}
       <div className={styles.headerActions}>
         <button className={styles.iconButton} type="button" onClick={onNotifications} aria-label="Notifications" title="Notifications">
           <Bell aria-hidden="true" />

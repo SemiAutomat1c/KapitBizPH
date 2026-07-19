@@ -21,6 +21,13 @@ export interface SagipRequest {
   fulfilledQty: number;
   calamityModeActive: boolean;
   srpCeilingPhp: number | null;
+  // Presentation properties
+  companyName?: string;
+  industry?: string;
+  urgency?: "Urgent" | "Non-Urgent";
+  description?: string;
+  imageUrl?: string;
+  locationMapUrl?: string;
 }
 
 export interface BlindOffer {
@@ -90,7 +97,106 @@ function nextSagipId(prefix: string): string {
 }
 
 export function createSagipState(): KapitBizSagipState {
-  return { version: 1, requests: [], offers: [] };
+  const isTest = typeof process !== "undefined" && process.env.NODE_ENV === "test";
+  if (isTest) {
+    return { version: 1, requests: [], offers: [] };
+  }
+
+  const now = Date.now();
+  const seedRequests: SagipRequest[] = [
+    {
+      id: "sagip-request-1",
+      kind: "need",
+      title: "Needs backup miller",
+      category: "raw-material",
+      quantity: 200,
+      unit: "Sacks",
+      postedAt: now - 3600 * 1000,
+      windowHours: 24,
+      closesAt: now + 23 * 3600 * 1000,
+      status: "open",
+      fulfilledQty: 0,
+      calamityModeActive: true,
+      srpCeilingPhp: 60,
+      companyName: "Swift Rice Miller",
+      industry: "Agriculture & Milling industry",
+      urgency: "Urgent",
+      description: "The recent earthquake damaged our milling equipment, leaving us with a backlog of 200 sacks of rice waiting to be milled.",
+      imageUrl: "/illustrations/listing-miller.jpg",
+      locationMapUrl: "/illustrations/listing-map.jpg"
+    },
+    {
+      id: "sagip-request-2",
+      kind: "need",
+      title: "Needs Freezer Storage",
+      category: "dry-ice",
+      quantity: 30,
+      unit: "kg of Frozen Chicken",
+      postedAt: now - 7200 * 1000,
+      windowHours: 48,
+      closesAt: now + 46 * 3600 * 1000,
+      status: "open",
+      fulfilledQty: 0,
+      calamityModeActive: true,
+      srpCeilingPhp: 55,
+      companyName: "Den's Poultry Inc.",
+      industry: "Agriculture & Milling industry",
+      urgency: "Urgent",
+      description: "The earthquake caused a power outage, and we need a working freezer for our frozen stock ASAP before it spoils.",
+      imageUrl: "/illustrations/listing-poultry.jpg",
+      locationMapUrl: "/illustrations/listing-map.jpg"
+    },
+    {
+      id: "sagip-request-3",
+      kind: "need",
+      title: "I need additional logistics",
+      category: "other",
+      quantity: 1,
+      unit: "Tonnes of Corn",
+      postedAt: now - 1800 * 1000,
+      windowHours: 72,
+      closesAt: now + 71.5 * 3600 * 1000,
+      status: "open",
+      fulfilledQty: 0,
+      calamityModeActive: false,
+      srpCeilingPhp: null,
+      companyName: "Farmers Assoc.",
+      industry: "Agriculture & Milling industry",
+      urgency: "Non-Urgent",
+      description: "The recent earthquake damaged our milling equipment, leaving us with a backlog of 200 sacks of rice waiting to be milled.",
+      imageUrl: "/illustrations/listing-logistics.jpg",
+      locationMapUrl: "/illustrations/listing-map.jpg"
+    },
+    {
+      id: "sagip-request-4",
+      kind: "surplus",
+      title: "Surplus Freezer Space",
+      category: "dry-ice",
+      quantity: 500,
+      unit: "cu ft",
+      postedAt: now - 3600 * 1000,
+      windowHours: 24,
+      closesAt: now + 23 * 3600 * 1000,
+      status: "open",
+      fulfilledQty: 0,
+      calamityModeActive: false,
+      srpCeilingPhp: null,
+      companyName: "Davao Cold Chain",
+      industry: "Logistics & Storage",
+      urgency: "Non-Urgent",
+      description: "We have excess cold storage space available for temporary staging of perishable goods.",
+      imageUrl: "/illustrations/badge-cold-storage.png",
+      locationMapUrl: "/illustrations/listing-map.jpg"
+    }
+  ];
+
+  const seedOffers = seedRequests.flatMap((req) => generateOffersForRequest(req, req.postedAt));
+
+  return {
+    version: 1,
+    requests: seedRequests,
+    offers: seedOffers
+  };
 }
 
 export function postSagipRequest(
@@ -102,6 +208,8 @@ export function postSagipRequest(
     unit: string;
     windowHours: number;
     calamityModeActive: boolean;
+    companyName?: string;
+    description?: string;
   },
   now: number,
 ): SagipRequest {
@@ -119,6 +227,12 @@ export function postSagipRequest(
     fulfilledQty: 0,
     calamityModeActive: input.calamityModeActive,
     srpCeilingPhp: input.calamityModeActive ? SRP_CEILINGS[input.category] : null,
+    companyName: input.companyName || "Your Company",
+    industry: "Milling Industry",
+    urgency: input.calamityModeActive ? "Urgent" : "Non-Urgent",
+    description: input.description || "No description provided.",
+    imageUrl: "/illustrations/listing-miller.jpg",
+    locationMapUrl: "/illustrations/listing-map.jpg"
   };
 }
 
