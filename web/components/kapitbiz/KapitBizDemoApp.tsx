@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useKapitBizDemoSession } from "@/lib/kapitbiz-demo";
 import { useKapitBiz } from "@/lib/kapitbiz";
 import { useHazardAssist } from "@/lib/use-hazard-assist";
+import { useSagip } from "@/lib/use-sagip";
 import { buildHazardRelayContext, type SafetyCheckAnswer } from "@/lib/kapitbiz-hazard-assist";
 import { KapitBizRelayApp } from "./KapitBizRelayApp";
 import ActivityScreen from "./ActivityScreen";
@@ -14,6 +15,7 @@ import NetworkScreen from "./NetworkScreen";
 import OnboardingFlow from "./OnboardingFlow";
 import RequestsScreen from "./RequestsScreen";
 import RolePreviewScreen from "./RolePreviewScreen";
+import SagipCenterScreen from "./SagipCenterScreen";
 import HazardAssistDialog from "./HazardAssistDialog";
 import SafetyCheckDecisionPanel from "./SafetyCheckDecisionPanel";
 import GoodSamaritanPanel from "./GoodSamaritanPanel";
@@ -29,9 +31,16 @@ export default function KapitBizDemoApp() {
   const { session, hydrated, dispatch, resetSession } = useKapitBizDemoSession();
   const relay = useKapitBiz();
   const hazardAssist = useHazardAssist();
+  const sagip = useSagip();
   const [hazardSurface, setHazardSurface] = useState<HazardAssistSurface>("closed");
+  const [now, setNow] = useState(() => Date.now());
 
-  if (!hydrated || !relay.hydrated || !hazardAssist.hydrated) {
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  if (!hydrated || !relay.hydrated || !hazardAssist.hydrated || !sagip.hydrated) {
     return (
       <main className={styles.restoreShell}>
         <p role="status">Restoring KapitBiz Relay...</p>
@@ -99,8 +108,9 @@ export default function KapitBizDemoApp() {
     resetSession();
     relay.resetRescue();
     hazardAssist.resetHazardAssist();
+    sagip.resetSagip();
   };
-  const selectTab = (tab: "home" | "requests" | "network" | "activity") => {
+  const selectTab = (tab: "home" | "requests" | "network" | "sagip" | "activity") => {
     dispatch({ type: "select-tab", tab });
   };
   const openSafetyCheck = () => {
@@ -179,12 +189,16 @@ export default function KapitBizDemoApp() {
           onPreviewRole={(role) => dispatch({ type: "select-role", role })}
           onResetDemo={resetDemo}
         />
-      ) : (
+      ) : session.activeTab === "sagip" ? (
+        <SagipCenterScreen state={sagip.state} now={now} dispatch={sagip.dispatch} />
+      ) : session.activeTab === "network" ? (
         <NetworkScreen
           state={relay.state}
           onStartRequest={startRelayFromNetwork}
           onOpenGoodSamaritan={openGoodSamaritan}
         />
+      ) : (
+        null
       )}
       {hazardAssist.state.recoveryPacketPreviewOpen && relay.state.receiverConfirmedAt !== null ? (
         <HazardAssistDialog label="Recovery packet preview" focusKey="recovery-packet" onClose={closeRecoveryPacket}>

@@ -1,5 +1,5 @@
 import type { RelayDemoState, RelaySelection, RelayStep } from "@/lib/kapitbiz";
-import { Bell, ChevronLeft, History, House, ListTodo, Menu, Network, X, type LucideIcon } from "lucide-react";
+import { Bell, ChevronLeft, Handshake, History, House, ListTodo, Menu, Network, X, type LucideIcon } from "lucide-react";
 import type { MerchantTab } from "@/lib/kapitbiz-demo";
 import styles from "./KapitBizRelay.module.css";
 
@@ -144,6 +144,7 @@ const navItems: { id: Exclude<MerchantTab, "menu">; label: string; icon: LucideI
   { id: "home", label: "Home", icon: House },
   { id: "requests", label: "Requests", icon: ListTodo },
   { id: "network", label: "Network", icon: Network },
+  { id: "sagip", label: "Sagip Center", icon: Handshake },
   { id: "activity", label: "Activity", icon: History },
 ];
 

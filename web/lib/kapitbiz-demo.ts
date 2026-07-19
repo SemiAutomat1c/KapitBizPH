@@ -4,7 +4,7 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 
 export const DEMO_SESSION_STORAGE_KEY = "kapitbiz-demo-session-v1";
 export type DemoRole = "merchant" | "host" | "rider";
-export type MerchantTab = "home" | "requests" | "network" | "activity" | "menu";
+export type MerchantTab = "home" | "requests" | "network" | "sagip" | "activity" | "menu";
 export type OnboardingStep = "protect" | "relay" | "verify" | "role" | "business";
 
 export interface KapitBizDemoSession {
@@ -127,7 +127,7 @@ function isDemoRole(value: unknown): value is DemoRole {
 }
 
 function isMerchantTab(value: unknown): value is MerchantTab {
-  return value === "home" || value === "requests" || value === "network" || value === "activity" || value === "menu";
+  return value === "home" || value === "requests" || value === "network" || value === "sagip" || value === "activity" || value === "menu";
 }
 
 function isOnboardingStep(value: unknown): value is OnboardingStep {

@@ -9,6 +9,7 @@ const tabLabels: Record<MerchantTab, string> = {
   home: "Merchant home",
   requests: "Rescue requests",
   network: "Relay network",
+  sagip: "Sagip Center",
   activity: "Business activity",
   menu: "Business menu",
 };
