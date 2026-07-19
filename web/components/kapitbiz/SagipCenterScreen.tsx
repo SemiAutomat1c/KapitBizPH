@@ -43,6 +43,8 @@ export default function SagipCenterScreen({
   const rejectOffer = (offerId: string) => dispatch({ type: "reject-offer", offerId });
   const negotiateOffer = (offerId: string, counter: { kind: "cash"; pricePhp: number }) =>
     dispatch({ type: "negotiate-offer", offerId, counter });
+  const barterOffer = (offerId: string, description: string, declaredValuePhp: number) =>
+    dispatch({ type: "negotiate-offer", offerId, counter: { kind: "barter", description, declaredValuePhp } });
 
   return (
     <section className={styles.sagipScreen} aria-labelledby="sagip-heading">
@@ -96,6 +98,7 @@ export default function SagipCenterScreen({
             onAccept={acceptOffer}
             onReject={rejectOffer}
             onNegotiate={negotiateOffer}
+            onBarter={barterOffer}
             onClose={() => setSurface({ kind: "closed" })}
             onPreviewSupplier={() => {}}
           />

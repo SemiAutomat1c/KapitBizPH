@@ -26,6 +26,7 @@ export interface SagipOfferBoardProps {
   onAccept: (offerId: string) => void;
   onReject: (offerId: string) => void;
   onNegotiate: (offerId: string, counter: { kind: "cash"; pricePhp: number }) => void;
+  onBarter: (offerId: string, description: string, declaredValuePhp: number) => void;
   onClose: () => void;
   onPreviewSupplier: () => void;
 }
@@ -37,18 +38,27 @@ export default function SagipOfferBoard({
   onAccept,
   onReject,
   onNegotiate,
+  onBarter,
   onClose,
   onPreviewSupplier,
 }: SagipOfferBoardProps) {
   const [negotiatingOfferId, setNegotiatingOfferId] = useState<string | null>(null);
   const [counterPrice, setCounterPrice] = useState("");
+  const [barterOfferId, setBarterOfferId] = useState<string | null>(null);
+  const [barterDescription, setBarterDescription] = useState("");
+  const [barterValue, setBarterValue] = useState("");
   const offers = sortOffers(request, visibleOffers(allOffers, request.id, now));
   const remaining = remainingQuantity(request);
 
-  const clearCounterForm = (offerId: string) => {
+  const clearProposalForms = (offerId: string) => {
     if (negotiatingOfferId === offerId) {
       setNegotiatingOfferId(null);
       setCounterPrice("");
+    }
+    if (barterOfferId === offerId) {
+      setBarterOfferId(null);
+      setBarterDescription("");
+      setBarterValue("");
     }
   };
 
@@ -57,17 +67,25 @@ export default function SagipOfferBoard({
     const pricePhp = Number(counterPrice);
     if (!Number.isFinite(pricePhp) || pricePhp <= 0) return;
     onNegotiate(offer.id, { kind: "cash", pricePhp });
-    clearCounterForm(offer.id);
+    clearProposalForms(offer.id);
+  };
+
+  const sendBarter = (offer: BlindOffer) => {
+    if (!canNegotiate(offer)) return;
+    const declaredValuePhp = Number(barterValue);
+    if (!barterDescription.trim() || !Number.isFinite(declaredValuePhp) || declaredValuePhp <= 0) return;
+    onBarter(offer.id, barterDescription.trim(), declaredValuePhp);
+    clearProposalForms(offer.id);
   };
 
   const acceptOffer = (offerId: string) => {
     onAccept(offerId);
-    clearCounterForm(offerId);
+    clearProposalForms(offerId);
   };
 
   const rejectOffer = (offerId: string) => {
     onReject(offerId);
-    clearCounterForm(offerId);
+    clearProposalForms(offerId);
   };
 
   return (
@@ -101,8 +119,20 @@ export default function SagipOfferBoard({
                       <button className={styles.responderAction} type="button" disabled={remaining <= 0} onClick={() => acceptOffer(offer.id)}>
                         Accept
                       </button>
-                      <button className={styles.responderAction} type="button" onClick={() => setNegotiatingOfferId(offer.id)}>
+                      <button className={styles.responderAction} type="button" onClick={() => {
+                        setNegotiatingOfferId(offer.id);
+                        setBarterOfferId(null);
+                        setBarterDescription("");
+                        setBarterValue("");
+                      }}>
                         Negotiate
+                      </button>
+                      <button className={styles.responderAction} type="button" onClick={() => {
+                        setBarterOfferId(offer.id);
+                        setNegotiatingOfferId(null);
+                        setCounterPrice("");
+                      }}>
+                        Propose barter
                       </button>
                       <button className={styles.responderAction} type="button" onClick={() => rejectOffer(offer.id)}>
                         Reject
@@ -117,6 +147,21 @@ export default function SagipOfferBoard({
                       </label>
                       <button className={styles.secondaryButton} type="button" onClick={() => sendCounter(offer)}>
                         Send counter-offer
+                      </button>
+                    </div>
+                  ) : null}
+                  {canNegotiate(offer) && barterOfferId === offer.id ? (
+                    <div className={styles.sagipNegotiateForm}>
+                      <label>
+                        Goods offered
+                        <input value={barterDescription} onChange={(event) => setBarterDescription(event.target.value)} placeholder="10 sacks of rice" />
+                      </label>
+                      <label>
+                        Declared value (PHP)
+                        <input type="number" min="1" value={barterValue} onChange={(event) => setBarterValue(event.target.value)} />
+                      </label>
+                      <button className={styles.secondaryButton} type="button" onClick={() => sendBarter(offer)}>
+                        Send barter proposal
                       </button>
                     </div>
                   ) : null}
