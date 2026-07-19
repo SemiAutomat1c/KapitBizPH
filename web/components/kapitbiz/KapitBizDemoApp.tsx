@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useKapitBizDemoSession } from "@/lib/kapitbiz-demo";
 import { useKapitBiz } from "@/lib/kapitbiz";
 import { useHazardAssist } from "@/lib/use-hazard-assist";
@@ -33,12 +33,6 @@ export default function KapitBizDemoApp() {
   const hazardAssist = useHazardAssist();
   const sagip = useSagip();
   const [hazardSurface, setHazardSurface] = useState<HazardAssistSurface>("closed");
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(Date.now()), 1_000);
-    return () => window.clearInterval(timer);
-  }, []);
 
   if (!hydrated || !relay.hydrated || !hazardAssist.hydrated || !sagip.hydrated) {
     return (
@@ -190,7 +184,7 @@ export default function KapitBizDemoApp() {
           onResetDemo={resetDemo}
         />
       ) : session.activeTab === "sagip" ? (
-        <SagipCenterScreen state={sagip.state} now={now} dispatch={sagip.dispatch} />
+        <SagipCenterScreen state={sagip.state} dispatch={sagip.dispatch} />
       ) : session.activeTab === "network" ? (
         <NetworkScreen
           state={relay.state}

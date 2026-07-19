@@ -1,20 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import type { KapitBizSagipState, SagipAction, SagipRequestKind } from "@/lib/kapitbiz-sagip";
 import styles from "./KapitBizRelay.module.css";
 
 export default function SagipCenterScreen({
   state,
-  now,
   dispatch,
 }: {
   state: KapitBizSagipState;
-  now: number;
   dispatch: (action: SagipAction) => void;
 }) {
   const [segment, setSegment] = useState<SagipRequestKind>("need");
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1_000);
+    return () => window.clearInterval(timer);
+  }, []);
   const requests = state.requests.filter((request) => request.kind === segment);
   const postLabel = segment === "need" ? "Post a request" : "Post surplus";
   const emptyLabel = segment === "need"
@@ -44,7 +48,7 @@ export default function SagipCenterScreen({
       </button>
 
       {requests.length === 0 ? (
-        <div className={styles.emptyStateBlock}>
+        <div className={styles.emptyState}>
           <p>{emptyLabel}</p>
         </div>
       ) : (
