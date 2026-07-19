@@ -187,13 +187,21 @@ describe("kapitbiz-sagip offer generation and selectors", () => {
 
   it("caps generated prices at the SRP ceiling when Calamity Mode is active", () => {
     const request = postSagipRequest(
-      { kind: "need", title: "Dry ice, 40kg", category: "dry-ice", quantity: 40, unit: "kg", windowHours: 24, calamityModeActive: true },
+      { kind: "need", title: "Packaging material, 200 units", category: "packaging", quantity: 200, unit: "units", windowHours: 24, calamityModeActive: true },
       0,
     );
     const offers = generateOffersForRequest(request, 0);
     for (const offer of offers) {
       if (offer.pricePhp !== null) expect(offer.pricePhp).toBeLessThanOrEqual(request.srpCeilingPhp as number);
     }
+  });
+
+  it("returns no offers when no bidders match the request category", () => {
+    const request = postSagipRequest(
+      { kind: "need", title: "Unlisted supply", category: "other", quantity: 10, unit: "units", windowHours: 24, calamityModeActive: false },
+      0,
+    );
+    expect(generateOffersForRequest(request, 0)).toEqual([]);
   });
 
   it("uses Supplier labels for need requests and Buyer labels for surplus requests", () => {
