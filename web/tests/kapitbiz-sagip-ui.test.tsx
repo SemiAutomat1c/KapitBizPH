@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -25,6 +27,11 @@ describe("Sagip Center tab", () => {
     expect(screen.getByRole("button", { name: "Requesting" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Offering surplus" })).toBeInTheDocument();
     expect(screen.getByText(/No open requests yet/)).toBeInTheDocument();
+  });
+
+  it("defines five bottom navigation columns for its five tabs", () => {
+    const stylesheet = readFileSync(resolve(process.cwd(), "components/kapitbiz/KapitBizRelay.module.css"), "utf8");
+    expect(stylesheet).toMatch(/\.bottomNav\s*\{[^}]*grid-template-columns:\s*repeat\(5, 1fr\);/s);
   });
 });
 
@@ -64,11 +71,15 @@ describe("Sagip Center offer board", () => {
 
     await user.click(await screen.findByText("Dry ice, 40kg"));
     const board = await screen.findByRole("dialog", { name: "Dry ice, 40kg" });
-    const prices = (await within(board).findAllByTestId("sagip-offer-price", {}, { timeout: 6_000 }))
+    await waitFor(() => {
+      expect(within(board).getAllByTestId("sagip-offer-price")).toHaveLength(2);
+      expect(within(board).getAllByRole("heading", { level: 3 })).toHaveLength(2);
+    }, { timeout: 10_000 });
+    const prices = within(board).getAllByTestId("sagip-offer-price")
       .map((node) => Number(node.textContent?.replace(/\D/g, "")));
     const sorted = [...prices].sort((a, b) => a - b);
     expect(prices).toEqual(sorted);
-  });
+  }, 12_000);
 });
 
 describe("Sagip Center multi-accept", () => {

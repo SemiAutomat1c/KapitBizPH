@@ -83,8 +83,10 @@ export const SRP_CEILINGS: Record<SagipCategory, number> = {
 
 let sagipIdCounter = 0;
 function nextSagipId(prefix: string): string {
+  const uuid = globalThis.crypto?.randomUUID?.();
+  if (uuid) return `${prefix}-${uuid}`;
   sagipIdCounter += 1;
-  return `${prefix}-${sagipIdCounter}`;
+  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${sagipIdCounter}`;
 }
 
 export function createSagipState(): KapitBizSagipState {
@@ -132,7 +134,8 @@ export function sagipReducer(state: KapitBizSagipState, action: SagipAction): Ka
       return { ...state, offers: [...state.offers, ...action.offers] };
     case "accept-offer": {
       const offer = state.offers.find((candidate) => candidate.id === action.offerId);
-      if (!offer || offer.status !== "pending" && offer.status !== "negotiating") return state;
+      const request = offer ? state.requests.find((candidate) => candidate.id === offer.requestId) : undefined;
+      if (!offer || !request || request.status !== "open" || remainingQuantity(request) <= 0 || offer.status !== "pending" && offer.status !== "negotiating") return state;
       const offers = state.offers.map((candidate) =>
         candidate.id === action.offerId ? { ...candidate, status: "accepted" as const } : candidate,
       );
@@ -144,8 +147,14 @@ export function sagipReducer(state: KapitBizSagipState, action: SagipAction): Ka
       return { ...state, offers, requests };
     }
     case "negotiate-offer": {
+      const offer = state.offers.find((candidate) => candidate.id === action.offerId);
+      const request = offer ? state.requests.find((candidate) => candidate.id === offer.requestId) : undefined;
+      const invalidCounter = action.counter.kind === "cash"
+        ? !Number.isFinite(action.counter.pricePhp) || action.counter.pricePhp <= 0
+        : !action.counter.description.trim() || !Number.isFinite(action.counter.declaredValuePhp) || action.counter.declaredValuePhp <= 0;
+      if (!offer || !request || request.status !== "open" || offer.status !== "pending" && offer.status !== "negotiating" || invalidCounter) return state;
       const offers = state.offers.map((candidate) => {
-        if (candidate.id !== action.offerId) return candidate;
+        if (candidate.id !== offer.id) return candidate;
         if (action.counter.kind === "cash") {
           return { ...candidate, status: "negotiating" as const, offerType: "cash" as const, pricePhp: action.counter.pricePhp };
         }
@@ -160,8 +169,11 @@ export function sagipReducer(state: KapitBizSagipState, action: SagipAction): Ka
       return { ...state, offers };
     }
     case "reject-offer": {
+      const offer = state.offers.find((candidate) => candidate.id === action.offerId);
+      const request = offer ? state.requests.find((candidate) => candidate.id === offer.requestId) : undefined;
+      if (!offer || !request || request.status !== "open" || offer.status !== "pending" && offer.status !== "negotiating") return state;
       const offers = state.offers.map((candidate) =>
-        candidate.id === action.offerId ? { ...candidate, status: "rejected" as const } : candidate,
+        candidate.id === offer.id ? { ...candidate, status: "rejected" as const } : candidate,
       );
       return { ...state, offers };
     }
@@ -186,6 +198,9 @@ export function generateOffersForRequest(request: SagipRequest, now: number): Bl
   const matchingBidders = SAGIP_BIDDER_POOL.filter((bidder) => bidder.categories.includes(request.category));
   const labelPrefix = request.kind === "need" ? "Supplier" : "Buyer";
   const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
+  const totalOfferedQuantity = Math.max(request.quantity, matchingBidders.length);
+  const baseQuantity = Math.floor(totalOfferedQuantity / matchingBidders.length);
+  const remainderQuantity = totalOfferedQuantity - baseQuantity * matchingBidders.length;
 
   return matchingBidders.map((bidder, index) => {
     const spread = bidder.priceBandPhpPerUnit.max - bidder.priceBandPhpPerUnit.min;
@@ -201,7 +216,7 @@ export function generateOffersForRequest(request: SagipRequest, now: number): Bl
       pricePhp: Math.round(pricePhp),
       barterDescription: null,
       barterDeclaredValuePhp: null,
-      quantityOffered: Math.min(request.quantity, Math.round(request.quantity / matchingBidders.length)),
+      quantityOffered: baseQuantity + (index === 0 ? remainderQuantity : 0),
       submittedAt: now,
       arrivesAt: now + (index + 1) * 4_000,
       status: "pending",
@@ -222,36 +237,56 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
+const SAGIP_CATEGORIES: readonly SagipCategory[] = ["dry-ice", "packaging", "fuel", "generator-rental", "raw-material", "other"];
+const SAGIP_WINDOW_HOURS = [24, 48, 72] as const;
+const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function isFinitePositiveNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value > 0;
+}
+
+function isTimestamp(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+}
+
 function isSagipRequest(value: unknown): value is SagipRequest {
   if (!isRecord(value)) return false;
-  return typeof value.id === "string"
+  return isNonEmptyString(value.id)
     && (value.kind === "need" || value.kind === "surplus")
-    && typeof value.title === "string"
-    && typeof value.category === "string"
-    && typeof value.quantity === "number"
-    && typeof value.unit === "string"
-    && typeof value.postedAt === "number"
-    && typeof value.windowHours === "number"
-    && typeof value.closesAt === "number"
+    && isNonEmptyString(value.title)
+    && SAGIP_CATEGORIES.includes(value.category as SagipCategory)
+    && isFinitePositiveNumber(value.quantity)
+    && isNonEmptyString(value.unit)
+    && isTimestamp(value.postedAt)
+    && SAGIP_WINDOW_HOURS.includes(value.windowHours as typeof SAGIP_WINDOW_HOURS[number])
+    && isTimestamp(value.closesAt)
+    && value.closesAt === value.postedAt + value.windowHours * HOUR_IN_MILLISECONDS
     && (value.status === "open" || value.status === "closed" || value.status === "fulfilled")
-    && typeof value.fulfilledQty === "number"
+    && typeof value.fulfilledQty === "number" && Number.isFinite(value.fulfilledQty) && value.fulfilledQty >= 0 && value.fulfilledQty <= value.quantity
+    && (value.status === "fulfilled" ? value.fulfilledQty === value.quantity : value.fulfilledQty < value.quantity)
     && typeof value.calamityModeActive === "boolean"
-    && (value.srpCeilingPhp === null || typeof value.srpCeilingPhp === "number");
+    && (value.calamityModeActive ? value.srpCeilingPhp === SRP_CEILINGS[value.category as SagipCategory] : value.srpCeilingPhp === null);
 }
 
 function isBlindOffer(value: unknown): value is BlindOffer {
   if (!isRecord(value)) return false;
-  return typeof value.id === "string"
-    && typeof value.requestId === "string"
-    && typeof value.bidderLabel === "string"
+  const isCashOffer = value.offerType === "cash" && isFinitePositiveNumber(value.pricePhp);
+  const isBarterOffer = value.offerType === "barter" && isNonEmptyString(value.barterDescription) && isFinitePositiveNumber(value.barterDeclaredValuePhp);
+  return isNonEmptyString(value.id)
+    && isNonEmptyString(value.requestId)
+    && isNonEmptyString(value.bidderLabel)
     && (value.bidderKycStatus === "verified" || value.bidderKycStatus === "provisional")
-    && (value.offerType === "cash" || value.offerType === "barter")
-    && (value.pricePhp === null || typeof value.pricePhp === "number")
+    && (isCashOffer || isBarterOffer)
+    && (value.pricePhp === null || isFinitePositiveNumber(value.pricePhp))
     && (value.barterDescription === null || typeof value.barterDescription === "string")
-    && (value.barterDeclaredValuePhp === null || typeof value.barterDeclaredValuePhp === "number")
-    && typeof value.quantityOffered === "number"
-    && typeof value.submittedAt === "number"
-    && typeof value.arrivesAt === "number"
+    && (value.barterDeclaredValuePhp === null || isFinitePositiveNumber(value.barterDeclaredValuePhp))
+    && isFinitePositiveNumber(value.quantityOffered)
+    && isTimestamp(value.submittedAt)
+    && isTimestamp(value.arrivesAt) && value.arrivesAt >= value.submittedAt
     && (value.status === "pending" || value.status === "accepted" || value.status === "negotiating" || value.status === "rejected");
 }
 
@@ -259,5 +294,9 @@ export function parseSagipState(value: unknown): KapitBizSagipState {
   if (!isRecord(value) || value.version !== 1) return createSagipState();
   if (!Array.isArray(value.requests) || !value.requests.every(isSagipRequest)) return createSagipState();
   if (!Array.isArray(value.offers) || !value.offers.every(isBlindOffer)) return createSagipState();
+  const ids = [...value.requests, ...value.offers].map((item) => item.id);
+  if (new Set(ids).size !== ids.length) return createSagipState();
+  const requestIds = new Set(value.requests.map((request) => request.id));
+  if (!value.offers.every((offer) => requestIds.has(offer.requestId))) return createSagipState();
   return { version: 1, requests: value.requests, offers: value.offers };
 }
