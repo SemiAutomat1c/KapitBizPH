@@ -217,3 +217,47 @@ export function sortOffers(request: SagipRequest, offers: BlindOffer[]): BlindOf
   const direction = request.kind === "need" ? 1 : -1;
   return [...offers].sort((a, b) => (offerPrice(a) - offerPrice(b)) * direction);
 }
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isSagipRequest(value: unknown): value is SagipRequest {
+  if (!isRecord(value)) return false;
+  return typeof value.id === "string"
+    && (value.kind === "need" || value.kind === "surplus")
+    && typeof value.title === "string"
+    && typeof value.category === "string"
+    && typeof value.quantity === "number"
+    && typeof value.unit === "string"
+    && typeof value.postedAt === "number"
+    && typeof value.windowHours === "number"
+    && typeof value.closesAt === "number"
+    && (value.status === "open" || value.status === "closed" || value.status === "fulfilled")
+    && typeof value.fulfilledQty === "number"
+    && typeof value.calamityModeActive === "boolean"
+    && (value.srpCeilingPhp === null || typeof value.srpCeilingPhp === "number");
+}
+
+function isBlindOffer(value: unknown): value is BlindOffer {
+  if (!isRecord(value)) return false;
+  return typeof value.id === "string"
+    && typeof value.requestId === "string"
+    && typeof value.bidderLabel === "string"
+    && (value.bidderKycStatus === "verified" || value.bidderKycStatus === "provisional")
+    && (value.offerType === "cash" || value.offerType === "barter")
+    && (value.pricePhp === null || typeof value.pricePhp === "number")
+    && (value.barterDescription === null || typeof value.barterDescription === "string")
+    && (value.barterDeclaredValuePhp === null || typeof value.barterDeclaredValuePhp === "number")
+    && typeof value.quantityOffered === "number"
+    && typeof value.submittedAt === "number"
+    && typeof value.arrivesAt === "number"
+    && (value.status === "pending" || value.status === "accepted" || value.status === "negotiating" || value.status === "rejected");
+}
+
+export function parseSagipState(value: unknown): KapitBizSagipState {
+  if (!isRecord(value) || value.version !== 1) return createSagipState();
+  if (!Array.isArray(value.requests) || !value.requests.every(isSagipRequest)) return createSagipState();
+  if (!Array.isArray(value.offers) || !value.offers.every(isBlindOffer)) return createSagipState();
+  return { version: 1, requests: value.requests, offers: value.offers };
+}

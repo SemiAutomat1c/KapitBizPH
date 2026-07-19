@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createSagipState,
+  parseSagipState,
   postSagipRequest,
   remainingQuantity,
   sagipReducer,
@@ -257,5 +258,22 @@ describe("kapitbiz-sagip offer generation and selectors", () => {
       { id: "b", requestId: request.id, bidderLabel: "Supplier B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 400, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending" },
     ];
     expect(sortOffers(request, offers).map((o) => o.id)).toEqual(["b", "a"]);
+  });
+});
+
+describe("parseSagipState", () => {
+  it("returns a fresh state for malformed input", () => {
+    expect(parseSagipState(null)).toEqual(createSagipState());
+    expect(parseSagipState({ version: 2 })).toEqual(createSagipState());
+    expect(parseSagipState({ version: 1, requests: "nope", offers: [] })).toEqual(createSagipState());
+  });
+
+  it("round-trips a valid state", () => {
+    const request = postSagipRequest(
+      { kind: "need", title: "x", category: "dry-ice", quantity: 10, unit: "kg", windowHours: 24, calamityModeActive: false }, 0,
+    );
+    const state = sagipReducer(createSagipState(), { type: "post-request", request });
+    const parsed = parseSagipState(JSON.parse(JSON.stringify(state)));
+    expect(parsed).toEqual(state);
   });
 });
