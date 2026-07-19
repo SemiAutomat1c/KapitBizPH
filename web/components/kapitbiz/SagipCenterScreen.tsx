@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import { generateOffersForRequest, postSagipRequest, type KapitBizSagipState, type SagipAction, type SagipCategory, type SagipRequestKind } from "@/lib/kapitbiz-sagip";
+import { generateOffersForRequest, postSagipRequest, remainingQuantity, type KapitBizSagipState, type SagipAction, type SagipCategory, type SagipRequest, type SagipRequestKind } from "@/lib/kapitbiz-sagip";
 import HazardAssistDialog from "./HazardAssistDialog";
+import SagipOfferBoard from "./SagipOfferBoard";
 import SagipRequestForm from "./SagipRequestForm";
 import styles from "./KapitBizRelay.module.css";
 
-type SagipSurface = { kind: "closed" } | { kind: "post-request" };
+type SagipSurface = { kind: "closed" } | { kind: "post-request" } | { kind: "offer-board"; requestId: string };
 
 export default function SagipCenterScreen({
   state,
@@ -29,12 +30,17 @@ export default function SagipCenterScreen({
   const emptyLabel = segment === "need"
     ? "No open requests yet. Post one to start collecting blind offers."
     : "No surplus posted yet. Offer idle stock or capacity for other businesses to bid on.";
+  const activeRequest: SagipRequest | undefined = surface.kind === "offer-board"
+    ? state.requests.find((request) => request.id === surface.requestId)
+    : undefined;
   const submitRequest = (input: { title: string; category: SagipCategory; quantity: number; unit: string; windowHours: number }) => {
     const request = postSagipRequest({ ...input, kind: segment, calamityModeActive: false }, now);
     dispatch({ type: "post-request", request });
     dispatch({ type: "receive-offers", offers: generateOffersForRequest(request, now) });
     setSurface({ kind: "closed" });
   };
+  const acceptOffer = (offerId: string) => dispatch({ type: "accept-offer", offerId });
+  const rejectOffer = (offerId: string) => dispatch({ type: "reject-offer", offerId });
 
   return (
     <section className={styles.sagipScreen} aria-labelledby="sagip-heading">
@@ -65,7 +71,12 @@ export default function SagipCenterScreen({
       ) : (
         <ul className={styles.sagipRequestList} aria-label={segment === "need" ? "Posted requests" : "Posted surplus"}>
           {requests.map((request) => (
-            <li key={request.id}>{request.title}</li>
+            <li key={request.id}>
+              <button type="button" className={styles.inlineAction} onClick={() => setSurface({ kind: "offer-board", requestId: request.id })}>
+                {request.title}
+              </button>
+              <small>{remainingQuantity(request)} of {request.quantity} {request.unit} remaining</small>
+            </li>
           ))}
         </ul>
       )}
@@ -73,6 +84,18 @@ export default function SagipCenterScreen({
       {surface.kind === "post-request" ? (
         <HazardAssistDialog label={postLabel} focusKey="post-request" onClose={() => setSurface({ kind: "closed" })}>
           <SagipRequestForm kind={segment} onSubmit={submitRequest} onClose={() => setSurface({ kind: "closed" })} />
+        </HazardAssistDialog>
+      ) : surface.kind === "offer-board" && activeRequest ? (
+        <HazardAssistDialog label={activeRequest.title} focusKey={activeRequest.id} onClose={() => setSurface({ kind: "closed" })}>
+          <SagipOfferBoard
+            request={activeRequest}
+            allOffers={state.offers}
+            now={now}
+            onAccept={acceptOffer}
+            onReject={rejectOffer}
+            onClose={() => setSurface({ kind: "closed" })}
+            onPreviewSupplier={() => {}}
+          />
         </HazardAssistDialog>
       ) : null}
     </section>
