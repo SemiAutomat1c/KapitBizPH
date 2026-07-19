@@ -50,3 +50,13 @@ Tests  5 passed (5)
 ## Concerns
 
 - The repository-wide `git diff --check` reports trailing whitespace in pre-existing dirty Task 1, 3, 4, and 5 report files. They were not changed or staged.
+
+## Review Fix
+
+- Guarded the cash counter-offer form and submit handler so they are available only while an offer is `pending` or `negotiating`.
+- Accepting or rejecting an offer now clears that offer's open counter form and entered counter price.
+- Added a delayed-offer-aware UI regression: it opens the first offer's counter form, accepts that offer, and verifies the accepted row no longer exposes the input or `Send counter-offer` action and does not show `negotiating`.
+- Verification:
+  - `cd web && npx vitest run tests/kapitbiz-sagip-ui.test.tsx` - passed, 6 tests.
+  - `cd web && npm run lint` - 0 errors; existing `web/components/IntakeForm.tsx:116` image warning remains.
+  - `git diff --check -- web/components/kapitbiz/SagipOfferBoard.tsx web/tests/kapitbiz-sagip-ui.test.tsx` - passed.

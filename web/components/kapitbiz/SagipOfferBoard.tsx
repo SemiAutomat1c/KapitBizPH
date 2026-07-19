@@ -15,6 +15,10 @@ function offerSummary(offer: BlindOffer): string {
     : `Barter: ${offer.barterDescription} (declared ${formatCurrency(offer.barterDeclaredValuePhp ?? 0)})`;
 }
 
+function canNegotiate(offer: BlindOffer): boolean {
+  return offer.status === "pending" || offer.status === "negotiating";
+}
+
 export interface SagipOfferBoardProps {
   request: SagipRequest;
   allOffers: BlindOffer[];
@@ -41,12 +45,29 @@ export default function SagipOfferBoard({
   const offers = sortOffers(request, visibleOffers(allOffers, request.id, now));
   const remaining = remainingQuantity(request);
 
-  const sendCounter = (offerId: string) => {
+  const clearCounterForm = (offerId: string) => {
+    if (negotiatingOfferId === offerId) {
+      setNegotiatingOfferId(null);
+      setCounterPrice("");
+    }
+  };
+
+  const sendCounter = (offer: BlindOffer) => {
+    if (!canNegotiate(offer)) return;
     const pricePhp = Number(counterPrice);
     if (!Number.isFinite(pricePhp) || pricePhp <= 0) return;
-    onNegotiate(offerId, { kind: "cash", pricePhp });
-    setNegotiatingOfferId(null);
-    setCounterPrice("");
+    onNegotiate(offer.id, { kind: "cash", pricePhp });
+    clearCounterForm(offer.id);
+  };
+
+  const acceptOffer = (offerId: string) => {
+    onAccept(offerId);
+    clearCounterForm(offerId);
+  };
+
+  const rejectOffer = (offerId: string) => {
+    onReject(offerId);
+    clearCounterForm(offerId);
   };
 
   return (
@@ -75,26 +96,26 @@ export default function SagipOfferBoard({
                 </div>
                 <div className={styles.responderTrust}>
                   <span>{offer.bidderKycStatus === "verified" ? "Verified Business" : "Provisional - pending review"}</span>
-                  {offer.status === "pending" || offer.status === "negotiating" ? (
+                  {canNegotiate(offer) ? (
                     <div className={styles.sagipOfferActions}>
-                      <button className={styles.responderAction} type="button" disabled={remaining <= 0} onClick={() => onAccept(offer.id)}>
+                      <button className={styles.responderAction} type="button" disabled={remaining <= 0} onClick={() => acceptOffer(offer.id)}>
                         Accept
                       </button>
                       <button className={styles.responderAction} type="button" onClick={() => setNegotiatingOfferId(offer.id)}>
                         Negotiate
                       </button>
-                      <button className={styles.responderAction} type="button" onClick={() => onReject(offer.id)}>
+                      <button className={styles.responderAction} type="button" onClick={() => rejectOffer(offer.id)}>
                         Reject
                       </button>
                     </div>
                   ) : null}
-                  {negotiatingOfferId === offer.id ? (
+                  {canNegotiate(offer) && negotiatingOfferId === offer.id ? (
                     <div className={styles.sagipNegotiateForm}>
                       <label>
                         Counter price (PHP)
                         <input type="number" min="1" value={counterPrice} onChange={(event) => setCounterPrice(event.target.value)} />
                       </label>
-                      <button className={styles.secondaryButton} type="button" onClick={() => sendCounter(offer.id)}>
+                      <button className={styles.secondaryButton} type="button" onClick={() => sendCounter(offer)}>
                         Send counter-offer
                       </button>
                     </div>

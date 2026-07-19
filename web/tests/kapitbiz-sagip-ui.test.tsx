@@ -132,4 +132,38 @@ describe("Sagip Center negotiate", () => {
 
     expect(await within(board).findByText(/negotiating/)).toBeInTheDocument();
   }, 15_000);
+
+  it("closes a counter-offer form when its offer is accepted", async () => {
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+    await user.click(screen.getByRole("button", { name: "Sagip Center" }));
+    await user.click(screen.getByRole("button", { name: "Post a request" }));
+    const postDialog = screen.getByRole("dialog", { name: "Post a request" });
+    await user.type(within(postDialog).getByLabelText("Title"), "Dry ice, 40kg");
+    await user.selectOptions(within(postDialog).getByLabelText("Category"), "dry-ice");
+    await user.clear(within(postDialog).getByLabelText("Quantity"));
+    await user.type(within(postDialog).getByLabelText("Quantity"), "40");
+    await user.type(within(postDialog).getByLabelText("Unit"), "kg");
+    await user.click(within(postDialog).getByRole("button", { name: "Post request" }));
+
+    await user.click(await screen.findByText("Dry ice, 40kg"));
+    const board = await screen.findByRole("dialog", { name: "Dry ice, 40kg" });
+    let negotiateButtons: HTMLElement[] = [];
+    await waitFor(() => {
+      negotiateButtons = within(board).getAllByRole("button", { name: "Negotiate" });
+      expect(negotiateButtons.length).toBeGreaterThan(0);
+    }, { timeout: 10_000 });
+
+    const offerRow = negotiateButtons[0].closest("li");
+    expect(offerRow).not.toBeNull();
+    await user.click(negotiateButtons[0]);
+    expect(within(offerRow!).getByLabelText("Counter price (PHP)")).toBeInTheDocument();
+
+    await user.click(within(offerRow!).getByRole("button", { name: "Accept" }));
+
+    await waitFor(() => expect(within(offerRow!).getByText(/accepted/)).toBeInTheDocument());
+    expect(within(offerRow!).queryByLabelText("Counter price (PHP)")).not.toBeInTheDocument();
+    expect(within(offerRow!).queryByRole("button", { name: "Send counter-offer" })).not.toBeInTheDocument();
+    expect(within(offerRow!).queryByText(/negotiating/)).not.toBeInTheDocument();
+  }, 15_000);
 });
