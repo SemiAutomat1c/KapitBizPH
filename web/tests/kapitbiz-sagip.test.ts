@@ -57,7 +57,7 @@ describe("kapitbiz-sagip reducer", () => {
     };
     let state = sagipReducer(createSagipState(), { type: "post-request", request });
     state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
-    state = sagipReducer(state, { type: "accept-offer", offerId: "offer-1", at: 100 });
+    state = sagipReducer(state, { type: "accept-offer", offerId: "offer-1" });
 
     const updatedRequest = state.requests[0];
     const updatedOffer = state.offers[0];
@@ -79,7 +79,7 @@ describe("kapitbiz-sagip reducer", () => {
     };
     let state = sagipReducer(createSagipState(), { type: "post-request", request });
     state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
-    state = sagipReducer(state, { type: "accept-offer", offerId: "offer-1", at: 100 });
+    state = sagipReducer(state, { type: "accept-offer", offerId: "offer-1" });
 
     expect(state.requests[0].status).toBe("fulfilled");
     expect(remainingQuantity(state.requests[0])).toBe(0);

@@ -55,7 +55,7 @@ export interface KapitBizSagipState {
 export type SagipAction =
   | { type: "post-request"; request: SagipRequest }
   | { type: "receive-offers"; offers: BlindOffer[] }
-  | { type: "accept-offer"; offerId: string; at: number }
+  | { type: "accept-offer"; offerId: string }
   | { type: "negotiate-offer"; offerId: string; counter: { kind: "cash"; pricePhp: number } | { kind: "barter"; description: string; declaredValuePhp: number } }
   | { type: "reject-offer"; offerId: string }
   | { type: "close-request"; requestId: string }
