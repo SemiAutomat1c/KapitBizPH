@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
 import { ArrowRight, HeartHandshake, Map, MapPinned, Snowflake, Truck, X } from "lucide-react";
 import { deriveSelection, eligibleHosts, type CapacityHost, type RelayDemoState } from "@/lib/kapitbiz";
 import CapacityMap from "./CapacityMap";
+import { ColdStorageBadge, TransportBadge } from "./illustrations";
 import styles from "./KapitBizRelay.module.css";
 
 type PartnerType = "storage" | "transport";
@@ -187,7 +188,7 @@ export default function NetworkScreen({
             const eligible = eligiblePartnerIds.has(host.id);
             return (
               <li className={styles.networkRow} data-eligible={eligible} key={host.id}>
-                <div className={styles.networkRowIcon}><Snowflake aria-hidden="true" /></div>
+                <div className={styles.networkRowIcon}><ColdStorageBadge /></div>
                 <div className={styles.networkRowCopy}>
                   <div className={styles.networkRowTitle}>
                     <h3>{host.name}</h3>
@@ -210,7 +211,7 @@ export default function NetworkScreen({
         <ul className={styles.networkList} aria-label="Seeded transport partners">
           {state.transportOptions.map((transport) => (
             <li className={styles.networkRow} key={transport.id}>
-              <div className={styles.networkRowIcon}><Truck aria-hidden="true" /></div>
+              <div className={styles.networkRowIcon}><TransportBadge /></div>
               <div className={styles.networkRowCopy}>
                 <div className={styles.networkRowTitle}><h3>{transport.name}</h3><span>Seeded option</span></div>
                 <p>{`${transport.arrivalMinutes} min arrival | ${transport.capacityKg} kg capacity | ${formatCurrency(transport.fee)} fee`}</p>

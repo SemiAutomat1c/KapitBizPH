@@ -4,6 +4,7 @@ import type { RelayDemoState, RelaySelection } from "@/lib/kapitbiz";
 import type { KapitBizHazardAssistState } from "@/lib/kapitbiz-hazard-assist";
 import { ArrowRight, FileCheck2, MapPinned, ShieldCheck } from "lucide-react";
 import HazardAlertStrip from "./HazardAlertStrip";
+import { HomeBannerIllustration } from "./illustrations";
 import styles from "./KapitBizRelay.module.css";
 
 function formatPhp(value: number): string {
@@ -36,6 +37,10 @@ export default function HomeScreen({
         <p className={styles.eyebrow}>Merchant home</p>
         <h2 id="home-heading">Good morning, Maya</h2>
         <p>Maya&apos;s Frozen Goods</p>
+      </div>
+
+      <div className={styles.homeBanner} aria-hidden="true">
+        <HomeBannerIllustration />
       </div>
 
       <HazardAlertStrip onRunSafetyCheck={onRunSafetyCheck} onOpenGoodSamaritan={onOpenGoodSamaritan} />

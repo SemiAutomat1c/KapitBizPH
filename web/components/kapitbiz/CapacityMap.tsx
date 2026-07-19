@@ -104,7 +104,7 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
           if (cancelled) return;
           new mapboxgl.Marker({ color: "#ba1a1a" }).setLngLat(origin).setPopup(new mapboxgl.Popup().setText(originLabel)).addTo(map);
           hosts.forEach((host) => {
-            new mapboxgl.Marker({ color: host.id === eligibleHostIds[0] ? "#006d77" : "#6f797a" })
+            new mapboxgl.Marker({ color: host.id === eligibleHostIds[0] ? "#0038a8" : "#6f797a" })
               .setLngLat(host.coordinates)
               .setPopup(new mapboxgl.Popup().setText(host.name))
               .addTo(map);
@@ -121,7 +121,7 @@ export default function CapacityMap({ origin, hosts, eligibleHostIds = [], selec
             id: "relay-route-line",
             type: "line",
             source: "relay-route",
-            paint: { "line-color": "#006d77", "line-width": 4, "line-dasharray": [2, 2] },
+            paint: { "line-color": "#0038a8", "line-width": 4, "line-dasharray": [2, 2] },
           });
         });
       } catch {

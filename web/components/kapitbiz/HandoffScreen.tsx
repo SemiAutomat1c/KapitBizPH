@@ -58,7 +58,7 @@ export default function HandoffScreen({
     QRCode.toDataURL(payload, {
       width: 320,
       margin: 2,
-      color: { dark: "#00535b", light: "#ffffff" },
+      color: { dark: "#002d86", light: "#ffffff" },
     })
       .then((dataUrl) => {
         if (active) {

@@ -1,21 +1,21 @@
 "use client";
 
 import { useState, type Dispatch, type FormEvent } from "react";
-import {
-  QrCode,
-  ShieldCheck,
-  Snowflake,
-  Store,
-  Truck,
-  Warehouse,
-  type LucideIcon,
-} from "lucide-react";
 import type {
   DemoRole,
   DemoSessionAction,
   KapitBizDemoSession,
   OnboardingStep,
 } from "@/lib/kapitbiz-demo";
+import {
+  BusinessIllustration,
+  ProtectIllustration,
+  RelayIllustration,
+  RoleHostIllustration,
+  RoleMerchantIllustration,
+  RoleRiderIllustration,
+  VerifyIllustration,
+} from "./illustrations";
 import styles from "./KapitBizRelay.module.css";
 
 const nextStep: Record<OnboardingStep, OnboardingStep | null> = {
@@ -58,10 +58,10 @@ const introductions: Record<Exclude<OnboardingStep, "role" | "business">, {
   },
 };
 
-const roles: { role: DemoRole; label: string; description: string; icon: LucideIcon }[] = [
-  { role: "merchant", label: "Merchant", description: "Protect your stock and request capacity.", icon: Store },
-  { role: "host", label: "Capacity Host", description: "Offer verified freezer or storage space.", icon: Warehouse },
-  { role: "rider", label: "Rider", description: "Move a confirmed rescue safely and quickly.", icon: Truck },
+const roles: { role: DemoRole; label: string; description: string; icon: () => React.JSX.Element }[] = [
+  { role: "merchant", label: "Merchant", description: "Protect your stock and request capacity.", icon: RoleMerchantIllustration },
+  { role: "host", label: "Capacity Host", description: "Offer verified freezer or storage space.", icon: RoleHostIllustration },
+  { role: "rider", label: "Rider", description: "Move a confirmed rescue safely and quickly.", icon: RoleRiderIllustration },
 ];
 
 function OnboardingProgress({ step }: { step: OnboardingStep }) {
@@ -76,20 +76,17 @@ function OnboardingProgress({ step }: { step: OnboardingStep }) {
   );
 }
 
-function OnboardingVisual({ step }: { step: Exclude<OnboardingStep, "role" | "business"> }) {
-  const panels: { step: Exclude<OnboardingStep, "role" | "business">; icon: LucideIcon }[] = [
-    { step: "protect", icon: ShieldCheck },
-    { step: "relay", icon: Warehouse },
-    { step: "verify", icon: QrCode },
-  ];
+const introVisuals: Record<Exclude<OnboardingStep, "role" | "business">, () => React.JSX.Element> = {
+  protect: ProtectIllustration,
+  relay: RelayIllustration,
+  verify: VerifyIllustration,
+};
 
+function OnboardingVisual({ step }: { step: Exclude<OnboardingStep, "role" | "business"> }) {
+  const Illustration = introVisuals[step];
   return (
-    <div className={styles.onboardingVisualPanels} aria-hidden="true">
-      {panels.map(({ step: panelStep, icon: Icon }) => (
-        <span key={panelStep} className={styles.onboardingVisualPanel} data-active={panelStep === step}>
-          <Icon />
-        </span>
-      ))}
+    <div className={styles.onboardingHero} aria-hidden="true">
+      <Illustration />
     </div>
   );
 }
@@ -140,7 +137,7 @@ export default function OnboardingFlow({
                 type="button"
                 onClick={() => selectRole(role)}
               >
-                <Icon aria-hidden="true" />
+                <Icon />
                 <span>
                   <strong>{label}</strong>
                   <small>{description}</small>
@@ -161,8 +158,8 @@ export default function OnboardingFlow({
       <main className={styles.onboardingShell}>
         <section className={styles.onboardingContent} aria-labelledby="business-setup-heading">
           <OnboardingProgress step={step} />
-          <div className={styles.onboardingVisual}>
-            <Snowflake aria-hidden="true" />
+          <div className={styles.onboardingHero} aria-hidden="true">
+            <BusinessIllustration />
           </div>
           <p className={styles.onboardingEyebrow}>Merchant setup</p>
           <h1 id="business-setup-heading">Set up your business</h1>

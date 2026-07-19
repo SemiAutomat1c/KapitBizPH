@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, CheckCircle2, Clock3, PackageCheck } from "lucide-react";
 import type { RelayDemoState } from "@/lib/kapitbiz";
+import { EmptyRequestsIllustration } from "./illustrations";
 import styles from "./KapitBizRelay.module.css";
 
 type RequestFilter = "active" | "pending" | "completed";
@@ -50,7 +51,14 @@ export default function RequestsScreen({
       </fieldset>
 
       {filter === "active" ? (
-        rescueComplete ? <p className={styles.emptyState}>No active rescue requests.</p> : <ActiveRequest state={state} startedFromHazardAssist={startedFromHazardAssist} onOpenRescue={onOpenRescue} />
+        rescueComplete ? (
+          <div className={styles.emptyStateBlock}>
+            <EmptyRequestsIllustration />
+            <p>No active rescue requests.</p>
+          </div>
+        ) : (
+          <ActiveRequest state={state} startedFromHazardAssist={startedFromHazardAssist} onOpenRescue={onOpenRescue} />
+        )
       ) : null}
       {filter === "pending" ? <PendingRequest /> : null}
       {filter === "completed" ? <CompletedRequests complete={rescueComplete} /> : null}

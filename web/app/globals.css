@@ -7,7 +7,7 @@
   --ink: #181c1d;
   --muted: #527376;
   --line: #cbd8d9;
-  --primary: #006d77;
+  --primary: #0038a8;
   --risk: #a33a2a;
 }
 
@@ -16,4 +16,4 @@ html, body { min-height: 100%; margin: 0; }
 body { background: var(--app-background); color: var(--ink); font-family: var(--font-sans); }
 button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
-:focus-visible { outline: 3px solid #65b9c0; outline-offset: 2px; }
+:focus-visible { outline: 3px solid #7da0ea; outline-offset: 2px; }
