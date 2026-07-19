@@ -177,3 +177,43 @@ export function sagipReducer(state: KapitBizSagipState, action: SagipAction): Ka
       return createSagipState();
   }
 }
+
+function offerPrice(offer: BlindOffer): number {
+  return offer.offerType === "cash" ? offer.pricePhp ?? 0 : offer.barterDeclaredValuePhp ?? 0;
+}
+
+export function generateOffersForRequest(request: SagipRequest, now: number): BlindOffer[] {
+  const matchingBidders = SAGIP_BIDDER_POOL.filter((bidder) => bidder.categories.includes(request.category));
+  const labelPrefix = request.kind === "need" ? "Supplier" : "Buyer";
+  const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+  return matchingBidders.map((bidder, index) => {
+    const spread = bidder.priceBandPhpPerUnit.max - bidder.priceBandPhpPerUnit.min;
+    const rawPrice = bidder.priceBandPhpPerUnit.min + spread * ((index + 1) / (matchingBidders.length + 1));
+    const pricePhp = request.srpCeilingPhp !== null ? Math.min(rawPrice, request.srpCeilingPhp) : rawPrice;
+
+    return {
+      id: nextSagipId("sagip-offer"),
+      requestId: request.id,
+      bidderLabel: `${labelPrefix} ${letters[index] ?? String(index + 1)}`,
+      bidderKycStatus: bidder.kycStatus,
+      offerType: "cash",
+      pricePhp: Math.round(pricePhp),
+      barterDescription: null,
+      barterDeclaredValuePhp: null,
+      quantityOffered: Math.min(request.quantity, Math.round(request.quantity / matchingBidders.length)),
+      submittedAt: now,
+      arrivesAt: now + (index + 1) * 4_000,
+      status: "pending",
+    };
+  });
+}
+
+export function visibleOffers(offers: BlindOffer[], requestId: string, now: number): BlindOffer[] {
+  return offers.filter((offer) => offer.requestId === requestId && offer.arrivesAt <= now);
+}
+
+export function sortOffers(request: SagipRequest, offers: BlindOffer[]): BlindOffer[] {
+  const direction = request.kind === "need" ? 1 : -1;
+  return [...offers].sort((a, b) => (offerPrice(a) - offerPrice(b)) * direction);
+}
