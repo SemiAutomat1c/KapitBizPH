@@ -171,10 +171,15 @@
 .merchantWelcome strong { color: #0038a8; font-size: 0.85rem; text-align: right; }
 
 @media (max-width: 420px) {
-  .onboardingActions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .onboardingActions .primaryButton { grid-column: 1 / -1; }
-  .businessForm .onboardingActions { grid-template-columns: minmax(0, 1fr); }
-  .businessForm .onboardingActions .primaryButton { grid-column: auto; }
+  .onboardingActions {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    width: 100%;
+  }
+  .onboardingActions button {
+    width: 100%;
+  }
   .merchantWelcome { align-items: flex-start; flex-direction: column; }
   .merchantWelcome strong { text-align: left; }
 }
@@ -1789,4 +1794,11 @@
   border-radius: 4px;
   letter-spacing: 0.5px;
   margin-top: 2px;
+}
+
+@media (max-height: 660px) {
+  .onboardingHero {
+    height: 120px;
+    margin-bottom: 14px;
+  }
 }
