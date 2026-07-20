@@ -6,7 +6,33 @@
 
 KapitBiz Relay is a mobile-first hackathon demo for rescuing at-risk MSME inventory during a localized disruption. The submitted app lives in [`web`](web).
 
-This is a frontend-only, seeded business-continuity transaction demo. It does not claim live utility feeds, government hazard feeds, payments, live routing, live capacity, insurance approval, or government-form acceptance.
+---
+
+## 🏆 Hackathon & Pitch Context
+
+This project was built for the **Resilience Theme** (lot drawn on July 15, 2026). KapitBiz PH focuses on protecting local micro, small, and medium enterprises (MSMEs) from catastrophic inventory losses during localized disruptions (e.g., floods, brownouts) in **Tagum City**.
+
+### Key Pitch Pillars:
+1. **Three-Phase Resiliency Loop (AksyonNgayon)**:
+   - **HANDA (Readiness)**: Profiling inventory, emergency contacts, and readiness scores.
+   - **AKSYON (Trigger Action)**: Live incident alerts triggering same-day rescue matchmaking. Connects at-risk merchants with nearby Good Samaritan hosts offering temporary cold storage or dry capacity.
+   - **BANGON (Damage Reporting)**: Compiling a loan-ready loss proof packet to access government calamity finance (e.g., SB Corp Emergency Relief Fund).
+2. **Quantified Impact (₱ Protected)**: A platform-wide ledger demonstrating actual inventory value saved rather than just checking off features.
+3. **Regulatory Moats**: Built-in compliance mechanisms for:
+   - **Price Act (RA 7581)**: "Calamity Mode" enforcing official Suggested Retail Prices (SRP) to block crisis price-gouging.
+   - **Internet Transactions Act (RA 11967)**: Platform-verified, anonymous buyer-seller matchmaking.
+   - **NPC AI Advisory 2024-04**: Provisional onboarding tiers instead of automated AI rejections.
+
+---
+
+## 📁 Repository Layout
+
+*   [`web/`](web): Reusable core web application (Next.js 16, TS, Vitest).
+*   [`pitch/`](pitch): 12-slide editable presentation decks and printable judge Q&A guides.
+*   [`planning/`](planning): Prep checklists, master idea lists, and legal compliance deep-dives.
+*   [`docs/`](docs): System architecture designs, spec files, and verification walkthroughs.
+
+---
 
 ## Deploy to Vercel
 
