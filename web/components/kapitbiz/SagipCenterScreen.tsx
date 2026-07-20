@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import {
   generateOffersForRequest,
   postSagipRequest,
@@ -123,8 +123,8 @@ export default function SagipCenterScreen({
       ? request.companyName.split(" ").map((n) => n[0]).join("")
       : "YC";
 
-    return (
-      <div className={styles.sagipRightPaneContent}>
+    const content = (
+      <>
         <div className={styles.sagipDetailHeader}>
           <div className={styles.companyLogo}>{initialLogo}</div>
           <div className={styles.sagipDetailHeaderInfo}>
@@ -237,6 +237,34 @@ export default function SagipCenterScreen({
             Mag-alok ng Tulong
           </button>
         </form>
+      </>
+    );
+
+    if (isMobile) {
+      return (
+        <>
+          <header className={styles.hazardDialogHeader}>
+            <span>{request.title}</span>
+            <button
+              className={styles.iconButton}
+              type="button"
+              onClick={() => setSurface({ kind: "closed" })}
+              aria-label={`Close ${request.title}`}
+              title={`Close ${request.title}`}
+            >
+              <X aria-hidden="true" />
+            </button>
+          </header>
+          <div className={styles.hazardDialogBody}>
+            {content}
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <div className={styles.sagipRightPaneContent}>
+        {content}
       </div>
     );
   };
@@ -417,7 +445,7 @@ export default function SagipCenterScreen({
           focusKey={`help-${activeRequest.id}`}
           onClose={() => setSurface({ kind: "closed" })}
         >
-          <div style={{ padding: "0" }}>{renderOfferHelpPane(activeRequest)}</div>
+          {renderOfferHelpPane(activeRequest)}
         </HazardAssistDialog>
       ) : null}
     </section>
