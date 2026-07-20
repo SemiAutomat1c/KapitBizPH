@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="web/public/illustrations/kapitlogo.png" alt="KapitBizPH Logo" width="400" />
+</p>
+
 # KapitBiz Relay
 
 KapitBiz Relay is a mobile-first hackathon demo for rescuing at-risk MSME inventory during a localized disruption. The submitted app lives in [`web`](web).
