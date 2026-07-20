@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/illustrations/kapitlogo.png" alt="KapitBizPH Logo" width="400" />
+</p>
+
 # KapitBiz Relay
 
 KapitBiz Relay is a mobile-first hackathon demo for rescuing at-risk MSME inventory during a localized disruption. The seeded scenario follows Maya's Frozen Goods from a Tagum power interruption through cold-storage matching, transport reservation, QR custody handoff, and a completed rescue record.
