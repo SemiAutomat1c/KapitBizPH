@@ -25,31 +25,6 @@ This project was built for the **Resilience Theme** (lot drawn on July 15, 2026)
 
 ---
 
-## 🧭 Judge Demo Walkthrough
-
-To experience the entire business-continuity flow end-to-end, follow this seeded judge path:
-
-```text
-Onboarding -> Merchant Home -> Run Safety Check -> Stock at risk
--> generator PHP714 vs Relay PHP450 -> Ask nearby hosts
--> Use Northline Cold Storage in Relay -> Reservation -> Rider dispatch
--> QR handoff -> Host confirmation -> PHP protected record
--> Recovery packet preview -> Activity audit trail
-```
-
-### Step-by-Step Interactive Guide:
-1. **Start**: Complete the onboarding flow as Maya (Maya's Frozen Goods).
-2. **Trigger Safety Check**: On the Merchant Home, run a safety check during a simulated Tagum power/flood incident.
-3. **Analyze & Match**: Compare the cost of running a local generator vs. using the Relay network. Select **Ask nearby hosts**.
-4. **Reserve Capacity**: Choose **Northline Cold Storage** and make a capacity reservation.
-5. **Simulate Rider Dispatch**: Hand off the inventory to the volunteer rider using the **QR custody verification**.
-6. **Host Confirmation**: Toggle/preview the Host confirmation panel to seal the QR-backed receipt.
-7. **Verify Audit Trail**: Return to the Merchant dashboard and open **View Custody Record** or **Recovery Packet Preview** to view the completed transaction evidence and SB Corp-ready loan document.
-
-*Note: The demo is fully client-side and resumable (persisted via versioned browser `localStorage`). Use the **Reset Demo** button in the Menu to clear the session and start fresh.*
-
----
-
 ## Run locally
 
 ```bash
