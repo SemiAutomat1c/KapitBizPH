@@ -1557,6 +1557,7 @@
 /* Detail View Layout (Right Column) */
 .sagipDetailHeader {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid #bec8ca;
@@ -1565,6 +1566,7 @@
 
 .sagipDetailHeaderInfo {
   flex-grow: 1;
+  min-width: 140px;
 }
 
 .sagipDetailHeaderInfo h2 {
