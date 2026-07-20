@@ -309,6 +309,10 @@
     transform: rotate(90deg);
     margin: 8px 0;
   }
+  .destinationMetrics {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 .rolePreviewShell {
