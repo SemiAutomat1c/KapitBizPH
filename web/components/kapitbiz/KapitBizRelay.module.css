@@ -291,6 +291,24 @@
     border-bottom-right-radius: 0;
     border-bottom: 0;
   }
+  .handoffIntro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .handoffParties {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+  .handoffParties div:last-child {
+    text-align: center;
+  }
+  .handoffArrow {
+    transform: rotate(90deg);
+    margin: 8px 0;
+  }
 }
 
 .rolePreviewShell {
