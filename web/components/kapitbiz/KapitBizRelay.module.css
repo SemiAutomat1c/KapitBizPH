@@ -280,7 +280,7 @@
   .responderRow { grid-template-columns: 1fr; }
   .responderTrust { justify-items: start; text-align: left; }
   .sagipOfferActions { justify-content: flex-start; }
-  .dialogBackdrop {
+  .dialogBackdrop:has(.hazardDialog) {
     padding: 0;
   }
   .hazardDialog {
