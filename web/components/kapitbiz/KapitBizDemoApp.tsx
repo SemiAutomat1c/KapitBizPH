@@ -54,10 +54,11 @@ export default function KapitBizDemoApp() {
         if (serialized) {
           dispatchBayanihan({ type: "hydrate", state: JSON.parse(serialized) });
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setBayanihanHydrated(true);
   }, []);
 
@@ -65,7 +66,7 @@ export default function KapitBizDemoApp() {
     if (bayanihanHydrated) {
       try {
         window.localStorage.setItem("kapitbiz-bayanihan-v1", JSON.stringify(bayanihanState));
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -224,7 +225,7 @@ export default function KapitBizDemoApp() {
         />
       ) : session.activeTab === "sagip" ? (
         <SagipCenterScreen state={sagip.state} dispatch={sagip.dispatch} />
-      ) : session.activeTab === "Bayanihan" ? (
+      ) : session.activeTab === "bayanihan" ? (
         <BayanihanScreen state={bayanihanState} dispatch={dispatchBayanihan} businessName={session.businessName} />
       ) : session.activeTab === "network" ? (
         <NetworkScreen

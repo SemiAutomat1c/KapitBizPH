@@ -12,7 +12,7 @@ const tabLabels: Record<MerchantTab, string> = {
   sagip: "Sagip Center",
   activity: "Business activity",
   menu: "Business menu",
-  Bayanihan: "Bayanihan Forum",
+  bayanihan: "Bayanihan Forum",
 };
 
 export default function MerchantShell({

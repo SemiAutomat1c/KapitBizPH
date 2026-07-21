@@ -117,7 +117,7 @@ export default function OnboardingFlow({
 
   const submitBusiness = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch({ type: "complete-onboarding" });
+    dispatch({ type: "complete-onboarding", businessName });
   };
 
   if (step === "role") {

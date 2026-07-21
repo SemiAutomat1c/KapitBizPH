@@ -152,7 +152,7 @@ const navItems: { id: Exclude<MerchantTab, "menu" | "network" | "activity">; lab
   { id: "home", label: "Home", icon: House },
   { id: "requests", label: "Requests", icon: ListTodo },
   { id: "sagip", label: "Sagip Center", icon: Handshake },
-  { id: "Bayanihan", label: "Bayanihan", icon: MessageSquare },
+  { id: "bayanihan", label: "Bayanihan", icon: MessageSquare },
 ];
 
 export function BottomNav({

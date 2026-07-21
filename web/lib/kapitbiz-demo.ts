@@ -4,7 +4,7 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 
 export const DEMO_SESSION_STORAGE_KEY = "kapitbiz-demo-session-v1";
 export type DemoRole = "merchant" | "host" | "rider";
-export type MerchantTab = "home" | "requests" | "network" | "sagip" | "activity" | "menu" | "Bayanihan";
+export type MerchantTab = "home" | "requests" | "network" | "sagip" | "activity" | "menu" | "bayanihan";
 export type OnboardingStep = "protect" | "relay" | "verify" | "role" | "business";
 
 export interface KapitBizDemoSession {
@@ -22,7 +22,7 @@ export interface KapitBizDemoSession {
 export type DemoSessionAction =
   | { type: "set-onboarding-step"; step: OnboardingStep }
   | { type: "select-role"; role: DemoRole }
-  | { type: "complete-onboarding" }
+  | { type: "complete-onboarding"; businessName?: string }
   | { type: "select-tab"; tab: MerchantTab }
   | { type: "open-rescue" }
   | { type: "close-rescue" }
@@ -50,7 +50,13 @@ export function demoSessionReducer(
   switch (action.type) {
     case "set-onboarding-step": return { ...state, onboardingStep: action.step };
     case "select-role": return { ...state, role: action.role };
-    case "complete-onboarding": return { ...state, onboardingComplete: true, businessSetupComplete: state.role === "merchant", activeTab: "home" };
+    case "complete-onboarding": return {
+      ...state,
+      onboardingComplete: true,
+      businessSetupComplete: state.role === "merchant",
+      activeTab: "home",
+      businessName: action.businessName ?? state.businessName,
+    };
     case "select-tab": return { ...state, activeTab: action.tab, rescueOpen: false };
     case "open-rescue": return { ...state, rescueOpen: true, role: "merchant" };
     case "close-rescue": return { ...state, rescueOpen: false };
@@ -97,12 +103,12 @@ function loadDemoSession(): KapitBizDemoSession | null {
   try {
     const serialized = window.localStorage.getItem(DEMO_SESSION_STORAGE_KEY);
     if (!serialized) return null;
-    const parsed: any = JSON.parse(serialized);
+    const parsed: unknown = JSON.parse(serialized);
     if (isKapitBizDemoSession(parsed)) {
-      if (parsed.businessName === undefined) {
-        parsed.businessName = "Maya's Frozen Goods";
-      }
-      return parsed;
+      return {
+        ...parsed,
+        businessName: parsed.businessName ?? "Maya's Frozen Goods",
+      };
     }
     return null;
   } catch {
@@ -136,7 +142,7 @@ function isDemoRole(value: unknown): value is DemoRole {
 }
 
 function isMerchantTab(value: unknown): value is MerchantTab {
-  return value === "home" || value === "requests" || value === "network" || value === "sagip" || value === "activity" || value === "menu" || value === "Bayanihan";
+  return value === "home" || value === "requests" || value === "network" || value === "sagip" || value === "activity" || value === "menu" || value === "bayanihan";
 }
 
 function isOnboardingStep(value: unknown): value is OnboardingStep {

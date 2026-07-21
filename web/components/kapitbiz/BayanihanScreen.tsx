@@ -5,8 +5,7 @@ import { MessageSquare, Heart, Plus, X } from "lucide-react";
 import {
   BayanihanState,
   BayanihanAction,
-  BayanihanTag,
-  BayanihanPost
+  BayanihanTag
 } from "@/lib/kapitbiz-bayanihan";
 import HazardAssistDialog from "./HazardAssistDialog";
 import styles from "./KapitBizRelay.module.css";
