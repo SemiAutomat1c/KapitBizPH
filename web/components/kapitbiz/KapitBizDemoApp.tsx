@@ -16,7 +16,6 @@ import MenuScreen from "./MenuScreen";
 import MerchantShell from "./MerchantShell";
 import NetworkScreen from "./NetworkScreen";
 import OnboardingFlow from "./OnboardingFlow";
-import RequestsScreen from "./RequestsScreen";
 import RolePreviewScreen from "./RolePreviewScreen";
 import SagipCenterScreen from "./SagipCenterScreen";
 import HazardAssistDialog from "./HazardAssistDialog";
@@ -195,20 +194,10 @@ export default function KapitBizDemoApp() {
     >
       {session.activeTab === "home" ? (
         <HomeScreen
-          state={relay.state}
-          selection={relay.selection}
-          eligibleHostCount={relay.eligibleHosts.length}
-          onOpenRescue={() => dispatch({ type: "open-rescue" })}
           hazardAssistState={hazardAssist.state}
           onRunSafetyCheck={openSafetyCheck}
           onOpenGoodSamaritan={openGoodSamaritan}
-          onOpenRecoveryPacket={openRecoveryPacket}
-        />
-      ) : session.activeTab === "requests" ? (
-        <RequestsScreen
-          state={relay.state}
-          startedFromHazardAssist={hazardAssist.state.relayStartedFromHazardAssist}
-          onOpenRescue={() => dispatch({ type: "open-rescue" })}
+          onOpenSagip={() => dispatch({ type: "select-tab", tab: "sagip" })}
         />
       ) : session.activeTab === "activity" ? (
         <ActivityScreen

@@ -20,7 +20,7 @@ describe("KapitBiz role previews", () => {
     vi.restoreAllMocks();
   });
 
-  it("closes the rescue to Home without losing progress", async () => {
+  it("closes the rescue to Home", async () => {
     seedCompletedOnboarding({ rescueOpen: true });
     seedRescueAtCapacity();
     const user = userEvent.setup();
@@ -29,8 +29,6 @@ describe("KapitBiz role previews", () => {
     expect(await screen.findByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Close rescue" }));
     expect(screen.getByRole("heading", { name: "Good morning, Maya" })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Resume rescue" }));
-    expect(screen.getByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
   });
 
   it("records Rider arrival and Host custody confirmation on the shared timeline", async () => {
@@ -63,8 +61,8 @@ describe("KapitBiz role previews", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Custody transfer confirmed");
 
     await user.click(screen.getByRole("button", { name: "Return to Merchant" }));
-    await user.click(screen.getByRole("button", { name: "Home" }));
-    await user.click(screen.getByRole("button", { name: "View Custody Record" }));
+    await user.click(screen.getByRole("button", { name: "Notifications" }));
+    await user.click(screen.getByRole("button", { name: "View custody record" }));
     expect(screen.getByText("Transfer confirmed")).toBeInTheDocument();
     expect(screen.getByText("Arrival at facility")).toBeInTheDocument();
     expect(screen.getByText("Rescue initiated")).toBeInTheDocument();

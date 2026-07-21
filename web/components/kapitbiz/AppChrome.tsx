@@ -1,5 +1,5 @@
 import type { RelayDemoState, RelaySelection, RelayStep } from "@/lib/kapitbiz";
-import { Bell, ChevronLeft, Handshake, History, House, ListTodo, Menu, MessageSquare, Network, X, type LucideIcon } from "lucide-react";
+import { Bell, ChevronLeft, Handshake, House, Menu, MessageSquare, X, type LucideIcon } from "lucide-react";
 import type { MerchantTab } from "@/lib/kapitbiz-demo";
 import styles from "./KapitBizRelay.module.css";
 
@@ -150,7 +150,6 @@ export function ProgressHeader({ step }: { step: RelayStep }) {
 
 const navItems: { id: Exclude<MerchantTab, "menu" | "network" | "activity">; label: string; icon: LucideIcon }[] = [
   { id: "home", label: "Home", icon: House },
-  { id: "requests", label: "Requests", icon: ListTodo },
   { id: "sagip", label: "Sagip Center", icon: Handshake },
   { id: "bayanihan", label: "Bayanihan", icon: MessageSquare },
 ];

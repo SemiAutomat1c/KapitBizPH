@@ -100,7 +100,7 @@ function KapitBizRelayWorkspace({
           onBack={goBack}
           onClose={onClose}
           onMenu={onOpenMenu}
-          onNotifications={onNavigate ? () => onNavigate("requests") : undefined}
+          onNotifications={onNavigate ? () => onNavigate("activity") : undefined}
         />
         {hazardContext !== null ? (
           <aside className={styles.relayContextBand} aria-label="Hazard Assist rescue context">

@@ -169,26 +169,6 @@ describe("KapitBiz Hazard Assist UI", () => {
     expect(screen.getByText("Relay chosen over simulated generator estimate: PHP714")).toBeInTheDocument();
   });
 
-  it("shows Hazard Assist source in Requests", async () => {
-    localStorage.setItem("kapitbiz-hazard-assist-v1", JSON.stringify({
-      version: 1,
-      alertAcknowledged: true,
-      safetyCheckAnswer: "stock-at-risk",
-      generatorEstimatePhp: 714,
-      relayEstimatePhp: 450,
-      calamityModePreviewOpen: false,
-      goodSamaritanAskedAt: 900_000,
-      selectedGoodSamaritanPartnerId: "northline",
-      relayStartedFromHazardAssist: true,
-      recoveryPacketPreviewOpen: false,
-    }));
-    const user = userEvent.setup();
-    render(<KapitBizDemoApp />);
-
-    await user.click(await screen.findByRole("button", { name: "Requests" }));
-    expect(screen.getByText("Started from Safety Check")).toBeInTheDocument();
-  });
-
   it("opens an honest recovery packet preview after confirmed handoff", async () => {
     seedCompletedOnboarding();
     createCompleteStateForTest();
@@ -207,7 +187,8 @@ describe("KapitBiz Hazard Assist UI", () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
-    await user.click(await screen.findByRole("button", { name: "Export Recovery Packet" }));
+    await user.click(await screen.findByRole("button", { name: "Notifications" }));
+    await user.click(screen.getByRole("button", { name: "Recovery packet preview" }));
 
     const dialog = screen.getByRole("dialog", { name: "Recovery packet preview" });
     expect(dialog).toBeInTheDocument();

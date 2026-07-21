@@ -1,11 +1,7 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import KapitBizDemoApp from "@/components/kapitbiz/KapitBizDemoApp";
-import RequestsScreen from "@/components/kapitbiz/RequestsScreen";
-import { createSeedState } from "@/lib/kapitbiz";
 import {
   createCompleteStateForTest,
   seedCompletedOnboarding,
@@ -24,13 +20,6 @@ afterEach(() => {
 });
 
 describe("KapitBiz complete demo navigation", () => {
-  it("renders Requests without a Hazard Assist source by default", () => {
-    render(<RequestsScreen state={createSeedState(1_000_000)} onOpenRescue={vi.fn()} />);
-
-    expect(screen.getByRole("heading", { name: "Rescue requests" })).toBeInTheDocument();
-    expect(screen.queryByText("Started from Safety Check")).not.toBeInTheDocument();
-  });
-
   it("omits Back on the first intro and enables it on later intros", async () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
@@ -96,7 +85,6 @@ describe("KapitBiz complete demo navigation", () => {
 
     for (const [buttonName, heading] of [
       ["Home", "Good morning, Maya"],
-      ["Requests", "Rescue requests"],
       ["Sagip Center", "Sagip Center"],
       ["Bayanihan", "Bayanihan Forum"],
     ] as const) {
@@ -110,15 +98,15 @@ describe("KapitBiz complete demo navigation", () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
-    await user.click(await screen.findByRole("button", { name: "Requests" }));
+    await user.click(await screen.findByRole("button", { name: "Sagip Center" }));
 
-    const heading = screen.getByRole("heading", { name: "Rescue requests" });
+    const heading = screen.getByRole("heading", { name: "Sagip Center" });
     const workspace = heading.closest("section")?.parentElement;
     expect(heading).toHaveFocus();
     expect(workspace).not.toHaveFocus();
   });
 
-  it("opens Menu and resumes the active rescue from Home", async () => {
+  it("opens Menu and navigates Home to Sagip Center", async () => {
     seedCompletedOnboarding();
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
@@ -126,17 +114,17 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(await screen.findByRole("button", { name: "Open menu" }));
     expect(screen.getByRole("heading", { name: "Business menu" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Home" }));
-    await user.click(screen.getByRole("button", { name: "Start inventory rescue" }));
-    expect(screen.getByRole("heading", { name: "Localized power interruption alert" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Tingnan ang Sagip Center" }));
+    expect(screen.getByRole("heading", { name: "Sagip Center" })).toBeInTheDocument();
   });
 
-  it("opens Requests from notifications", async () => {
+  it("opens Business activity from notifications", async () => {
     seedCompletedOnboarding();
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
     await user.click(await screen.findByRole("button", { name: "Notifications" }));
-    expect(screen.getByRole("heading", { name: "Rescue requests" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Business activity" })).toBeInTheDocument();
   });
 
   it("shows Menu details and asks for reset confirmation", async () => {
@@ -209,7 +197,7 @@ describe("KapitBiz complete demo navigation", () => {
     expect(screen.getByRole("heading", { name: "Business menu" })).toBeInTheDocument();
   });
 
-  it("routes controlled rescue Menu, notification, and bottom-navigation actions", async () => {
+  it("routes controlled rescue Menu and notification actions", async () => {
     seedCompletedOnboarding({ rescueOpen: true });
     seedRescueAtCapacity();
     const user = userEvent.setup();
@@ -219,64 +207,33 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(screen.getByRole("button", { name: "Open menu" }));
     expect(screen.getByRole("heading", { name: "Business menu" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Home" }));
-    await user.click(screen.getByRole("button", { name: "Resume rescue" }));
+    expect(screen.getByRole("heading", { name: "Good morning, Maya" })).toBeInTheDocument();
+  });
+
+  it("routes notifications from an active rescue to Business activity", async () => {
+    seedCompletedOnboarding({ rescueOpen: true });
+    seedRescueAtCapacity();
+    const user = userEvent.setup();
+    render(<KapitBizDemoApp />);
+
+    await screen.findByRole("heading", { name: "2 matches found" });
     await user.click(screen.getByRole("button", { name: "Notifications" }));
-    expect(screen.getByRole("heading", { name: "Rescue requests" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Business activity" })).toBeInTheDocument();
   });
 
-  it("offers a resume action for an active rescue without changing it first", async () => {
-    seedCompletedOnboarding();
-    seedRescueAtCapacity();
-    const user = userEvent.setup();
-    render(<KapitBizDemoApp />);
-
-    await user.click(await screen.findByRole("button", { name: "Resume rescue" }));
-    expect(screen.getByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
-  });
-
-  it("filters requests and resumes the active rescue", async () => {
-    seedCompletedOnboarding();
-    seedRescueAtCapacity();
-    const user = userEvent.setup();
-    render(<KapitBizDemoApp />);
-
-    await user.click(await screen.findByRole("button", { name: "Requests" }));
-    await user.click(screen.getByRole("radio", { name: "Pending" }));
-    expect(screen.getByText("Host confirmation requested")).toBeInTheDocument();
-    await user.click(screen.getByRole("radio", { name: "Completed" }));
-    expect(screen.getByText("RE-4817-V")).toBeInTheDocument();
-    expect(screen.queryByText("No completed rescue requests yet")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("radio", { name: "Active" }));
-    await user.click(screen.getByRole("button", { name: "Resume rescue RE-4892-X" }));
-
-    expect(screen.getByRole("heading", { name: "2 matches found" })).toBeInTheDocument();
-  });
-
-  it("keeps Capacity two-column and scopes the Requests three-column control", async () => {
-    const css = readFileSync(resolve(process.cwd(), "components/kapitbiz/KapitBizRelay.module.css"), "utf8");
-
-    expect(css).toMatch(/\.segmentedControl\s*\{[^}]*grid-template-columns:\s*repeat\(2,/);
-    expect(css).toMatch(/\.requestFilters\s*\{[^}]*grid-template-columns:\s*repeat\(3,/);
-
-    seedCompletedOnboarding();
-    const user = userEvent.setup();
-    render(<KapitBizDemoApp />);
-
-    await user.click(await screen.findByRole("button", { name: "Requests" }));
-    expect(screen.getByRole("group", { name: "Request status" }).className).toContain("requestFilters");
-  });
-
-  it("opens the completed custody record from Home", async () => {
+  it("opens the completed custody record from Business activity", async () => {
     seedCompletedOnboarding();
     createCompleteStateForTest();
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
-    await user.click(await screen.findByRole("button", { name: "View Custody Record" }));
+    await user.click(await screen.findByRole("button", { name: "Notifications" }));
+    expect(screen.getByRole("heading", { name: "Business activity" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "View custody record" }));
     expect(screen.getByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
   });
 
-  it("closes a completed rescue to Home and reopens its custody record", async () => {
+  it("closes a completed rescue to Home and reopens its custody record from Business activity", async () => {
     seedCompletedOnboarding({ rescueOpen: true });
     createCompleteStateForTest();
     const user = userEvent.setup();
@@ -289,13 +246,13 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(screen.getByRole("button", { name: "Close rescue" }));
 
     expect(screen.getByRole("heading", { name: "Good morning, Maya" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "View Custody Record" })).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem("kapitbiz-relay-v2") ?? "{}")).toMatchObject({
       step: "complete",
       receiverConfirmedAt: expect.any(Number),
     });
 
-    await user.click(screen.getByRole("button", { name: "View Custody Record" }));
+    await user.click(screen.getByRole("button", { name: "Notifications" }));
+    await user.click(screen.getByRole("button", { name: "View custody record" }));
     expect(screen.getByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
   });
 

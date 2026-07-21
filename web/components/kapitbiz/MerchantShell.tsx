@@ -7,7 +7,6 @@ import styles from "./KapitBizRelay.module.css";
 
 const tabLabels: Record<MerchantTab, string> = {
   home: "Merchant home",
-  requests: "Rescue requests",
   network: "Relay network",
   sagip: "Sagip Center",
   activity: "Business activity",
@@ -44,7 +43,7 @@ export default function MerchantShell({
         <MerchantHeader
           title="KapitBiz Relay"
           onMenu={onOpenMenu}
-          onNotifications={() => onSelectTab("requests")}
+          onNotifications={() => onSelectTab("activity")}
         />
         {children}
       </section>
