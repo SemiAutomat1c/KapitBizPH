@@ -103,6 +103,9 @@ function ActiveRequest({ state, startedFromHazardAssist, onOpenRescue }: { state
   return (
     <article className={`${styles.requestCard} ${styles.requestCardActive}`}>
       <div className={styles.requestCardAccent} />
+      <div className={styles.requestCardImageContainer}>
+        <img src="/illustrations/listing-poultry.jpg" alt="Active rescue request" />
+      </div>
       <div className={styles.requestCardInner}>
         <div className={styles.requestCardTop}>
           <div className={styles.requestCardIcon} data-status="active">
@@ -152,10 +155,15 @@ function ActiveRequest({ state, startedFromHazardAssist, onOpenRescue }: { state
   );
 }
 
-function PendingRequest() {
+type PendingRequestProps = Record<string, never>;
+
+function PendingRequest(_props: PendingRequestProps) {
   return (
     <article className={`${styles.requestCard} ${styles.requestCardPending}`}>
       <div className={styles.requestCardAccent} />
+      <div className={styles.requestCardImageContainer}>
+        <img src="/illustrations/listing-logistics.jpg" alt="Pending rescue request" />
+      </div>
       <div className={styles.requestCardInner}>
         <div className={styles.requestCardTop}>
           <div className={styles.requestCardIcon} data-status="pending">
@@ -181,6 +189,9 @@ function CompletedRequests({ complete }: { complete: boolean }) {
       {complete && (
         <article className={`${styles.requestCard} ${styles.requestCardComplete}`}>
           <div className={styles.requestCardAccent} />
+          <div className={styles.requestCardImageContainer}>
+            <img src="/illustrations/listing-poultry.jpg" alt="Completed rescue request" />
+          </div>
           <div className={styles.requestCardInner}>
             <div className={styles.requestCardTop}>
               <div className={styles.requestCardIcon} data-status="complete">
@@ -200,6 +211,9 @@ function CompletedRequests({ complete }: { complete: boolean }) {
       )}
       <article className={`${styles.requestCard} ${styles.requestCardComplete}`}>
         <div className={styles.requestCardAccent} />
+        <div className={styles.requestCardImageContainer}>
+          <img src="/illustrations/listing-miller.jpg" alt="Completed rescue request" />
+        </div>
         <div className={styles.requestCardInner}>
           <div className={styles.requestCardTop}>
             <div className={styles.requestCardIcon} data-status="complete">
