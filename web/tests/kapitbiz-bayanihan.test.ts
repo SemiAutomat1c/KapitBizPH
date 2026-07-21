@@ -2,8 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   bayanihanReducer,
   createInitialBayanihanState,
-  SEEDED_BAYANIHAN_POSTS,
-  type BayanihanPost,
 } from "@/lib/kapitbiz-bayanihan";
 
 describe("Bayanihan Forum State & Reducer", () => {
