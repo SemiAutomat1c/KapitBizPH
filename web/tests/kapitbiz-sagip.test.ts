@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  computeCommission,
+  computeDealStage,
+  computeOfferTotal,
   createSagipState,
   parseSagipState,
   postSagipRequest,
@@ -57,7 +60,7 @@ describe("kapitbiz-sagip reducer", () => {
     const offer: BlindOffer = {
       id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
       offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
-      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending",
+      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
     };
     let state = sagipReducer(createSagipState(), { type: "post-request", request });
     state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
@@ -71,7 +74,7 @@ describe("kapitbiz-sagip reducer", () => {
     expect(updatedRequest.status).toBe("open");
   });
 
-  it("marks the request fulfilled once accepted offers meet the requested quantity", () => {
+  it("accepting an offer that meets the requested quantity does not fulfill the request on its own", () => {
     const request = postSagipRequest(
       { kind: "need", title: "Dry ice, 40kg", category: "dry-ice", quantity: 40, unit: "kg", windowHours: 24, calamityModeActive: false },
       0,
@@ -79,14 +82,99 @@ describe("kapitbiz-sagip reducer", () => {
     const offer: BlindOffer = {
       id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
       offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
-      quantityOffered: 40, submittedAt: 0, arrivesAt: 0, status: "pending",
+      quantityOffered: 40, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
     };
     let state = sagipReducer(createSagipState(), { type: "post-request", request });
     state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
     state = sagipReducer(state, { type: "accept-offer", offerId: "offer-1" });
 
-    expect(state.requests[0].status).toBe("fulfilled");
+    expect(state.requests[0].status).toBe("open");
     expect(remainingQuantity(state.requests[0])).toBe(0);
+  });
+
+  it("walks a locked offer through escrow, delivery, and confirmation to fulfilled", () => {
+    const request = postSagipRequest(
+      { kind: "need", title: "Dry ice, 40kg", category: "dry-ice", quantity: 40, unit: "kg", windowHours: 24, calamityModeActive: false },
+      0,
+    );
+    const offer: BlindOffer = {
+      id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
+      offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
+      quantityOffered: 40, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
+    };
+    let state = sagipReducer(createSagipState(), { type: "post-request", request });
+    state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
+    state = sagipReducer(state, { type: "accept-offer", offerId: "offer-1" });
+    expect(computeDealStage(state.offers[0])).toBe("locked");
+
+    state = sagipReducer(state, { type: "fund-escrow", offerId: "offer-1", at: 1_000 });
+    expect(state.offers[0].escrowFundedAt).toBe(1_000);
+    expect(computeDealStage(state.offers[0])).toBe("in-progress");
+
+    state = sagipReducer(state, { type: "mark-delivered", offerId: "offer-1", at: 2_000 });
+    expect(state.offers[0].deliveredAt).toBe(2_000);
+    expect(computeDealStage(state.offers[0])).toBe("delivered");
+
+    state = sagipReducer(state, { type: "confirm-received", offerId: "offer-1" });
+    expect(state.offers[0].status).toBe("fulfilled");
+    expect(state.requests[0].status).toBe("fulfilled");
+    expect(computeDealStage(state.offers[0])).toBe("fulfilled");
+  });
+
+  it("fund-escrow, mark-delivered, and confirm-received are no-ops out of order", () => {
+    const request = postSagipRequest(
+      { kind: "need", title: "Dry ice, 40kg", category: "dry-ice", quantity: 40, unit: "kg", windowHours: 24, calamityModeActive: false },
+      0,
+    );
+    const offer: BlindOffer = {
+      id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
+      offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
+      quantityOffered: 40, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
+    };
+    let state = sagipReducer(createSagipState(), { type: "post-request", request });
+    state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
+
+    // Can't fund escrow, mark delivered, or confirm before the offer is accepted.
+    state = sagipReducer(state, { type: "fund-escrow", offerId: "offer-1", at: 1_000 });
+    expect(state.offers[0].escrowFundedAt).toBeNull();
+    state = sagipReducer(state, { type: "mark-delivered", offerId: "offer-1", at: 1_000 });
+    expect(state.offers[0].deliveredAt).toBeNull();
+    state = sagipReducer(state, { type: "confirm-received", offerId: "offer-1" });
+    expect(state.offers[0].status).toBe("pending");
+
+    state = sagipReducer(state, { type: "accept-offer", offerId: "offer-1" });
+
+    // Can't mark delivered or confirm before escrow is funded.
+    state = sagipReducer(state, { type: "mark-delivered", offerId: "offer-1", at: 1_000 });
+    expect(state.offers[0].deliveredAt).toBeNull();
+    state = sagipReducer(state, { type: "confirm-received", offerId: "offer-1" });
+    expect(state.offers[0].status).toBe("accepted");
+  });
+
+  it("request-best-offer flags a pending or negotiating offer", () => {
+    const request = postSagipRequest(
+      { kind: "need", title: "Dry ice, 40kg", category: "dry-ice", quantity: 40, unit: "kg", windowHours: 24, calamityModeActive: false },
+      0,
+    );
+    const offer: BlindOffer = {
+      id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
+      offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
+      quantityOffered: 40, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
+    };
+    let state = sagipReducer(createSagipState(), { type: "post-request", request });
+    state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
+    state = sagipReducer(state, { type: "request-best-offer", offerId: "offer-1" });
+    expect(state.offers[0].bestOfferRequested).toBe(true);
+  });
+
+  it("computeOfferTotal and computeCommission calculate the transaction value and 5% cut", () => {
+    const cashOffer: BlindOffer = {
+      id: "offer-1", requestId: "r1", bidderLabel: "Supplier A", bidderKycStatus: "verified",
+      offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
+      quantityOffered: 40, submittedAt: 0, arrivesAt: 0, status: "accepted", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
+    };
+    expect(computeOfferTotal(cashOffer)).toBe(1_800);
+    expect(computeCommission(1_800)).toBe(90);
   });
 
   it("reject-offer marks the offer rejected without touching quantity", () => {
@@ -97,7 +185,7 @@ describe("kapitbiz-sagip reducer", () => {
     const offer: BlindOffer = {
       id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
       offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
-      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending",
+      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
     };
     let state = sagipReducer(createSagipState(), { type: "post-request", request });
     state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
@@ -115,7 +203,7 @@ describe("kapitbiz-sagip reducer", () => {
     const offer: BlindOffer = {
       id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
       offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
-      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending",
+      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
     };
     let state = sagipReducer(createSagipState(), { type: "post-request", request });
     state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
@@ -135,7 +223,7 @@ describe("kapitbiz-sagip reducer", () => {
     const offer: BlindOffer = {
       id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
       offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
-      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending",
+      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
     };
     let state = sagipReducer(createSagipState(), { type: "post-request", request });
     state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
@@ -178,7 +266,7 @@ describe("kapitbiz-sagip reducer", () => {
     const offer: BlindOffer = {
       id: "offer-1", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified",
       offerType: "cash", pricePhp: 45, barterDescription: null, barterDeclaredValuePhp: null,
-      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending",
+      quantityOffered: 25, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null,
     };
     let state = sagipReducer(createSagipState(), { type: "post-request", request });
     state = sagipReducer(state, { type: "receive-offers", offers: [offer] });
@@ -259,13 +347,13 @@ describe("kapitbiz-sagip offer generation and selectors", () => {
     state = sagipReducer(state, { type: "receive-offers", offers });
     for (const offer of offers) state = sagipReducer(state, { type: "accept-offer", offerId: offer.id });
 
-    expect(state.requests[0]).toMatchObject({ fulfilledQty: quantity, status: "fulfilled" });
+    expect(state.requests[0]).toMatchObject({ fulfilledQty: quantity, status: "open" });
   });
 
   it("visibleOffers hides offers whose arrivesAt is in the future", () => {
     const offers: BlindOffer[] = [
-      { id: "a", requestId: "r1", bidderLabel: "Supplier A", bidderKycStatus: "verified", offerType: "cash", pricePhp: 40, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 1_000, status: "pending" },
-      { id: "b", requestId: "r1", bidderLabel: "Supplier B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 42, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 5_000, status: "pending" },
+      { id: "a", requestId: "r1", bidderLabel: "Supplier A", bidderKycStatus: "verified", offerType: "cash", pricePhp: 40, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 1_000, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null },
+      { id: "b", requestId: "r1", bidderLabel: "Supplier B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 42, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 5_000, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null },
     ];
     expect(visibleOffers(offers, "r1", 2_000).map((o) => o.id)).toEqual(["a"]);
     expect(visibleOffers(offers, "r1", 6_000).map((o) => o.id)).toEqual(["a", "b"]);
@@ -276,8 +364,8 @@ describe("kapitbiz-sagip offer generation and selectors", () => {
       { kind: "need", title: "x", category: "dry-ice", quantity: 10, unit: "kg", windowHours: 24, calamityModeActive: false }, 0,
     );
     const offers: BlindOffer[] = [
-      { id: "a", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified", offerType: "cash", pricePhp: 50, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending" },
-      { id: "b", requestId: request.id, bidderLabel: "Supplier B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 30, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending" },
+      { id: "a", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified", offerType: "cash", pricePhp: 50, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null },
+      { id: "b", requestId: request.id, bidderLabel: "Supplier B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 30, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null },
     ];
     expect(sortOffers(request, offers).map((o) => o.id)).toEqual(["b", "a"]);
   });
@@ -287,8 +375,8 @@ describe("kapitbiz-sagip offer generation and selectors", () => {
       { kind: "surplus", title: "x", category: "raw-material", quantity: 10, unit: "sacks", windowHours: 24, calamityModeActive: false }, 0,
     );
     const offers: BlindOffer[] = [
-      { id: "a", requestId: request.id, bidderLabel: "Buyer A", bidderKycStatus: "verified", offerType: "cash", pricePhp: 50, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending" },
-      { id: "b", requestId: request.id, bidderLabel: "Buyer B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 30, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending" },
+      { id: "a", requestId: request.id, bidderLabel: "Buyer A", bidderKycStatus: "verified", offerType: "cash", pricePhp: 50, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null },
+      { id: "b", requestId: request.id, bidderLabel: "Buyer B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 30, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null },
     ];
     expect(sortOffers(request, offers).map((o) => o.id)).toEqual(["a", "b"]);
   });
@@ -298,8 +386,8 @@ describe("kapitbiz-sagip offer generation and selectors", () => {
       { kind: "need", title: "x", category: "dry-ice", quantity: 10, unit: "kg", windowHours: 24, calamityModeActive: false }, 0,
     );
     const offers: BlindOffer[] = [
-      { id: "a", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified", offerType: "barter", pricePhp: null, barterDescription: "rice", barterDeclaredValuePhp: 900, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending" },
-      { id: "b", requestId: request.id, bidderLabel: "Supplier B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 400, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending" },
+      { id: "a", requestId: request.id, bidderLabel: "Supplier A", bidderKycStatus: "verified", offerType: "barter", pricePhp: null, barterDescription: "rice", barterDeclaredValuePhp: 900, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null },
+      { id: "b", requestId: request.id, bidderLabel: "Supplier B", bidderKycStatus: "verified", offerType: "cash", pricePhp: 400, barterDescription: null, barterDeclaredValuePhp: null, quantityOffered: 10, submittedAt: 0, arrivesAt: 0, status: "pending", bestOfferRequested: false, escrowFundedAt: null, deliveredAt: null },
     ];
     expect(sortOffers(request, offers).map((o) => o.id)).toEqual(["b", "a"]);
   });

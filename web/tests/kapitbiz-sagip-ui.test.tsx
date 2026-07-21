@@ -102,7 +102,7 @@ describe("Sagip Center multi-accept", () => {
 
     let acceptButtons: HTMLElement[] = [];
     await waitFor(() => {
-      acceptButtons = within(board).getAllByRole("button", { name: "Accept" });
+      acceptButtons = within(board).getAllByRole("button", { name: "Lock In" });
       expect(acceptButtons.length).toBeGreaterThanOrEqual(2);
     }, { timeout: 10_000 });
     const [firstAccept, secondAccept] = acceptButtons;
@@ -170,7 +170,7 @@ describe("Sagip Center negotiate", () => {
     await user.click(negotiateButtons[0]);
     expect(within(offerRow!).getByLabelText("Counter price (PHP)")).toBeInTheDocument();
 
-    await user.click(within(offerRow!).getByRole("button", { name: "Accept" }));
+    await user.click(within(offerRow!).getByRole("button", { name: "Lock In" }));
 
     await waitFor(() => expect(within(offerRow!).getByText(/accepted/)).toBeInTheDocument());
     expect(within(offerRow!).queryByLabelText("Counter price (PHP)")).not.toBeInTheDocument();

@@ -5,7 +5,9 @@ export type SagipRequestStatus = "open" | "closed" | "fulfilled";
 export type SagipCategory = "dry-ice" | "packaging" | "fuel" | "generator-rental" | "raw-material" | "other";
 export type BidderKycStatus = "verified" | "provisional";
 export type OfferType = "cash" | "barter";
-export type OfferStatus = "pending" | "accepted" | "negotiating" | "rejected";
+export type OfferStatus = "pending" | "accepted" | "negotiating" | "rejected" | "fulfilled";
+export type SagipDealStage = "locked" | "escrow-funded" | "in-progress" | "delivered" | "fulfilled";
+export const SAGIP_COMMISSION_RATE = 0.05;
 
 export interface SagipRequest {
   id: string;
@@ -44,6 +46,9 @@ export interface BlindOffer {
   submittedAt: number;
   arrivesAt: number;
   status: OfferStatus;
+  bestOfferRequested: boolean;
+  escrowFundedAt: number | null;
+  deliveredAt: number | null;
 }
 
 export interface SagipBidderProfile {
@@ -66,6 +71,10 @@ export type SagipAction =
   | { type: "accept-offer"; offerId: string }
   | { type: "negotiate-offer"; offerId: string; counter: { kind: "cash"; pricePhp: number } | { kind: "barter"; description: string; declaredValuePhp: number } }
   | { type: "reject-offer"; offerId: string }
+  | { type: "request-best-offer"; offerId: string }
+  | { type: "fund-escrow"; offerId: string; at: number }
+  | { type: "mark-delivered"; offerId: string; at: number }
+  | { type: "confirm-received"; offerId: string }
   | { type: "close-request"; requestId: string }
   | { type: "reset" };
 
@@ -271,6 +280,22 @@ export function isClosed(closesAt: number, now: number): boolean {
   return closesAt - now <= 0;
 }
 
+export function computeDealStage(offer: BlindOffer): SagipDealStage {
+  if (offer.status === "fulfilled") return "fulfilled";
+  if (offer.deliveredAt !== null) return "delivered";
+  if (offer.escrowFundedAt !== null) return "in-progress";
+  return "locked";
+}
+
+export function computeOfferTotal(offer: BlindOffer): number {
+  const unitPrice = offer.offerType === "cash" ? offer.pricePhp ?? 0 : offer.barterDeclaredValuePhp ?? 0;
+  return unitPrice * offer.quantityOffered;
+}
+
+export function computeCommission(total: number): number {
+  return Math.round(total * SAGIP_COMMISSION_RATE);
+}
+
 export function sagipReducer(state: KapitBizSagipState, action: SagipAction): KapitBizSagipState {
   switch (action.type) {
     case "post-request":
@@ -287,8 +312,46 @@ export function sagipReducer(state: KapitBizSagipState, action: SagipAction): Ka
       const requests = state.requests.map((request) => {
         if (request.id !== offer.requestId) return request;
         const fulfilledQty = Math.min(request.quantity, request.fulfilledQty + offer.quantityOffered);
-        return { ...request, fulfilledQty, status: fulfilledQty >= request.quantity ? "fulfilled" as const : request.status };
+        return { ...request, fulfilledQty };
       });
+      return { ...state, offers, requests };
+    }
+    case "request-best-offer": {
+      const offer = state.offers.find((candidate) => candidate.id === action.offerId);
+      if (!offer || offer.status !== "pending" && offer.status !== "negotiating") return state;
+      const offers = state.offers.map((candidate) =>
+        candidate.id === action.offerId ? { ...candidate, bestOfferRequested: true } : candidate,
+      );
+      return { ...state, offers };
+    }
+    case "fund-escrow": {
+      const offer = state.offers.find((candidate) => candidate.id === action.offerId);
+      if (!offer || offer.status !== "accepted" || offer.escrowFundedAt !== null) return state;
+      const offers = state.offers.map((candidate) =>
+        candidate.id === action.offerId ? { ...candidate, escrowFundedAt: action.at } : candidate,
+      );
+      return { ...state, offers };
+    }
+    case "mark-delivered": {
+      const offer = state.offers.find((candidate) => candidate.id === action.offerId);
+      if (!offer || offer.status !== "accepted" || offer.escrowFundedAt === null || offer.deliveredAt !== null) return state;
+      const offers = state.offers.map((candidate) =>
+        candidate.id === action.offerId ? { ...candidate, deliveredAt: action.at } : candidate,
+      );
+      return { ...state, offers };
+    }
+    case "confirm-received": {
+      const offer = state.offers.find((candidate) => candidate.id === action.offerId);
+      const request = offer ? state.requests.find((candidate) => candidate.id === offer.requestId) : undefined;
+      if (!offer || !request || offer.status !== "accepted" || offer.deliveredAt === null) return state;
+      const offers = state.offers.map((candidate) =>
+        candidate.id === action.offerId ? { ...candidate, status: "fulfilled" as const } : candidate,
+      );
+      const requests = state.requests.map((candidate) =>
+        candidate.id === request.id && remainingQuantity(request) <= 0
+          ? { ...candidate, status: "fulfilled" as const }
+          : candidate,
+      );
       return { ...state, offers, requests };
     }
     case "negotiate-offer": {
@@ -365,6 +428,9 @@ export function generateOffersForRequest(request: SagipRequest, now: number): Bl
       submittedAt: now,
       arrivesAt: now + (index + 1) * 4_000,
       status: "pending",
+      bestOfferRequested: false,
+      escrowFundedAt: null,
+      deliveredAt: null,
     };
   });
 }
@@ -435,7 +501,10 @@ function isBlindOffer(value: unknown): value is BlindOffer {
     && isFinitePositiveNumber(value.quantityOffered)
     && isTimestamp(value.submittedAt)
     && isTimestamp(value.arrivesAt) && value.arrivesAt >= value.submittedAt
-    && (value.status === "pending" || value.status === "accepted" || value.status === "negotiating" || value.status === "rejected");
+    && (value.status === "pending" || value.status === "accepted" || value.status === "negotiating" || value.status === "rejected" || value.status === "fulfilled")
+    && typeof value.bestOfferRequested === "boolean"
+    && (value.escrowFundedAt === null || isTimestamp(value.escrowFundedAt))
+    && (value.deliveredAt === null || isTimestamp(value.deliveredAt));
 }
 
 export function parseSagipState(value: unknown): KapitBizSagipState {

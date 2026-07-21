@@ -277,6 +277,48 @@
 .sagipNegotiateForm label { display: grid; gap: 4px; color: #1a3a7a; font-size: 0.82rem; font-weight: 700; text-align: left; }
 .sagipNegotiateForm input { min-width: 0; min-height: 40px; border: 1px solid #bec8ca; border-radius: 4px; background: #fff; color: #10282b; padding: 8px; font: inherit; }
 
+.bestOfferRequestedNote { display: inline-flex; align-items: center; min-height: 44px; color: #526163; font-size: 0.78rem; font-weight: 700; font-style: italic; padding: 6px 0 6px 8px; }
+
+.dealPanel {
+  display: grid;
+  gap: 14px;
+  margin: 14px 0;
+  border: 1px solid #0038a8;
+  border-radius: 10px;
+  background: #f4f7ff;
+  padding: 16px;
+}
+
+.dealPanelHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.dealPanelHeader h3 { margin: 2px 0; color: #181c1d; font-size: 1rem; }
+.dealPanelHeader p { margin: 0; color: #3e494a; font-size: 0.85rem; }
+
+.dealStepper { display: flex; flex-wrap: wrap; gap: 0; margin: 0; padding: 0; list-style: none; }
+.dealStepper li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 96px;
+  border-top: 3px solid #cbd8d9;
+  padding: 8px 6px 0 0;
+  color: #8a9598;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+.dealStepper li[data-done="true"] { border-top-color: #0038a8; color: #0038a8; }
+.dealStepper li[data-active="true"] { border-top-color: #0038a8; color: #002d86; }
+.dealStepperDot svg { width: 14px; height: 14px; }
+
+.dealReceipt { border-top: 1px dashed #bec8ca; padding-top: 12px; }
+.dealReceipt h4 { margin: 0 0 8px; color: #087a35; font-size: 0.9rem; }
+.dealReceipt dl { display: grid; gap: 6px; margin: 0; }
+.dealReceipt dl > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.dealReceipt dt { color: #526163; font-size: 0.8rem; }
+.dealReceipt dd { margin: 0; color: #181c1d; font-weight: 700; font-family: var(--font-mono), ui-monospace, monospace; }
+
 @media (max-width: 620px) {
   .hazardAlertStrip { grid-template-columns: auto minmax(0, 1fr); }
   .hazardAlertActions { grid-column: 1 / -1; justify-items: stretch; }

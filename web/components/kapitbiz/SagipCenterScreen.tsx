@@ -115,6 +115,10 @@ export default function SagipCenterScreen({
     dispatch({ type: "negotiate-offer", offerId, counter });
   const barterOffer = (offerId: string, description: string, declaredValuePhp: number) =>
     dispatch({ type: "negotiate-offer", offerId, counter: { kind: "barter", description, declaredValuePhp } });
+  const requestBestOffer = (offerId: string) => dispatch({ type: "request-best-offer", offerId });
+  const fundEscrow = (offerId: string) => dispatch({ type: "fund-escrow", offerId, at: now });
+  const markDelivered = (offerId: string) => dispatch({ type: "mark-delivered", offerId, at: now });
+  const confirmReceived = (offerId: string) => dispatch({ type: "confirm-received", offerId });
 
   const handleOfferHelpSubmit = (request: SagipRequest) => {
     const price = Number(offerPrice);
@@ -133,6 +137,9 @@ export default function SagipCenterScreen({
       submittedAt: now,
       arrivesAt: now,
       status: "pending" as const,
+      bestOfferRequested: false,
+      escrowFundedAt: null,
+      deliveredAt: null,
     };
 
     dispatch({ type: "receive-offers", offers: [newOffer] });
@@ -458,6 +465,10 @@ export default function SagipCenterScreen({
                     onReject={rejectOffer}
                     onNegotiate={negotiateOffer}
                     onBarter={barterOffer}
+                    onRequestBestOffer={requestBestOffer}
+                    onFundEscrow={fundEscrow}
+                    onMarkDelivered={markDelivered}
+                    onConfirmReceived={confirmReceived}
                     onClose={() => setSelectedRequestId(null)}
                     onPreviewSupplier={() => setSurface({ kind: "supplier-preview", requestId: activeRequest.id })}
                   />
@@ -494,6 +505,10 @@ export default function SagipCenterScreen({
             onReject={rejectOffer}
             onNegotiate={negotiateOffer}
             onBarter={barterOffer}
+            onRequestBestOffer={requestBestOffer}
+            onFundEscrow={fundEscrow}
+            onMarkDelivered={markDelivered}
+            onConfirmReceived={confirmReceived}
             onClose={() => setSurface({ kind: "closed" })}
             onPreviewSupplier={() => setSurface({ kind: "supplier-preview", requestId: activeRequest.id })}
           />

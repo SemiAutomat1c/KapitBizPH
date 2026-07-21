@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, X } from "lucide-react";
+import { CheckCircle2, Clock, X } from "lucide-react";
 import {
+  computeCommission,
+  computeDealStage,
+  computeOfferTotal,
   formatTimeRemaining,
   isClosed,
   isClosingSoon,
@@ -10,6 +13,7 @@ import {
   sortOffers,
   visibleOffers,
   type BlindOffer,
+  type SagipDealStage,
   type SagipRequest,
 } from "@/lib/kapitbiz-sagip";
 import styles from "./KapitBizRelay.module.css";
@@ -28,6 +32,87 @@ function canNegotiate(offer: BlindOffer): boolean {
   return offer.status === "pending" || offer.status === "negotiating";
 }
 
+const DEAL_STAGES: { key: SagipDealStage; label: string }[] = [
+  { key: "locked", label: "Locked" },
+  { key: "escrow-funded", label: "Escrow Funded" },
+  { key: "in-progress", label: "In Progress" },
+  { key: "delivered", label: "Delivered" },
+  { key: "fulfilled", label: "Fulfilled" },
+];
+
+function DealStepper({ stage }: { stage: SagipDealStage }) {
+  const currentIndex = DEAL_STAGES.findIndex((step) => step.key === stage);
+  return (
+    <ol className={styles.dealStepper} aria-label="Deal progress">
+      {DEAL_STAGES.map((step, index) => (
+        <li key={step.key} data-done={index < currentIndex} data-active={index === currentIndex}>
+          <span className={styles.dealStepperDot} aria-hidden="true">
+            {index < currentIndex ? <CheckCircle2 aria-hidden="true" /> : null}
+          </span>
+          {step.label}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function DealPanel({
+  request,
+  offer,
+  onFundEscrow,
+  onMarkDelivered,
+  onConfirmReceived,
+}: {
+  request: SagipRequest;
+  offer: BlindOffer;
+  onFundEscrow: (offerId: string) => void;
+  onMarkDelivered: (offerId: string) => void;
+  onConfirmReceived: (offerId: string) => void;
+}) {
+  const stage = computeDealStage(offer);
+  const total = computeOfferTotal(offer);
+  const commission = computeCommission(total);
+
+  return (
+    <section className={styles.dealPanel} aria-label="Locked deal">
+      <div className={styles.dealPanelHeader}>
+        <div>
+          <p className={styles.eyebrow}>Locked in</p>
+          <h3>{offer.bidderLabel}</h3>
+          <p>{offerSummary(offer)} &middot; {offer.quantityOffered} {request.unit}</p>
+        </div>
+        <span className={styles.offersCountBadge}>{formatCurrency(total)} total</span>
+      </div>
+
+      <DealStepper stage={stage} />
+
+      {stage === "locked" ? (
+        <button className={styles.primaryButton} type="button" onClick={() => onFundEscrow(offer.id)}>
+          Fund Escrow ({formatCurrency(total)})
+        </button>
+      ) : stage === "in-progress" ? (
+        <button className={styles.primaryButton} type="button" onClick={() => onMarkDelivered(offer.id)}>
+          Mark Delivered
+        </button>
+      ) : stage === "delivered" ? (
+        <button className={styles.primaryButton} type="button" onClick={() => onConfirmReceived(offer.id)}>
+          Confirm Received
+        </button>
+      ) : (
+        <div className={styles.dealReceipt} aria-label="Transaction receipt">
+          <h4>Transaction receipt</h4>
+          <dl>
+            <div><dt>Total value</dt><dd>{formatCurrency(total)}</dd></div>
+            <div><dt>Platform commission (5%)</dt><dd>-{formatCurrency(commission)}</dd></div>
+            <div><dt>Net payout to {offer.bidderLabel}</dt><dd>{formatCurrency(total - commission)}</dd></div>
+            <div><dt>Units</dt><dd>{offer.quantityOffered} {request.unit}</dd></div>
+          </dl>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export interface SagipOfferBoardProps {
   request: SagipRequest;
   allOffers: BlindOffer[];
@@ -36,6 +121,10 @@ export interface SagipOfferBoardProps {
   onReject: (offerId: string) => void;
   onNegotiate: (offerId: string, counter: { kind: "cash"; pricePhp: number }) => void;
   onBarter: (offerId: string, description: string, declaredValuePhp: number) => void;
+  onRequestBestOffer: (offerId: string) => void;
+  onFundEscrow: (offerId: string) => void;
+  onMarkDelivered: (offerId: string) => void;
+  onConfirmReceived: (offerId: string) => void;
   onClose: () => void;
   onPreviewSupplier: () => void;
 }
@@ -48,6 +137,10 @@ export default function SagipOfferBoard({
   onReject,
   onNegotiate,
   onBarter,
+  onRequestBestOffer,
+  onFundEscrow,
+  onMarkDelivered,
+  onConfirmReceived,
   onClose,
   onPreviewSupplier,
 }: SagipOfferBoardProps) {
@@ -58,6 +151,7 @@ export default function SagipOfferBoard({
   const [barterValue, setBarterValue] = useState("");
   const offers = sortOffers(request, visibleOffers(allOffers, request.id, now));
   const remaining = remainingQuantity(request);
+  const lockedOffer = offers.find((offer) => offer.status === "accepted" || offer.status === "fulfilled");
 
   const clearProposalForms = (offerId: string) => {
     if (negotiatingOfferId === offerId) {
@@ -118,6 +212,16 @@ export default function SagipOfferBoard({
         </span>
         <button className={styles.secondaryButton} type="button" onClick={onPreviewSupplier}>Preview as supplier</button>
 
+        {lockedOffer ? (
+          <DealPanel
+            request={request}
+            offer={lockedOffer}
+            onFundEscrow={onFundEscrow}
+            onMarkDelivered={onMarkDelivered}
+            onConfirmReceived={onConfirmReceived}
+          />
+        ) : null}
+
         {offers.length === 0 ? (
           <p>No offers yet. Offers arrive within moments of posting.</p>
         ) : (
@@ -134,7 +238,7 @@ export default function SagipOfferBoard({
                   {canNegotiate(offer) ? (
                     <div className={styles.sagipOfferActions}>
                       <button className={styles.responderAction} type="button" disabled={remaining <= 0} onClick={() => acceptOffer(offer.id)}>
-                        Accept
+                        Lock In
                       </button>
                       <button className={styles.responderAction} type="button" onClick={() => {
                         setNegotiatingOfferId(offer.id);
@@ -151,6 +255,13 @@ export default function SagipOfferBoard({
                       }}>
                         Propose barter
                       </button>
+                      {offer.bestOfferRequested ? (
+                        <span className={styles.bestOfferRequestedNote}>Best offer requested</span>
+                      ) : (
+                        <button className={styles.responderAction} type="button" onClick={() => onRequestBestOffer(offer.id)}>
+                          Request Best Offer
+                        </button>
+                      )}
                       <button className={styles.responderAction} type="button" onClick={() => rejectOffer(offer.id)}>
                         Reject
                       </button>
