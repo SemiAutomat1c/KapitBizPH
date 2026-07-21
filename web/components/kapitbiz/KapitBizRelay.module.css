@@ -46,7 +46,13 @@
   background: linear-gradient(160deg, #eaf0fb, #fff8e3);
 }
 
-.onboardingHero svg, .onboardingHero img { width: 190px; height: 152px; object-fit: contain; }
+.onboardingHero svg, .onboardingHero img {
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
 
 .onboardingEyebrow {
   margin: 0 0 8px;
@@ -75,10 +81,15 @@
 }
 
 .onboardingActions {
-  display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
+  display: flex;
   gap: 10px;
   align-items: center;
+  width: 100%;
+}
+
+.onboardingActions .primaryButton {
+  flex: 1;
+  min-width: 0;
 }
 
 .onboardingBack,

@@ -12,7 +12,6 @@ export function ProtectIllustration() {
     <img
       src="/illustrations/onboarding-protect.png"
       alt="A storefront protected by a shield"
-      style={{ width: "100%", height: "100%", objectFit: "contain" }}
     />
   );
 }
@@ -22,7 +21,6 @@ export function RelayIllustration() {
     <img
       src="/illustrations/onboarding-relay.png"
       alt="A relay route from a shop to a storage warehouse"
-      style={{ width: "100%", height: "100%", objectFit: "contain" }}
     />
   );
 }
@@ -32,7 +30,6 @@ export function VerifyIllustration() {
     <img
       src="/illustrations/onboarding-verify.png"
       alt="A verified QR handoff of a package"
-      style={{ width: "100%", height: "100%", objectFit: "contain" }}
     />
   );
 }
@@ -42,7 +39,6 @@ export function BusinessIllustration() {
     <img
       src="/illustrations/onboarding-business.png"
       alt="A stocked frozen-goods cold storage cabinet"
-      style={{ width: "100%", height: "100%", objectFit: "contain" }}
     />
   );
 }
