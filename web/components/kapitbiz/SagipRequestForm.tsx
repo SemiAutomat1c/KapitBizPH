@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import type { SagipCategory, SagipRequestKind } from "@/lib/kapitbiz-sagip";
 import styles from "./KapitBizRelay.module.css";
 
-const categories: { value: SagipCategory; label: string }[] = [
+export const SAGIP_CATEGORY_OPTIONS: { value: SagipCategory; label: string }[] = [
   { value: "dry-ice", label: "Dry ice" },
   { value: "packaging", label: "Packaging material" },
   { value: "fuel", label: "Fuel" },
@@ -56,7 +56,7 @@ export default function SagipRequestForm({
           <label>
             Category
             <select value={category} onChange={(event) => setCategory(event.target.value as SagipCategory)}>
-              {categories.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+              {SAGIP_CATEGORY_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
           </label>
           <label>

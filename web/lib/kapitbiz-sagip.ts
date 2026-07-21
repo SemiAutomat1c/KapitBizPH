@@ -24,6 +24,7 @@ export interface SagipRequest {
   // Presentation properties
   companyName?: string;
   industry?: string;
+  region?: string;
   urgency?: "Urgent" | "Non-Urgent";
   description?: string;
   imageUrl?: string;
@@ -120,6 +121,7 @@ export function createSagipState(): KapitBizSagipState {
       srpCeilingPhp: 60,
       companyName: "Swift Rice Miller",
       industry: "Agriculture & Milling industry",
+      region: "Tagum City",
       urgency: "Urgent",
       description: "The recent earthquake damaged our milling equipment, leaving us with a backlog of 200 sacks of rice waiting to be milled.",
       imageUrl: "/illustrations/listing-miller.jpg",
@@ -141,6 +143,7 @@ export function createSagipState(): KapitBizSagipState {
       srpCeilingPhp: 55,
       companyName: "Den's Poultry Inc.",
       industry: "Agriculture & Milling industry",
+      region: "Panabo City",
       urgency: "Urgent",
       description: "The earthquake caused a power outage, and we need a working freezer for our frozen stock ASAP before it spoils.",
       imageUrl: "/illustrations/listing-poultry.jpg",
@@ -162,6 +165,7 @@ export function createSagipState(): KapitBizSagipState {
       srpCeilingPhp: null,
       companyName: "Farmers Assoc.",
       industry: "Agriculture & Milling industry",
+      region: "Carmen",
       urgency: "Non-Urgent",
       description: "The recent earthquake damaged our milling equipment, leaving us with a backlog of 200 sacks of rice waiting to be milled.",
       imageUrl: "/illustrations/listing-logistics.jpg",
@@ -183,6 +187,7 @@ export function createSagipState(): KapitBizSagipState {
       srpCeilingPhp: null,
       companyName: "Davao Cold Chain",
       industry: "Logistics & Storage",
+      region: "Davao City",
       urgency: "Non-Urgent",
       description: "We have excess cold storage space available for temporary staging of perishable goods.",
       imageUrl: "/illustrations/badge-cold-storage.png",
@@ -229,6 +234,7 @@ export function postSagipRequest(
     srpCeilingPhp: input.calamityModeActive ? SRP_CEILINGS[input.category] : null,
     companyName: input.companyName || "Your Company",
     industry: "Milling Industry",
+    region: "Tagum City",
     urgency: input.calamityModeActive ? "Urgent" : "Non-Urgent",
     description: input.description || "No description provided.",
     imageUrl: "/illustrations/listing-miller.jpg",

@@ -17,7 +17,7 @@ import {
 } from "@/lib/kapitbiz-sagip";
 import HazardAssistDialog from "./HazardAssistDialog";
 import SagipOfferBoard from "./SagipOfferBoard";
-import SagipRequestForm from "./SagipRequestForm";
+import SagipRequestForm, { SAGIP_CATEGORY_OPTIONS } from "./SagipRequestForm";
 import SupplierPreviewDialog from "./SupplierPreviewDialog";
 import styles from "./KapitBizRelay.module.css";
 
@@ -51,6 +51,9 @@ export default function SagipCenterScreen({
   const [segment, setSegment] = useState<SagipRequestKind>("need");
   const [now, setNow] = useState(() => Date.now());
   const [surface, setSurface] = useState<SagipSurface>({ kind: "closed" });
+  const [categoryFilter, setCategoryFilter] = useState<SagipCategory | "all">("all");
+  const [industryFilter, setIndustryFilter] = useState<string>("all");
+  const [regionFilter, setRegionFilter] = useState<string>("all");
 
   // Track the selected listing for desktop split pane
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
@@ -80,6 +83,16 @@ export default function SagipCenterScreen({
   const postLabel = segment === "need" ? "Post a request" : "Post surplus";
 
   const activeRequest = requests.find((request) => request.id === selectedRequestId);
+
+  const industryOptions = Array.from(new Set(requests.map((r) => r.industry).filter((v): v is string => Boolean(v)))).sort();
+  const regionOptions = Array.from(new Set(requests.map((r) => r.region).filter((v): v is string => Boolean(v)))).sort();
+
+  const filteredRequests = requests.filter((request) => {
+    if (categoryFilter !== "all" && request.category !== categoryFilter) return false;
+    if (industryFilter !== "all" && request.industry !== industryFilter) return false;
+    if (regionFilter !== "all" && request.region !== regionFilter) return false;
+    return true;
+  });
 
   const submitRequest = (input: {
     title: string;
@@ -329,11 +342,47 @@ export default function SagipCenterScreen({
         {segment === "need" ? "Mag-post ng Sagip" : "Mag-post ng Tulong"}
       </button>
 
+      {requests.length > 0 ? (
+        <div className={styles.sagipFilters} role="group" aria-label="Filter listings">
+          <label>
+            <span>Category</span>
+            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as SagipCategory | "all")}>
+              <option value="all">All categories</option>
+              {SAGIP_CATEGORY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span>Industry</span>
+            <select value={industryFilter} onChange={(event) => setIndustryFilter(event.target.value)}>
+              <option value="all">All industries</option>
+              {industryOptions.map((industry) => (
+                <option key={industry} value={industry}>{industry}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span>Region</span>
+            <select value={regionFilter} onChange={(event) => setRegionFilter(event.target.value)}>
+              <option value="all">All regions</option>
+              {regionOptions.map((region) => (
+                <option key={region} value={region}>{region}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+      ) : null}
+
       {requests.length === 0 ? (
         <div className={styles.emptyState}>
           <p>{segment === "need"
             ? "Wala pang bukas na Sagip (No open requests yet). Mag-post para makakuha ng alok."
             : "Wala pang bukas na Tulong (No surplus posted yet). Mag-post para makapag-alok ng tulong."}</p>
+        </div>
+      ) : filteredRequests.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>No listings match these filters.</p>
         </div>
       ) : (
         <div className={styles.sagipLayout}>
@@ -343,7 +392,7 @@ export default function SagipCenterScreen({
               {segment === "need" ? "Mga negosyong nangangailangan ng Sagip" : "Mga alok na Tulong sa malapit"}
             </p>
             <ul className={styles.sagipCardList} aria-label={segment === "need" ? "Posted requests" : "Posted surplus"}>
-              {requests.map((request) => {
+              {filteredRequests.map((request) => {
                 const initialLogo = request.companyName
                   ? request.companyName.split(" ").map((n) => n[0]).join("")
                   : "YC";

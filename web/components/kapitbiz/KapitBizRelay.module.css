@@ -607,6 +607,38 @@
 .segmentedControl button[data-active="true"] { background: #fff; color: #002d86; box-shadow: 0 1px 2px rgba(24, 28, 29, 0.12); }
 .segmentedControl svg { width: 16px; height: 16px; }
 
+.sagipFilters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.sagipFilters label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #526163;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.sagipFilters select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  border: 1px solid #bec8ca;
+  border-radius: 6px;
+  background: #fff;
+  color: #181c1d;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0 10px;
+  text-transform: none;
+}
+
 .recommendedHost { overflow: hidden; border: 2px solid #0042bd; border-radius: 8px; background: #fff; }
 .recommendedBand { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #0042bd; color: #fff; padding: 10px 16px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; }
 .recommendedBand span { display: flex; align-items: center; gap: 6px; }
