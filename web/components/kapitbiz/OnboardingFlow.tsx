@@ -2,7 +2,6 @@
 
 import { useState, type Dispatch, type FormEvent } from "react";
 import type {
-  DemoRole,
   DemoSessionAction,
   KapitBizDemoSession,
   OnboardingStep,
@@ -11,9 +10,6 @@ import {
   BusinessIllustration,
   ProtectIllustration,
   RelayIllustration,
-  RoleHostIllustration,
-  RoleMerchantIllustration,
-  RoleRiderIllustration,
   VerifyIllustration,
 } from "./illustrations";
 import styles from "./KapitBizRelay.module.css";
@@ -21,22 +17,20 @@ import styles from "./KapitBizRelay.module.css";
 const nextStep: Record<OnboardingStep, OnboardingStep | null> = {
   protect: "relay",
   relay: "verify",
-  verify: "role",
-  role: "business",
+  verify: "business",
   business: null,
 };
 
-const onboardingSteps: OnboardingStep[] = ["protect", "relay", "verify", "role", "business"];
+const onboardingSteps: OnboardingStep[] = ["protect", "relay", "verify", "business"];
 
 const previousStep: Record<OnboardingStep, OnboardingStep | null> = {
   protect: null,
   relay: "protect",
   verify: "relay",
-  role: "verify",
-  business: "role",
+  business: "verify",
 };
 
-const introductions: Record<Exclude<OnboardingStep, "role" | "business">, {
+const introductions: Record<Exclude<OnboardingStep, "business">, {
   title: string;
   body: string;
   actionLabel: string;
@@ -54,15 +48,9 @@ const introductions: Record<Exclude<OnboardingStep, "role" | "business">, {
   verify: {
     title: "Keep every handoff clear",
     body: "Use a simple QR-backed record to make the transfer visible from reservation through receipt.",
-    actionLabel: "Choose a role",
+    actionLabel: "Set up business",
   },
 };
-
-const roles: { role: DemoRole; label: string; description: string; icon: () => React.JSX.Element }[] = [
-  { role: "merchant", label: "Merchant", description: "Protect your stock and request capacity.", icon: RoleMerchantIllustration },
-  { role: "host", label: "Capacity Host", description: "Offer verified freezer or storage space.", icon: RoleHostIllustration },
-  { role: "rider", label: "Rider", description: "Move a confirmed rescue safely and quickly.", icon: RoleRiderIllustration },
-];
 
 function OnboardingProgress({ step }: { step: OnboardingStep }) {
   const activeIndex = onboardingSteps.indexOf(step);
@@ -76,13 +64,13 @@ function OnboardingProgress({ step }: { step: OnboardingStep }) {
   );
 }
 
-const introVisuals: Record<Exclude<OnboardingStep, "role" | "business">, () => React.JSX.Element> = {
+const introVisuals: Record<Exclude<OnboardingStep, "business">, () => React.JSX.Element> = {
   protect: ProtectIllustration,
   relay: RelayIllustration,
   verify: VerifyIllustration,
 };
 
-function OnboardingVisual({ step }: { step: Exclude<OnboardingStep, "role" | "business"> }) {
+function OnboardingVisual({ step }: { step: Exclude<OnboardingStep, "business"> }) {
   const Illustration = introVisuals[step];
   return (
     <div className={styles.onboardingHero} aria-hidden="true">
@@ -106,52 +94,10 @@ export default function OnboardingFlow({
   const moveTo = (step: OnboardingStep) => dispatch({ type: "set-onboarding-step", step });
   const step = session.onboardingStep;
 
-  const selectRole = (role: DemoRole) => {
-    dispatch({ type: "select-role", role });
-    if (role === "merchant") {
-      moveTo("business");
-      return;
-    }
-    dispatch({ type: "complete-onboarding" });
-  };
-
   const submitBusiness = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch({ type: "complete-onboarding", businessName });
   };
-
-  if (step === "role") {
-    return (
-      <main className={styles.onboardingShell}>
-        <section className={styles.onboardingContent} aria-labelledby="onboarding-role-heading">
-          <OnboardingProgress step={step} />
-          <p className={styles.onboardingEyebrow}>KapitBiz Relay demo</p>
-          <h1 id="onboarding-role-heading">Choose your demo role</h1>
-          <p className={styles.onboardingCopy}>Pick the part of the rescue network you want to explore first.</p>
-          <div className={styles.roleChoices}>
-            {roles.map(({ role, label, description, icon: Icon }) => (
-              <button
-                key={role}
-                aria-label={`Continue as ${label}`}
-                className={styles.roleButton}
-                type="button"
-                onClick={() => selectRole(role)}
-              >
-                <Icon />
-                <span>
-                  <strong>{label}</strong>
-                  <small>{description}</small>
-                </span>
-              </button>
-            ))}
-          </div>
-          <div className={styles.onboardingActions}>
-            <button className={styles.onboardingBack} type="button" onClick={() => moveTo("verify")}>Back</button>
-          </div>
-        </section>
-      </main>
-    );
-  }
 
   if (step === "business") {
     return (
@@ -182,7 +128,7 @@ export default function OnboardingFlow({
               <input value={ownerName} onChange={(event) => setOwnerName(event.target.value)} />
             </label>
             <div className={styles.onboardingActions}>
-              <button className={styles.onboardingBack} type="button" onClick={() => moveTo("role")}>Back</button>
+              <button className={styles.onboardingBack} type="button" onClick={() => moveTo("verify")}>Back</button>
               <button className={styles.primaryButton} type="submit">Enter KapitBiz Relay</button>
             </div>
           </form>
@@ -208,7 +154,7 @@ export default function OnboardingFlow({
               Back
             </button>
           ) : null}
-          <button className={styles.onboardingSkip} type="button" onClick={() => moveTo("role")}>Skip</button>
+          <button className={styles.onboardingSkip} type="button" onClick={() => moveTo("business")}>Skip</button>
           <button className={styles.primaryButton} type="button" onClick={() => moveTo(nextStep[step] as OnboardingStep)}>
             {intro.actionLabel}
           </button>

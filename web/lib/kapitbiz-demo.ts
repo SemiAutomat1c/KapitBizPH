@@ -5,7 +5,7 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 export const DEMO_SESSION_STORAGE_KEY = "kapitbiz-demo-session-v1";
 export type DemoRole = "merchant" | "host" | "rider";
 export type MerchantTab = "home" | "requests" | "network" | "sagip" | "activity" | "menu" | "bayanihan";
-export type OnboardingStep = "protect" | "relay" | "verify" | "role" | "business";
+export type OnboardingStep = "protect" | "relay" | "verify" | "business";
 
 export interface KapitBizDemoSession {
   version: 1;
@@ -146,7 +146,7 @@ function isMerchantTab(value: unknown): value is MerchantTab {
 }
 
 function isOnboardingStep(value: unknown): value is OnboardingStep {
-  return value === "protect" || value === "relay" || value === "verify" || value === "role" || value === "business";
+  return value === "protect" || value === "relay" || value === "verify" || value === "business";
 }
 
 function isNullableFiniteNumber(value: unknown): value is number | null {
