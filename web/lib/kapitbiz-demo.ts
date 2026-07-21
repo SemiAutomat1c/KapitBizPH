@@ -4,7 +4,7 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 
 export const DEMO_SESSION_STORAGE_KEY = "kapitbiz-demo-session-v1";
 export type DemoRole = "merchant" | "host" | "rider";
-export type MerchantTab = "home" | "requests" | "network" | "sagip" | "activity" | "menu";
+export type MerchantTab = "home" | "requests" | "network" | "sagip" | "activity" | "menu" | "Bayanihan";
 export type OnboardingStep = "protect" | "relay" | "verify" | "role" | "business";
 
 export interface KapitBizDemoSession {
@@ -16,6 +16,7 @@ export interface KapitBizDemoSession {
   activeTab: MerchantTab;
   rescueOpen: boolean;
   riderArrivedAt: number | null;
+  businessName: string;
 }
 
 export type DemoSessionAction =
@@ -38,6 +39,7 @@ export function createDemoSession(): KapitBizDemoSession {
     activeTab: "home",
     rescueOpen: false,
     riderArrivedAt: null,
+    businessName: "Maya's Frozen Goods",
   };
 }
 
@@ -95,8 +97,14 @@ function loadDemoSession(): KapitBizDemoSession | null {
   try {
     const serialized = window.localStorage.getItem(DEMO_SESSION_STORAGE_KEY);
     if (!serialized) return null;
-    const parsed: unknown = JSON.parse(serialized);
-    return isKapitBizDemoSession(parsed) ? parsed : null;
+    const parsed: any = JSON.parse(serialized);
+    if (isKapitBizDemoSession(parsed)) {
+      if (parsed.businessName === undefined) {
+        parsed.businessName = "Maya's Frozen Goods";
+      }
+      return parsed;
+    }
+    return null;
   } catch {
     return null;
   }
@@ -119,7 +127,8 @@ function isKapitBizDemoSession(value: unknown): value is KapitBizDemoSession {
     && isDemoRole(value.role)
     && isMerchantTab(value.activeTab)
     && typeof value.rescueOpen === "boolean"
-    && isNullableFiniteNumber(value.riderArrivedAt);
+    && isNullableFiniteNumber(value.riderArrivedAt)
+    && (typeof value.businessName === "string" || value.businessName === undefined);
 }
 
 function isDemoRole(value: unknown): value is DemoRole {
@@ -127,7 +136,7 @@ function isDemoRole(value: unknown): value is DemoRole {
 }
 
 function isMerchantTab(value: unknown): value is MerchantTab {
-  return value === "home" || value === "requests" || value === "network" || value === "sagip" || value === "activity" || value === "menu";
+  return value === "home" || value === "requests" || value === "network" || value === "sagip" || value === "activity" || value === "menu" || value === "Bayanihan";
 }
 
 function isOnboardingStep(value: unknown): value is OnboardingStep {

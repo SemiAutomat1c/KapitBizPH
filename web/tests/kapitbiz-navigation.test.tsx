@@ -97,6 +97,7 @@ describe("KapitBiz complete demo navigation", () => {
       ["Home", "Good morning, Maya"],
       ["Requests", "Rescue requests"],
       ["Sagip Center", "Sagip Center"],
+      ["Bayanihan", "Bayanihan Forum"],
     ] as const) {
       await user.click(await screen.findByRole("button", { name: buttonName }));
       expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();

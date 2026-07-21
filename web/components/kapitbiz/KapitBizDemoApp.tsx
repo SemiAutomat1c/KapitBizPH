@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useKapitBizDemoSession } from "@/lib/kapitbiz-demo";
+import { useState, useReducer, useEffect } from "react";
+import { useKapitBizDemoSession, type MerchantTab } from "@/lib/kapitbiz-demo";
+import { createInitialBayanihanState, bayanihanReducer } from "@/lib/kapitbiz-bayanihan";
+import type { BayanihanState, BayanihanAction } from "@/lib/kapitbiz-bayanihan";
+import BayanihanScreen from "./BayanihanScreen";
 import { useKapitBiz } from "@/lib/kapitbiz";
 import { useHazardAssist } from "@/lib/use-hazard-assist";
 import { useSagip } from "@/lib/use-sagip";
@@ -34,7 +37,41 @@ export default function KapitBizDemoApp() {
   const sagip = useSagip();
   const [hazardSurface, setHazardSurface] = useState<HazardAssistSurface>("closed");
 
-  if (!hydrated || !relay.hydrated || !hazardAssist.hydrated || !sagip.hydrated) {
+  const [bayanihanState, dispatchBayanihan] = useReducer(
+    (state: BayanihanState, action: BayanihanAction | { type: "hydrate"; state: BayanihanState }) => {
+      if (action.type === "hydrate") return action.state;
+      return bayanihanReducer(state, action);
+    },
+    undefined,
+    createInitialBayanihanState
+  );
+  const [bayanihanHydrated, setBayanihanHydrated] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const serialized = window.localStorage.getItem("kapitbiz-bayanihan-v1");
+        if (serialized) {
+          dispatchBayanihan({ type: "hydrate", state: JSON.parse(serialized) });
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    setBayanihanHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (bayanihanHydrated) {
+      try {
+        window.localStorage.setItem("kapitbiz-bayanihan-v1", JSON.stringify(bayanihanState));
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [bayanihanHydrated, bayanihanState]);
+
+  if (!hydrated || !relay.hydrated || !hazardAssist.hydrated || !sagip.hydrated || !bayanihanHydrated) {
     return (
       <main className={styles.restoreShell}>
         <p role="status">Restoring KapitBiz Relay...</p>
@@ -103,8 +140,9 @@ export default function KapitBizDemoApp() {
     relay.resetRescue();
     hazardAssist.resetHazardAssist();
     sagip.resetSagip();
+    dispatchBayanihan({ type: "hydrate", state: createInitialBayanihanState() });
   };
-  const selectTab = (tab: "home" | "requests" | "network" | "sagip" | "activity") => {
+  const selectTab = (tab: Exclude<MerchantTab, "menu">) => {
     dispatch({ type: "select-tab", tab });
   };
   const openSafetyCheck = () => {
@@ -186,6 +224,8 @@ export default function KapitBizDemoApp() {
         />
       ) : session.activeTab === "sagip" ? (
         <SagipCenterScreen state={sagip.state} dispatch={sagip.dispatch} />
+      ) : session.activeTab === "Bayanihan" ? (
+        <BayanihanScreen state={bayanihanState} dispatch={dispatchBayanihan} businessName={session.businessName} />
       ) : session.activeTab === "network" ? (
         <NetworkScreen
           state={relay.state}

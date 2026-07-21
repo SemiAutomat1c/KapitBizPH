@@ -103,7 +103,7 @@ export default function BayanihanScreen({
       <div className={styles.bayanihanHeader}>
         <div className={styles.bayanihanHeaderInfo}>
           <p className={styles.eyebrow}>Bayanihan Forum</p>
-          <h2 className={styles.bayanihanTitle}>Bayanihan Community</h2>
+          <h2 className={styles.bayanihanTitle}>Bayanihan Forum</h2>
           <p className={styles.bayanihanSub}>
             Discussions, emergency alerts, and business preparedness tips in Tagum City.
           </p>

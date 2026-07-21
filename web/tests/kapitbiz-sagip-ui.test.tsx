@@ -29,9 +29,9 @@ describe("Sagip Center tab", () => {
     expect(screen.getByText(/No open requests yet/)).toBeInTheDocument();
   });
 
-  it("defines three bottom navigation columns for its three tabs", () => {
+  it("defines four bottom navigation columns for its four tabs", () => {
     const stylesheet = readFileSync(resolve(process.cwd(), "components/kapitbiz/KapitBizRelay.module.css"), "utf8");
-    expect(stylesheet).toMatch(/\.bottomNav\s*\{[^}]*grid-template-columns:\s*repeat\(3, 1fr\);/s);
+    expect(stylesheet).toMatch(/\.bottomNav\s*\{[^}]*grid-template-columns:\s*repeat\(4, 1fr\);/s);
   });
 });
 
