@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Clock, Plus, X } from "lucide-react";
 import {
+  formatTimeRemaining,
   generateOffersForRequest,
+  isClosed,
+  isClosingSoon,
   postSagipRequest,
   remainingQuantity,
   type KapitBizSagipState,
@@ -24,6 +27,19 @@ type SagipSurface =
   | { kind: "offer-board"; requestId: string }
   | { kind: "supplier-preview"; requestId: string }
   | { kind: "offer-help-modal"; requestId: string };
+
+function CountdownBadge({ closesAt, now }: { closesAt: number; now: number }) {
+  return (
+    <span
+      className={styles.countdownBadge}
+      data-urgent={isClosingSoon(closesAt, now)}
+      data-closed={isClosed(closesAt, now)}
+    >
+      <Clock aria-hidden="true" />
+      {formatTimeRemaining(closesAt, now)}
+    </span>
+  );
+}
 
 export default function SagipCenterScreen({
   state,
@@ -135,6 +151,7 @@ export default function SagipCenterScreen({
             {request.urgency === "Urgent" ? "Urgent" : "Non-Urgent"}
           </span>
           <span className={styles.offersCountBadge}>{offersCount} Kasalukuyang Alok</span>
+          <CountdownBadge closesAt={request.closesAt} now={now} />
         </div>
 
         <div className={styles.sagipDetailImage}>
@@ -368,6 +385,7 @@ export default function SagipCenterScreen({
                         </div>
                         <h2 className={styles.sagipCardTitle}>{request.title}</h2>
                         <p className={styles.sagipCardQty}>{remainingQuantity(request)} {request.unit} natitira</p>
+                        <CountdownBadge closesAt={request.closesAt} now={now} />
                         <p className={styles.sagipCardDesc}>{request.description || "Walang deskripsyong ibinigay."}</p>
                       </div>
                     </button>

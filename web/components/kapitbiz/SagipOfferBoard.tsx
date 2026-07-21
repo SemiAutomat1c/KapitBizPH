@@ -1,8 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
-import { remainingQuantity, sortOffers, visibleOffers, type BlindOffer, type SagipRequest } from "@/lib/kapitbiz-sagip";
+import { Clock, X } from "lucide-react";
+import {
+  formatTimeRemaining,
+  isClosed,
+  isClosingSoon,
+  remainingQuantity,
+  sortOffers,
+  visibleOffers,
+  type BlindOffer,
+  type SagipRequest,
+} from "@/lib/kapitbiz-sagip";
 import styles from "./KapitBizRelay.module.css";
 
 function formatCurrency(value: number): string {
@@ -99,6 +108,14 @@ export default function SagipOfferBoard({
       <div className={styles.hazardDialogBody}>
         <h2 data-hazard-initial-focus tabIndex={-1}>{request.title}</h2>
         <p>{request.fulfilledQty} of {request.quantity} {request.unit} secured</p>
+        <span
+          className={styles.countdownBadge}
+          data-urgent={isClosingSoon(request.closesAt, now)}
+          data-closed={isClosed(request.closesAt, now)}
+        >
+          <Clock aria-hidden="true" />
+          {formatTimeRemaining(request.closesAt, now)}
+        </span>
         <button className={styles.secondaryButton} type="button" onClick={onPreviewSupplier}>Preview as supplier</button>
 
         {offers.length === 0 ? (

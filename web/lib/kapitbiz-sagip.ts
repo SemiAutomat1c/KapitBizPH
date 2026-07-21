@@ -240,6 +240,31 @@ export function remainingQuantity(request: SagipRequest): number {
   return Math.max(0, request.quantity - request.fulfilledQty);
 }
 
+const CLOSING_SOON_MS = 60 * 60 * 1_000;
+
+export function formatTimeRemaining(closesAt: number, now: number): string {
+  const msLeft = closesAt - now;
+  if (msLeft <= 0) return "Closed";
+
+  const totalMinutes = Math.floor(msLeft / 60_000);
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) return `${days}d ${hours}h left`;
+  if (hours > 0) return `${hours}h ${minutes}m left`;
+  return `${minutes}m left`;
+}
+
+export function isClosingSoon(closesAt: number, now: number): boolean {
+  const msLeft = closesAt - now;
+  return msLeft > 0 && msLeft <= CLOSING_SOON_MS;
+}
+
+export function isClosed(closesAt: number, now: number): boolean {
+  return closesAt - now <= 0;
+}
+
 export function sagipReducer(state: KapitBizSagipState, action: SagipAction): KapitBizSagipState {
   switch (action.type) {
     case "post-request":
