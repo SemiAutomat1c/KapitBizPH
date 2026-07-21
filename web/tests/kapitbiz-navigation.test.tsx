@@ -55,8 +55,9 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(screen.getByRole("button", { name: "Next" }));
     expect(screen.getByRole("heading", { name: "Relay to available capacity" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Next" }));
-    await user.click(screen.getByRole("button", { name: "Choose a role" }));
-    await user.click(screen.getByRole("button", { name: "Continue as Merchant" }));
+    expect(screen.getByRole("heading", { name: "Keep every handoff clear" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Set up business" }));
+    expect(screen.getByRole("heading", { name: "Set up your business" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Enter KapitBiz Relay" }));
 
     const merchantGreeting = screen.getByRole("heading", { name: "Good morning, Maya" });
@@ -76,7 +77,7 @@ describe("KapitBiz complete demo navigation", () => {
   it("resumes the saved onboarding step after remount", async () => {
     localStorage.setItem("kapitbiz-demo-session-v1", JSON.stringify({
       version: 1,
-      onboardingStep: "role",
+      onboardingStep: "verify",
       onboardingComplete: false,
       businessSetupComplete: false,
       role: "merchant",
@@ -85,7 +86,7 @@ describe("KapitBiz complete demo navigation", () => {
       riderArrivedAt: null,
     }));
     render(<KapitBizDemoApp />);
-    await waitFor(() => expect(screen.getByRole("heading", { name: "Choose your demo role" })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole("heading", { name: "Keep every handoff clear" })).toBeInTheDocument());
   });
 
   it("makes every primary navigation item a working control", async () => {
