@@ -63,10 +63,11 @@ describe("KapitBiz role previews", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Custody transfer confirmed");
 
     await user.click(screen.getByRole("button", { name: "Return to Merchant" }));
-    await user.click(screen.getByRole("button", { name: "Notifications" }));
-    expect(screen.getByText("Rider arrived")).toBeInTheDocument();
-    expect(screen.getByText("Arrival at facility")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Home" }));
+    await user.click(screen.getByRole("button", { name: "View Custody Record" }));
     expect(screen.getByText("Transfer confirmed")).toBeInTheDocument();
+    expect(screen.getByText("Arrival at facility")).toBeInTheDocument();
+    expect(screen.getByText("Rescue initiated")).toBeInTheDocument();
   });
 
   it("shows the selected Tagum North and refrigerated van reservation in both role previews", async () => {

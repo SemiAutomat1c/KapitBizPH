@@ -91,12 +91,11 @@ describe("KapitBiz Hazard Assist UI", () => {
     expect(screen.getByRole("heading", { name: "Confirm reservation" })).toBeInTheDocument();
   });
 
-  it("opens Good Samaritan capacity from Network", async () => {
+  it("opens Good Samaritan capacity from Home", async () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
-    await user.click(await screen.findByRole("button", { name: "Network" }));
-    await user.click(screen.getByRole("button", { name: "Good Samaritan capacity" }));
+    await user.click(await screen.findByRole("button", { name: "Good Samaritan capacity" }));
     expect(screen.getByRole("dialog", { name: "Good Samaritan capacity" })).toBeInTheDocument();
   });
 
@@ -170,7 +169,7 @@ describe("KapitBiz Hazard Assist UI", () => {
     expect(screen.getByText("Relay chosen over simulated generator estimate: PHP714")).toBeInTheDocument();
   });
 
-  it("shows Hazard Assist source in Requests and the unified Activity timeline", async () => {
+  it("shows Hazard Assist source in Requests", async () => {
     localStorage.setItem("kapitbiz-hazard-assist-v1", JSON.stringify({
       version: 1,
       alertAcknowledged: true,
@@ -188,14 +187,10 @@ describe("KapitBiz Hazard Assist UI", () => {
 
     await user.click(await screen.findByRole("button", { name: "Requests" }));
     expect(screen.getByText("Started from Safety Check")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Activity" }));
-    expect(screen.getByText("Simulated alert received")).toBeInTheDocument();
-    expect(screen.getByText("Fuel comparison generated")).toBeInTheDocument();
-    expect(screen.getByText("Good Samaritan capacity opened")).toBeInTheDocument();
-    expect(screen.getByText("Relay started from Safety Check")).toBeInTheDocument();
   });
 
   it("opens an honest recovery packet preview after confirmed handoff", async () => {
+    seedCompletedOnboarding();
     createCompleteStateForTest();
     localStorage.setItem("kapitbiz-hazard-assist-v1", JSON.stringify({
       version: 1,
@@ -212,15 +207,16 @@ describe("KapitBiz Hazard Assist UI", () => {
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
-    await user.click(await screen.findByRole("button", { name: "Activity" }));
-    await user.click(screen.getByRole("button", { name: "Recovery packet preview" }));
+    await user.click(await screen.findByRole("button", { name: "Export Recovery Packet" }));
 
-    expect(screen.getByRole("dialog", { name: "Recovery packet preview" })).toBeInTheDocument();
-    expect(screen.getByText("Maya's Frozen Goods")).toBeInTheDocument();
-    expect(screen.getByText("PHP21,800 at-risk inventory baseline")).toBeInTheDocument();
-    expect(screen.getByText("Relay chosen over PHP714 generator estimate")).toBeInTheDocument();
-    expect(screen.getByText(/QR custody record RE-4892-X/)).toBeInTheDocument();
-    expect(screen.getByText(/not an accepted government form or guaranteed claim document/i)).toBeInTheDocument();
+    const dialog = screen.getByRole("dialog", { name: "Recovery packet preview" });
+    expect(dialog).toBeInTheDocument();
+    const within = (await import("@testing-library/react")).within;
+    expect(within(dialog).getByText("Maya's Frozen Goods")).toBeInTheDocument();
+    expect(within(dialog).getByText("PHP21,800 at-risk inventory baseline")).toBeInTheDocument();
+    expect(within(dialog).getByText("Relay chosen over PHP714 generator estimate")).toBeInTheDocument();
+    expect(within(dialog).getByText(/QR custody record RE-4892-X/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/not an accepted government form or guaranteed claim document/i)).toBeInTheDocument();
   });
 
   it("Reset demo clears demo-session, Relay, and Hazard Assist progress", async () => {

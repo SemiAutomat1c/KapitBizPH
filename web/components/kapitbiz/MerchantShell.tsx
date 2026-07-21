@@ -43,7 +43,7 @@ export default function MerchantShell({
         <MerchantHeader
           title="KapitBiz Relay"
           onMenu={onOpenMenu}
-          onNotifications={() => onSelectTab("activity")}
+          onNotifications={() => onSelectTab("requests")}
         />
         {children}
       </section>

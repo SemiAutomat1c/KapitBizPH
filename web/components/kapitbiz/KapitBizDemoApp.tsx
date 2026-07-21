@@ -163,6 +163,7 @@ export default function KapitBizDemoApp() {
           hazardAssistState={hazardAssist.state}
           onRunSafetyCheck={openSafetyCheck}
           onOpenGoodSamaritan={openGoodSamaritan}
+          onOpenRecoveryPacket={openRecoveryPacket}
         />
       ) : session.activeTab === "requests" ? (
         <RequestsScreen

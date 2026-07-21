@@ -148,12 +148,10 @@ export function ProgressHeader({ step }: { step: RelayStep }) {
   );
 }
 
-const navItems: { id: Exclude<MerchantTab, "menu">; label: string; icon: LucideIcon }[] = [
+const navItems: { id: Exclude<MerchantTab, "menu" | "network" | "activity">; label: string; icon: LucideIcon }[] = [
   { id: "home", label: "Home", icon: House },
   { id: "requests", label: "Requests", icon: ListTodo },
-  { id: "network", label: "Network", icon: Network },
   { id: "sagip", label: "Sagip Center", icon: Handshake },
-  { id: "activity", label: "Activity", icon: History },
 ];
 
 export function BottomNav({

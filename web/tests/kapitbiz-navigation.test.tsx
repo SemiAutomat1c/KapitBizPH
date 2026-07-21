@@ -96,8 +96,7 @@ describe("KapitBiz complete demo navigation", () => {
     for (const [buttonName, heading] of [
       ["Home", "Good morning, Maya"],
       ["Requests", "Rescue requests"],
-      ["Network", "Relay network"],
-      ["Activity", "Business activity"],
+      ["Sagip Center", "Sagip Center"],
     ] as const) {
       await user.click(await screen.findByRole("button", { name: buttonName }));
       expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
@@ -129,13 +128,13 @@ describe("KapitBiz complete demo navigation", () => {
     expect(screen.getByRole("heading", { name: "Localized power interruption alert" })).toBeInTheDocument();
   });
 
-  it("opens Activity from notifications", async () => {
+  it("opens Requests from notifications", async () => {
     seedCompletedOnboarding();
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
     await user.click(await screen.findByRole("button", { name: "Notifications" }));
-    expect(screen.getByRole("heading", { name: "Business activity" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Rescue requests" })).toBeInTheDocument();
   });
 
   it("shows Menu details and asks for reset confirmation", async () => {
@@ -220,7 +219,7 @@ describe("KapitBiz complete demo navigation", () => {
     await user.click(screen.getByRole("button", { name: "Home" }));
     await user.click(screen.getByRole("button", { name: "Resume rescue" }));
     await user.click(screen.getByRole("button", { name: "Notifications" }));
-    expect(screen.getByRole("heading", { name: "Business activity" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Rescue requests" })).toBeInTheDocument();
   });
 
   it("offers a resume action for an active rescue without changing it first", async () => {
@@ -265,16 +264,13 @@ describe("KapitBiz complete demo navigation", () => {
     expect(screen.getByRole("group", { name: "Request status" }).className).toContain("requestFilters");
   });
 
-  it("opens the completed custody record from Activity", async () => {
+  it("opens the completed custody record from Home", async () => {
     seedCompletedOnboarding();
     createCompleteStateForTest();
     const user = userEvent.setup();
     render(<KapitBizDemoApp />);
 
-    await user.click(await screen.findByRole("button", { name: "Notifications" }));
-    expect(screen.getByText("Transfer confirmed")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "View custody record" }));
-
+    await user.click(await screen.findByRole("button", { name: "View Custody Record" }));
     expect(screen.getByRole("heading", { name: "₱16,500 inventory protected" })).toBeInTheDocument();
   });
 

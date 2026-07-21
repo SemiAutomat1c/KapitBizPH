@@ -2,7 +2,7 @@
 
 import type { RelayDemoState, RelaySelection } from "@/lib/kapitbiz";
 import type { KapitBizHazardAssistState } from "@/lib/kapitbiz-hazard-assist";
-import { ArrowRight, FileCheck2, MapPinned, ShieldCheck } from "lucide-react";
+import { ArrowRight, Clipboard, FileCheck2, MapPinned, ShieldCheck } from "lucide-react";
 import HazardAlertStrip from "./HazardAlertStrip";
 import { HomeBannerIllustration } from "./illustrations";
 import styles from "./KapitBizRelay.module.css";
@@ -19,6 +19,7 @@ export default function HomeScreen({
   hazardAssistState,
   onRunSafetyCheck,
   onOpenGoodSamaritan,
+  onOpenRecoveryPacket,
 }: {
   state: RelayDemoState;
   selection: RelaySelection;
@@ -27,6 +28,7 @@ export default function HomeScreen({
   hazardAssistState: KapitBizHazardAssistState;
   onRunSafetyCheck: () => void;
   onOpenGoodSamaritan: () => void;
+  onOpenRecoveryPacket: () => void;
 }) {
   const atRiskValue = state.inventory.reduce((total, item) => total + item.totalValue, 0);
   const rescueStarted = state.step !== "incident";
@@ -81,10 +83,16 @@ export default function HomeScreen({
       </button>
 
       {state.receiverConfirmedAt !== null ? (
-        <button className={styles.secondaryAction} type="button" onClick={onOpenRescue}>
-          <FileCheck2 aria-hidden="true" />
-          View Custody Record
-        </button>
+        <div style={{ display: "grid", gap: "10px", width: "100%", margin: "10px 0 0" }}>
+          <button className={styles.secondaryAction} type="button" onClick={onOpenRescue}>
+            <FileCheck2 aria-hidden="true" />
+            View Custody Record
+          </button>
+          <button className={styles.secondaryAction} type="button" onClick={onOpenRecoveryPacket}>
+            <Clipboard aria-hidden="true" />
+            Export Recovery Packet
+          </button>
+        </div>
       ) : null}
       <p className={styles.homeFootnote}><ShieldCheck aria-hidden="true" /> Seeded merchant, host, and rider data for this pilot demo.</p>
     </section>
